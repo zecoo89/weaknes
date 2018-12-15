@@ -27,8 +27,9 @@
     "prettier": "^1.15.3",
     "rollup": "^0.67.0",
     "rollup-plugin-eslint": "^5.0.0",
-    "rollup-plugin-node-resolve": "^3.4.0",
-    "source-map-support": "^0.5.9"
+    "rollup-plugin-node-resolve": "^3.4.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "source-map-support": "^0.5.9"
+  }
 }

@@ -1,18 +1,18 @@
 const isNode = typeof process !== "undefined" && typeof require !== "undefined"
 
 async function main() {
-  const path = './assets/helloworld/sample1.nes'
+  const path = './assets/helloworld/helloworld.nes'
   let nes
   /* node.jsかブラウザか判定し、環境に合わせてライブラリやROMの読み込み方法を替える */
   if(isNode) {
+    require('source-map-support').install()
+
     const NesPack = require('./dist/bundle')
     const fs = require('fs')
-    require('source-map-support').install()
 
     const data = fs.readFileSync(path)
 
     const Nes = NesPack.Nes
-    const Renderer = NesPack.Renderer
     const Rom = NesPack.Rom
 
     nes = new Nes()
