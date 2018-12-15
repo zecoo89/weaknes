@@ -1,0 +1,19 @@
+{
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true,
+    "jest": true
+  },
+  "extends": ["eslint:recommended", "plugin:node/recommended"],
+  "plugins": ["node"],
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "rules": {
+    "node/no-unsupported-features/es-syntax": ["off", {
+      "version": ">=10.0.0",
+      "ignores": []
+    }]
+  }
+}
