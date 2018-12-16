@@ -15,4 +15,4 @@ export default {
     carry_: 0
   },
   pc: 0x8000 // プログラムカウンタ
-};
+}

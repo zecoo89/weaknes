@@ -1,3 +1,3 @@
-import Ppu from "./ppu";
+import Ppu from './ppu'
 
-export default Ppu;
+export default Ppu

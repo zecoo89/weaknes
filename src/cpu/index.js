@@ -1,3 +1,3 @@
-import Cpu from "./cpu";
+import Cpu from './cpu'
 
-export default Cpu;
+export default Cpu

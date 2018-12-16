@@ -10,7 +10,7 @@
     "test": "jest ./src",
     "watch:test": "jest --watch ./src",
     "serve": "http-server . -p 1234",
-    "format": "prettier --write ./src/**/*.js"
+    "format": "prettier --config .prettierrc.json --write ./src/**/*.js"
   },
   "author": "",
   "license": "ISC",
