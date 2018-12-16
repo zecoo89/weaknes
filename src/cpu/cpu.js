@@ -1,11 +1,13 @@
 import registers from './registers'
 import Ram from './ram'
 import opcodes from './opcodes'
+import Util from '../util'
 
 /* 6502 CPU */
 export default class Cpu {
-  constructor() {
+  constructor(isDebug) {
     this.init()
+    this.isDebug = isDebug
   }
 
   init() {
@@ -22,12 +24,13 @@ export default class Cpu {
 
   reset() {
     this.init()
+    this.run()
   }
 
-  run(isDebug) {
-    const run = isDebug ? this.debug.bind(this) : this.eval.bind(this)
+  run() {
+    const execute = this.isDebug ? this.debug.bind(this) : this.eval.bind(this)
 
-    setInterval(run, 70)
+    Util.isNodejs() ? setInterval(execute, 100) : execute()
   }
 
   // 命令を処理する
@@ -37,6 +40,10 @@ export default class Cpu {
     const opcode = this.ram.read(addr)
 
     this.opcodes[opcode].call()
+
+    const fn = this.eval.bind(this)
+
+    if(!Util.isNodejs()) window.requestAnimationFrame(fn)
   }
 
   /* eslint-disable no-console */
@@ -52,6 +59,10 @@ export default class Cpu {
 
     const debugString = this.opcodes[opcode].bind(this).call()
     console.log(debugString)
+
+    const fn = this.debug.bind(this)
+
+    if(!Util.isNodejs()) window.requestAnimationFrame(fn)
   }
 
   /* 0x8000~のメモリにROM内のPRG-ROMを読み込む*/

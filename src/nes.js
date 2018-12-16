@@ -4,7 +4,9 @@ import Bus from './bus'
 
 export default class Nes {
   constructor() {
-    this.cpu = new Cpu()
+    const isDebug = true
+
+    this.cpu = new Cpu(isDebug)
     this.ppu = new Ppu()
     this.bus = new Bus()
     this.ppu.connect({ bus: this.bus })
