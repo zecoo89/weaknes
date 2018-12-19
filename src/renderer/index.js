@@ -2,7 +2,7 @@ import colors from './colors'
 
 export default class Renderer {
   constructor(id) {
-    if(!id) throw new Error('Id of canvas tag isn\'t specified.')
+    if (!id) throw new Error("Id of canvas tag isn't specified.")
 
     let canvas = document.getElementById(id)
     this.context = canvas.getContext('2d')

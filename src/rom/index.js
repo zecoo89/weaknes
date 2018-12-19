@@ -12,6 +12,16 @@ export default class Rom {
     return 0x10
   }
 
+  get NUMBER_OF_PRG_ROM_BLOCKS() {
+    //console.log('Number of PRG-ROM blocks: ' + this.data[4])
+    return this.data[4]
+  }
+
+  get NUMBER_OF_CHR_ROM_BLOCKS() {
+    //console.log('Number of CHR-ROM blocks: ' + this.data[5])
+    return this.data[5]
+  }
+
   get START_ADDRESS_OF_CHR_ROM() {
     return this.NES_ROM_HEADER_SIZE + this.SIZE_OF_PRG_ROM
   }
@@ -23,12 +33,12 @@ export default class Rom {
   /* PRG ROMのサイズを取得する
    ** ROMヘッダの1から数えて5Byte目の値に16Ki(キビ)をかけたサイズ */
   get SIZE_OF_PRG_ROM() {
-    return this.data[4] * 0x4000
+    return this.NUMBER_OF_PRG_ROM_BLOCKS * 0x4000
   }
 
   /* PRG ROMに同じ*/
   get SIZE_OF_CHR_ROM() {
-    return this.data[5] * 0x2000
+    return this.NUMBER_OF_CHR_ROM_BLOCKS * 0x2000
   }
 
   /* ROMからprgROMに該当するところを切り出す

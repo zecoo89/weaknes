@@ -1,29 +1,29 @@
 export default class Util {
   static debugString(instruction, addressing, value_) {
-    let prefix = "$";
-    let postfix = "";
+    let prefix = '$'
+    let postfix = ''
 
     if (!addressing) {
-      prefix = "";
-    } else if (addressing.name === "bound immediate") {
-      prefix = "#$";
+      prefix = ''
+    } else if (addressing.name === 'bound immediate') {
+      prefix = '#$'
     }
 
-    let value;
+    let value
     if (value_ === undefined) {
-      value = "";
+      value = ''
     } else {
-      value = value_.toString(16);
+      value = value_.toString(16)
     }
 
     const chars = [
-      instruction.name.split(" ")[1],
-      " ",
+      instruction.name.split(' ')[1],
+      ' ',
       prefix,
       value,
       postfix
-    ].join("");
+    ].join('')
 
-    return chars;
+    return chars
   }
 }

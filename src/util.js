@@ -1,5 +1,5 @@
 export default {
   isNodejs: () => {
-    return typeof process !== "undefined" && typeof require !== "undefined"
+    return typeof process !== 'undefined' && typeof require !== 'undefined'
   }
 }

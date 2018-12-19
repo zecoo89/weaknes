@@ -3,9 +3,7 @@ import Ppu from './ppu'
 import Bus from './bus'
 
 export default class Nes {
-  constructor() {
-    const isDebug = true
-
+  constructor(isDebug) {
     this.cpu = new Cpu(isDebug)
     this.ppu = new Ppu()
     this.bus = new Bus()
