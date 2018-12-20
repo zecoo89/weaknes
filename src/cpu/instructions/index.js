@@ -137,9 +137,9 @@ export default {
   BIT: function(addr) {
     const memory = this.ram.read(addr)
 
-    this.registers.statusZero = this.registers.acc & memory
+    this.registers.statusZero = (this.registers.acc & memory)
     this.registers.statusNegative = memory >> 7
-    this.registers.statusOverflow = (memory >> 6) & 0x01
+    this.registers.statusOverflow = memory >> 6 & 0x01
   },
 
   /* Aとメモリを比較演算してフラグを操作
@@ -151,11 +151,11 @@ export default {
   CMP: function(addr) {
     const result = this.registers.acc - this.ram.read(addr)
 
-    if (result === 0) {
+    if(result === 0) {
       this.registers.statusZero = 1
     } else {
       this.registers.statusZero = 0
-      if (result > 0) {
+      if(result > 0) {
         this.registers.statusCarry = 1
       } else {
         this.registers.statusCarry = 0
@@ -169,7 +169,7 @@ export default {
   /* Yとメモリを比較演算*/
   CPY: function() {},
 
-  /* *をインクリメントする
+  /* *をインクリメント・デクリメントする
    * フラグ
    *   - negative
    *   - zero
@@ -227,7 +227,7 @@ export default {
     this.registers.acc = this.registers.acc ^ this.ram.read(addr)
   },
 
-  /* accとメモリを論理OR演算して結果をAへ返す */
+  /* accとメモリを論理OR演算して結果をaccへ返す */
   ORA: function(addr) {
     this.registers.acc = this.registers.acc | this.ram.read(addr)
   },
@@ -272,13 +272,13 @@ export default {
     this.registers.acc = (this.registers.acc >> 1) | carry
   },
 
-  /* acc + memory + carryFlag
-   * フラグ
-   *   - negative
-   *   - overflow
-   *   - zero
-   *   - carry
-   * */
+       /* acc + memory + carryFlag
+        * フラグ
+        *   - negative
+        *   - overflow
+        *   - zero
+        *   - carry
+        * */
   ADC: function(addr) {
     const added = this.registers.acc + this.ram.read(addr)
     this.registers.acc = added + this.registers.statusCarry
@@ -293,7 +293,9 @@ export default {
   },
 
   /* accをスタックにプッシュ */
-  PHA: function() {},
+  PHA: function() {
+    this.stackPush(this.registers.acc)
+  },
 
   /* ステータス・レジスタをスタックにプッシュ */
   PHP: function() {
@@ -306,7 +308,9 @@ export default {
   },
 
   /* スタックからPにポップアップする */
-  PLP: function() {},
+  PLP: function() {
+    this.registers.allRawBits = this.stackPop()
+  },
 
   /* アドレスへジャンプする */
   JMP: function(addr) {
@@ -329,7 +333,7 @@ export default {
   RTS: function() {
     const highAddr = this.stackPop()
     const lowAddr = this.stackPop()
-    const addr = (highAddr << 8) | lowAddr
+    const addr = highAddr << 8 | lowAddr
     this.registers.pc = addr
   },
 
@@ -422,7 +426,9 @@ export default {
   CLI: function() {},
 
   /* オーバーフローフラグをクリアする */
-  CLV: function() {},
+  CLV: function() {
+    this.registers.statusOverflow = 0
+  },
 
   /* BCDモードに設定する NESには実装されていない */
   SED: function() {

@@ -1,29 +1,58 @@
+import Addressing from '../addressing'
+import Instructions from '../instructions'
+
 export default class Util {
-  static debugString(instruction, addressing, value_) {
+  static debugString(instruction, addressing, value_, addrOfOpcode) {
     let prefix = '$'
-    let postfix = ''
-
-    if (!addressing) {
-      prefix = ''
-    } else if (addressing.name === 'bound immediate') {
-      prefix = '#$'
-    }
-
     let value
-    if (value_ === undefined) {
+
+    if (addressing.name === 'bound immediate') {
+      prefix = '#$'
+      value = this.ram.read(value_)
+    } else if(addressing.name === 'bound implied') {
+      prefix = ''
       value = ''
     } else {
-      value = value_.toString(16)
+      value = value_
+    }
+
+    if (value === null || value === undefined) {
+      value = ''
+    } else {
+      value = value.toString(16)
     }
 
     const chars = [
+      this.registers.debugString(),
+      ': $' + addrOfOpcode.toString(16),
+      ' ',
       instruction.name.split(' ')[1],
       ' ',
+      addressing.name.split(' ')[1],
+      ' ',
       prefix,
-      value,
-      postfix
+      value
     ].join('')
 
-    return chars
+    // eslint-disable-next-line no-console
+    console.log(chars)
+  }
+
+  static execute(instructionName, addressingName) {
+    let addrOfOpcode
+    if(this.isDebug) {
+      addrOfOpcode = this.registers.pc - 1
+    }
+
+    const addressing = Addressing[addressingName].bind(this)
+    const addr = addressing.call()
+
+    const instruction = Instructions[instructionName].bind(this, addr)
+    instruction.call()
+
+    if(this.isDebug) {
+      Util.debugString.call(this, instruction, addressing, addr, addrOfOpcode)
+    }
+
   }
 }

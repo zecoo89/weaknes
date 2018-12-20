@@ -1,48 +1,31 @@
-import Addressing from '../addressing'
-import Instructions from '../instructions'
 import Util from './util'
 
 /* 0x20 - 0x2F */
 export default [
-  /* 0x20: JSR Absolute*/
+  /* 0x20: JSR absolute*/
   function() {
-    const absolute = Addressing.absolute.bind(this)
-    const addr = absolute()
-
-    const JSR = Instructions.JSR.bind(this)
-
-    JSR(addr)
-
-    return Util.debugString(JSR, absolute, addr)
+    Util.execute.call(this, 'JSR', 'absolute')
   },
-  '1',
+  /* 0x21: INC indexIndirect */
+  function() {
+    Util.execute.call(this, 'INC', 'indexIndirect')
+  },
   '2',
   '3',
-  /* 0x24: BIT */
+  /* 0x24: BIT zeropage */
   function() {
-    const zeropage = Addressing.zeropage.bind(this)
-    const addr = zeropage()
-
-    const BIT = Instructions.BIT.bind(this)
-
-    BIT(addr)
-
-    return Util.debugString(BIT, zeropage, addr)
+    Util.execute.call(this, 'BIT', 'zeropage')
   },
   '5',
   '6',
   '7',
-  '8',
+  /* 0x28: PLP implied */
+  function() {
+    Util.execute.call(this, 'PLP', 'implied')
+  },
   /* 0x29: AND Immediate */
   function() {
-    const immediate = Addressing.immediate.bind(this)
-    const addr = immediate()
-
-    const AND = Instructions.AND.bind(this)
-
-    AND(addr)
-
-    return Util.debugString(AND, immediate, addr)
+    Util.execute.call(this, 'AND', 'immediate')
   },
   '',
   '',

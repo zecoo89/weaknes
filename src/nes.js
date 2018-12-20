@@ -23,10 +23,10 @@ export default class Nes {
     this._rom = rom
   }
 
-  run(isDebug) {
+  run() {
     this.cpu.prgRom = this.rom.prgRom
     this.ppu.chrRom = this.rom.chrRom
 
-    this.cpu.run(isDebug)
+    this.cpu.run()
   }
 }

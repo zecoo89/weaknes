@@ -1,33 +1,24 @@
-import Addressing from '../addressing'
-import Instructions from '../instructions'
 import Util from './util'
 
 /* 0xf0 - 0xff */
 export default [
-  /* 0xf0: BEQ */
+  /* 0xf0: BEQ relative */
   function() {
-    const relative = Addressing.relative.bind(this)
-    const addr = relative()
-
-    const BEQ = Instructions.BEQ.bind(this)
-    BEQ(addr)
-
-    return Util.debugString(BEQ, relative, addr)
+    Util.execute.call(this, 'BEQ', 'relative')
   },
   '1',
   '2',
   '3',
   '4',
   '5',
-  '6',
-  '7',
-  /* 0xf8: SED */
+  /* 0xf6: INC zeropageX */
   function() {
-    const SED = Instructions.SED.bind(this)
-
-    SED()
-
-    return Util.debugString(SED)
+    Util.execute.call(this, 'INC', 'zeropageX')
+  },
+  '7',
+  /* 0xf8: SED implied */
+  function() {
+    Util.execute.call(this, 'SED', 'implied')
   },
   '',
   '',

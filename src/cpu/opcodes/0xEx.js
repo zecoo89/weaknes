@@ -1,5 +1,3 @@
-//import Addressing from '../addressing'
-import Instructions from '../instructions'
 import Util from './util'
 
 /* 0xe0 - 0xeF */
@@ -12,19 +10,14 @@ export default [
   '5',
   '6',
   '7',
-  /* 0xe8: INX */
+  /* 0xe8: INX implied */
   function() {
-    const INX = Instructions.INX.bind(this)
-
-    INX()
-
-    return Util.debugString(INX)
+    Util.execute.call(this, 'INX', 'implied')
   },
   '9',
-  /* 0xea: NOP */
+  /* 0xea: NOP implied */
   function() {
-    //何もしない
-    return Util.debugString(Instructions.NOP.bind(this))
+    Util.execute.call(this, 'NOP', 'implied')
   },
   '',
   '',

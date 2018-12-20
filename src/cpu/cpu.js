@@ -30,9 +30,9 @@ export default class Cpu {
   }
 
   run() {
-    const execute = this.isDebug ? this.debug.bind(this) : this.eval.bind(this)
+    const execute = this.eval.bind(this)
 
-    Util.isNodejs() ? setInterval(execute, 100) : execute()
+    Util.isNodejs() ? setInterval(execute, 50) : execute()
   }
 
   // 命令を処理する
@@ -40,30 +40,16 @@ export default class Cpu {
     const addr = this.registers.pc++
     const opcode = this.ram.read(addr)
 
-    this.opcodes[opcode].call()
-
-    const fn = this.eval.bind(this)
-
-    if (!Util.isNodejs()) window.requestAnimationFrame(fn)
-  }
-
-  /* eslint-disable no-console */
-  debug() {
-    const addr = this.registers.pc++
-    //const opcode = this.memory[i]
-    const opcode = this.ram.read(addr)
-
-    if (typeof this.opcodes[opcode] !== 'function') {
-      console.error('Not implemented: ' + opcode.toString(16))
-      console.error(this.opcodes[opcode])
+    if(typeof this.opcodes[opcode] !== 'function') {
+      throw new Error('0x' + opcode.toString(16) + ' is not implemented')
     }
 
-    const debugString = this.opcodes[opcode].call()
-    console.log('$' + addr.toString(16) + ':' + debugString)
+    this.opcodes[opcode].call()
 
-    const fn = this.debug.bind(this)
-
-    if (!Util.isNodejs()) window.requestAnimationFrame(fn)
+    if (!Util.isNodejs()) {
+      const fn = this.eval.bind(this)
+      window.requestAnimationFrame(fn)
+    }
   }
 
   /* 0x8000~のメモリにROM内のPRG-ROMを読み込む*/

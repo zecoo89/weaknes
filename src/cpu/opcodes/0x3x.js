@@ -1,10 +1,11 @@
-import Instructions from '../instructions'
-//import Addressing from '../addressing'
 import Util from './util'
 
 /* 0x30 - 0x3F */
 export default [
-  '0',
+  /* 0x30: BMI relative */
+  function() {
+    Util.execute.call(this, 'BMI', 'relative')
+  },
   '1',
   '2',
   '3',
@@ -12,13 +13,9 @@ export default [
   '5',
   '6',
   '7',
-  /* 0x38: SEC */
+  /* 0x38: SEC implied */
   function() {
-    const SEC = Instructions.SEC.bind(this)
-
-    SEC()
-
-    return Util.debugString(SEC)
+    Util.execute.call(this, 'SEC', 'implied')
   },
   '',
   '',

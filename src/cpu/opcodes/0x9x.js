@@ -1,18 +1,10 @@
-import Addressing from '../addressing'
-import Instructions from '../instructions'
 import Util from './util.js'
 
 /* 0x90 - 0x9F */
 export default [
+  /* 0x90: BCC relative*/
   function() {
-    const relative = Addressing.relative.bind(this)
-    const addr = relative()
-
-    const BCC = Instructions.BCC.bind(this)
-
-    BCC(addr)
-
-    return Util.debugString(BCC, relative, addr)
+    Util.execute.call(this, 'BCC', 'relative')
   },
   '1',
   '2',
@@ -23,12 +15,9 @@ export default [
   '7',
   '8',
   '9',
-  /* 9A: TXS Implied*/
+  /* 9A: TXS implied */
   function() {
-    const TXS = Instructions.TXS.bind(this)
-    TXS()
-
-    return Util.debugString(TXS)
+    Util.execute.call(this, 'TXS', 'implied')
   },
   '',
   '',

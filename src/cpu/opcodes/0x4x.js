@@ -1,5 +1,3 @@
-import Addressing from '../addressing'
-import Instructions from '../instructions'
 import Util from './util'
 
 /* 0x40 - 0x4F */
@@ -12,19 +10,16 @@ export default [
   '5',
   '6',
   '7',
-  '8',
+  /* 0x48: PHA implied */
+  function() {
+    Util.execute.call(this, 'PHA', 'implied')
+  },
   '9',
   'a',
   'b',
   /* 0x4c: JMP Absolute */
   function() {
-    const absolute = Addressing.absolute.bind(this)
-    const addr = absolute()
-
-    const JMP = Instructions.JMP.bind(this)
-    JMP(addr)
-
-    return Util.debugString(JMP, absolute, addr)
+    Util.execute.call(this, 'JMP', 'absolute')
   },
   'd',
   'e',

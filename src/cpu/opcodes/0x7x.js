@@ -1,18 +1,10 @@
-import Addressing from '../addressing'
-import Instructions from '../instructions'
 import Util from './util'
 
 /* 0x70 - 0x7F */
 export default [
-  /* 0x70: BVS */
+  /* 0x70: BVS relative */
   function() {
-    const relative = Addressing.relative.bind(this)
-    const addr = relative()
-
-    const BVS = Instructions.BVS.bind(this)
-    BVS(addr)
-
-    return Util.debugString(BVS, relative, addr)
+    Util.execute.call(this, 'BVS', 'relative')
   },
   '1',
   '2',
@@ -21,13 +13,9 @@ export default [
   '5',
   '6',
   '7',
-  /* 0x78: SEI */
+  /* 0x78: SEI implied */
   function() {
-    const SEI = Instructions.SEI.bind(this)
-
-    SEI()
-
-    return Util.debugString(SEI)
+    Util.execute.call(this, 'SEI', 'implied')
   },
   '9',
   'a',

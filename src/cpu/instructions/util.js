@@ -4,7 +4,7 @@ export default class Util {
   }
 
   static isZero(value) {
-    return (value === 0x00) & 1
+    return value === 0x00 & 1
   }
 
   static msb(value) {

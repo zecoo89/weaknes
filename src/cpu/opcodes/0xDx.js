@@ -1,18 +1,10 @@
-import Addressing from '../addressing'
-import Instructions from '../instructions'
 import Util from './util'
 
 /* 0xd0 - 0xdF */
 export default [
-  /* 0xd0: BNE */
+  /* 0xd0: BNE relative */
   function() {
-    const relative = Addressing.relative.bind(this)
-    const addr = relative()
-
-    const BNE = Instructions.BNE.bind(this)
-    BNE(addr)
-
-    return Util.debugString(BNE, relative, addr)
+    Util.execute.call(this, 'BNE', 'relative')
   },
   '1',
   '2',
@@ -21,12 +13,9 @@ export default [
   '5',
   '6',
   '7',
-  /* 0xd8: CLD */
+  /* 0xd8: CLD implied */
   function() {
-    const CLD = Instructions.CLD.bind(this)
-    CLD()
-
-    return Util.debugString(CLD)
+    Util.execute.call(this, 'CLD', 'implied')
   },
   '9',
   'a',

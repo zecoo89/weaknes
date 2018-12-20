@@ -1,5 +1,3 @@
-import Instructions from '../instructions'
-import Addressing from '../addressing'
 import Util from './util'
 
 /* 0xc0 - 0xcF */
@@ -15,13 +13,7 @@ export default [
   '8',
   /* 0xc9: CMP immediate */
   function() {
-    const immediate = Addressing.immediate.bind(this)
-    const addr = immediate()
-
-    const CMP = Instructions.CMP.bind(this)
-    CMP(addr)
-
-    return Util.debugString(CMP, immediate, addr)
+    Util.execute.call(this, 'CMP', 'immediate')
   },
   '',
   '',

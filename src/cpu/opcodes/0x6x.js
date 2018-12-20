@@ -1,15 +1,10 @@
-//import Addressing from '../addressing'
-import Instructions from '../instructions'
 import Util from './util'
 
 /* 0x60 - 0x6F */
 export default [
-  /* 0x60: RTS */
+  /* 0x60: RTS implied */
   function() {
-    const RTS = Instructions.RTS.bind(this)
-    RTS()
-
-    return Util.debugString(RTS)
+    Util.execute.call(this, 'RTS', 'implied')
   },
   '1',
   '2',
@@ -18,12 +13,9 @@ export default [
   '5',
   '6',
   '7',
-  /* 0x68: PLA */
+  /* 0x68: PLA implied */
   function() {
-    const PLA = Instructions.PLA.bind(this)
-    PLA()
-
-    return Util.debugString(PLA)
+    Util.execute.call(this, 'PLA', 'implied')
   },
   '',
   '',

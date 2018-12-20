@@ -21,8 +21,25 @@ export default class Register {
     this.pc = 0x8000 // プログラムカウンタ
   }
 
+  debugString() {
+    return [
+      this.statusNegative,
+      this.statusOverflow,
+      this.statusReserved,
+      this.statusBreak,
+      this.statusDecimal,
+      this.statusInterrupt,
+      this.statusZero,
+      this.statusCarry
+    ].join(' ')
+  }
+
   get statusAllRawBits() {
     return this.status_
+  }
+
+  set statusAllRawBits(bits) {
+    this.status_ = bits
   }
 
   get acc() {
@@ -54,6 +71,7 @@ export default class Register {
   }
 
   set statusNegative(bit) {
+    this.status_ = this.status_ & 0x7f // 0111 1111
     this.status_ = this.status_ | (bit << 7)
   }
 
@@ -62,6 +80,7 @@ export default class Register {
   }
 
   set statusOverflow(bit) {
+    this.status_ = this.status_ & 0xbf // 1011 1111
     this.status_ = this.status_ | (bit << 6)
   }
 
@@ -70,6 +89,7 @@ export default class Register {
   }
 
   set statusReserved(bit) {
+    this.status_ = this.status_ & 0xdf // 1101 1111
     this.status_ = this.status_ | (bit << 5)
   }
 
@@ -78,6 +98,7 @@ export default class Register {
   }
 
   set statusBreak(bit) {
+    this.status_ = this.status_ & 0xef // 1110 1111
     this.status_ = this.status_ | (bit << 4)
   }
 
@@ -86,6 +107,7 @@ export default class Register {
   }
 
   set statusDecimal(bit) {
+    this.status_ = this.status_ & 0xf7 // 1111 0111
     this.status_ = this.status_ | (bit << 3)
   }
 
@@ -94,6 +116,7 @@ export default class Register {
   }
 
   set statusInterrupt(bit) {
+    this.status_ = this.status_ & 0xfb // 1111 1011
     this.status_ = this.status_ | (bit << 2)
   }
 
@@ -102,6 +125,7 @@ export default class Register {
   }
 
   set statusZero(bit) {
+    this.status_ = this.status_ & 0xfd // 1111 1101
     this.status_ = this.status_ | (bit << 1)
   }
 
@@ -110,6 +134,7 @@ export default class Register {
   }
 
   set statusCarry(bit) {
+    this.status_ = this.status_ & 0xfe // 1111 1110
     this.status_ = this.status_ | bit
   }
 }

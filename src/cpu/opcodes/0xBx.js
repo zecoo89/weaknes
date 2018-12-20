@@ -1,19 +1,10 @@
-import Addressing from '../addressing'
-import Instructions from '../instructions'
 import Util from './util'
 
 /* 0xb0 - 0xbF */
 export default [
-  /* 0xb0: BCS */
+  /* 0xb0: BCS implied */
   function() {
-    const relative = Addressing.relative.bind(this)
-
-    const addr = relative()
-
-    const BCS = Instructions.BCS.bind(this)
-    BCS(addr)
-
-    return Util.debugString(BCS, relative, addr)
+    Util.execute.call(this, 'BCS', 'relative')
   },
   '1',
   '2',
@@ -22,20 +13,17 @@ export default [
   '5',
   '6',
   '7',
-  '8',
+  /* 0xb8: CLV implied */
+  function () {
+    Util.execute.call(this, 'CLV', 'implied')
+  },
   '9',
   'a',
   'b',
   'c',
-  /* 0xbd: LDA Absolutem X */
+  /* 0xbd: LDA AbsoluteX */
   function() {
-    const absoluteX = Addressing.absoluteX.bind(this)
-    const addr = absoluteX()
-
-    const LDA = Instructions.LDA.bind(this)
-    LDA(addr)
-
-    return Util.debugString(LDA, absoluteX, addr)
+    Util.execute.call(this, 'LDA', 'absoluteX')
   },
   'e',
   'f'

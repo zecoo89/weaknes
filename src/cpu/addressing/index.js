@@ -1,4 +1,7 @@
 export default {
+  implied: function() {
+    return null
+  },
   /* 8bitの即値なのでアドレスをそのまま返す */
   immediate: function() {
     const addr = this.registers.pc++

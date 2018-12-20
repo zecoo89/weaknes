@@ -2,6 +2,11 @@ import Addressing from '../../addressing'
 import Cpu from '../../'
 
 describe('Addressing', () => {
+  test('implied', () => {
+    const addr = Addressing.implied()
+
+    expect(addr).toBe(null)
+  })
   test('immediate', () => {
     const cpu = new Cpu()
     cpu.registers.pc = 0x0001
