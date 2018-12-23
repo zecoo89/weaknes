@@ -7,14 +7,20 @@ export default [
   '2',
   '3',
   '4',
-  '5',
+  /* 0x45: EOR zeropage */
+  function() {
+    Util.execute.call(this, 'EOR', 'zeropage')
+  },
   '6',
   '7',
   /* 0x48: PHA implied */
   function() {
     Util.execute.call(this, 'PHA', 'implied')
   },
-  '9',
+  /* 0x49: EOR immediate */
+  function() {
+    Util.execute.call(this, 'EOR', 'immediate')
+  },
   'a',
   'b',
   /* 0x4c: JMP Absolute */

@@ -1,7 +1,8 @@
 const isNode = typeof process !== "undefined" && typeof require !== "undefined"
 
 async function main() {
-  const path = './assets/helloworld/helloworld.nes'
+  const path = './assets/nestest/nestest.nes'
+  //const path = './assets/helloworld/helloworld.nes'
   let nes
   /* node.jsかブラウザか判定し、環境に合わせてライブラリやROMの読み込み方法を替える */
   if(isNode) {

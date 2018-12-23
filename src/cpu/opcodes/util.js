@@ -9,7 +9,7 @@ export default class Util {
     if (addressing.name === 'bound immediate') {
       prefix = '#$'
       value = this.ram.read(value_)
-    } else if(addressing.name === 'bound implied') {
+    } else if (addressing.name === 'bound implied') {
       prefix = ''
       value = ''
     } else {
@@ -22,17 +22,14 @@ export default class Util {
       value = value.toString(16)
     }
 
+    const prefixAndValue = prefix + value
     const chars = [
-      this.registers.debugString(),
-      ': $' + addrOfOpcode.toString(16),
-      ' ',
+      addrOfOpcode.toString(16),
       instruction.name.split(' ')[1],
-      ' ',
       addressing.name.split(' ')[1],
-      ' ',
-      prefix,
-      value
-    ].join('')
+      prefixAndValue,
+      this.registers.debugString()
+    ].join(' ')
 
     // eslint-disable-next-line no-console
     console.log(chars)
@@ -40,7 +37,7 @@ export default class Util {
 
   static execute(instructionName, addressingName) {
     let addrOfOpcode
-    if(this.isDebug) {
+    if (this.isDebug) {
       addrOfOpcode = this.registers.pc - 1
     }
 
@@ -48,11 +45,11 @@ export default class Util {
     const addr = addressing.call()
 
     const instruction = Instructions[instructionName].bind(this, addr)
-    instruction.call()
 
-    if(this.isDebug) {
+    if (this.isDebug) {
       Util.debugString.call(this, instruction, addressing, addr, addrOfOpcode)
     }
 
+    instruction.call()
   }
 }

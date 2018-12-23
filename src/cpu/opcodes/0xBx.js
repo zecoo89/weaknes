@@ -14,14 +14,17 @@ export default [
   '6',
   '7',
   /* 0xb8: CLV implied */
-  function () {
+  function() {
     Util.execute.call(this, 'CLV', 'implied')
   },
   '9',
-  'a',
+  /* 0xba: TSX implied*/
+  function() {
+    Util.execute.call(this, 'TSX', 'implied')
+  },
   'b',
   'c',
-  /* 0xbd: LDA AbsoluteX */
+  /* 0xbd: LDA bsoluteX */
   function() {
     Util.execute.call(this, 'LDA', 'absoluteX')
   },

@@ -3,7 +3,7 @@ import Util from './util'
 export default {
   /* LD* (Load memory[addr) to * register)
    * フラグ
-   *   - negative : 計算結果が負の値のとき1そうでなければ0(accの7bit目と同じ値になる)
+   *   - negative : 対象の最上位ビット(0から数えて7bit目)
    *   - zero : 計算結果がゼロのとき1そうでなければ0
    * */
   LDA: function(addr) {
@@ -75,27 +75,16 @@ export default {
     this.registers.statusZero = Util.isZero(value)
   },
 
+  // TXSは他のTX*と違い、フラグを変更しない
   TXS: function() {
     const value = this.registers.indexX
     this.registers.sp = value
-    this.registers.statusNegative = Util.isNegative(value)
-    this.registers.statusZero = Util.isZero(value)
+    //this.registers.statusNegative = Util.isNegative(value)
+    //this.registers.statusZero = Util.isZero(value)
   },
 
   TYA: function() {
     const value = this.registers.indexY
-    this.registers.acc = value
-    this.registers.statusNegative = Util.isNegative(value)
-    this.registers.statusZero = Util.isZero(value)
-  },
-
-  /* acc & memory[addr)
-   * フラグ
-   *   - negative
-   *   - zero
-   * */
-  AND: function(addr) {
-    const value = this.registers.acc & this.ram.read(addr)
     this.registers.acc = value
     this.registers.statusNegative = Util.isNegative(value)
     this.registers.statusZero = Util.isZero(value)
@@ -137,9 +126,9 @@ export default {
   BIT: function(addr) {
     const memory = this.ram.read(addr)
 
-    this.registers.statusZero = (this.registers.acc & memory)
+    this.registers.statusZero = this.registers.acc & memory ? 0x00 : 0x01
     this.registers.statusNegative = memory >> 7
-    this.registers.statusOverflow = memory >> 6 & 0x01
+    this.registers.statusOverflow = (memory >> 6) & 0x01
   },
 
   /* Aとメモリを比較演算してフラグを操作
@@ -150,24 +139,42 @@ export default {
    * */
   CMP: function(addr) {
     const result = this.registers.acc - this.ram.read(addr)
+    this.registers.statusZero = Util.isZero(result)
+    this.registers.statusNegative = Util.isNegative(result)
 
-    if(result === 0) {
-      this.registers.statusZero = 1
+    if (result >= 0) {
+      this.registers.statusCarry = 1
     } else {
-      this.registers.statusZero = 0
-      if(result > 0) {
-        this.registers.statusCarry = 1
-      } else {
-        this.registers.statusCarry = 0
-      }
+      this.registers.statusCarry = 0
     }
   },
 
   /* Xとメモリを比較演算 */
-  CPX: function() {},
+  /* TODO フラグ操作が怪しいので要チェック */
+  CPX: function(addr) {
+    const result = this.registers.indexX - this.ram.read(addr)
+    this.registers.statusZero = Util.isZero(result)
+    this.registers.statusNegative = Util.isNegative(result)
+
+    if (result >= 0) {
+      this.registers.statusCarry = 1
+    } else {
+      this.registers.statusCarry = 0
+    }
+  },
 
   /* Yとメモリを比較演算*/
-  CPY: function() {},
+  CPY: function(addr) {
+    const result = this.registers.indexY - this.ram.read(addr)
+    this.registers.statusZero = Util.isZero(result)
+    this.registers.statusNegative = Util.isNegative(result)
+
+    if (result >= 0) {
+      this.registers.statusCarry = 1
+    } else {
+      this.registers.statusCarry = 0
+    }
+  },
 
   /* *をインクリメント・デクリメントする
    * フラグ
@@ -176,23 +183,25 @@ export default {
    * */
   /* メモリをインクリメントする*/
   INC: function(addr) {
-    this.ram.write(addr, this.ram.read(addr) + 1)
     const value = this.ram.read(addr)
-    this.registers.statusNegative = Util.isNegative(value)
-    this.registers.statusZero = Util.isZero(value)
+    const result = Util.add(value, 1)
+    this.ram.write(addr, result)
+    this.registers.statusNegative = Util.isNegative(result)
+    this.registers.statusZero = Util.isZero(result)
   },
 
   /* メモリをデクリメント */
   DEC: function(addr) {
-    this.ram.write(addr, this.ram.read(addr) - 1)
     const value = this.ram.read(addr)
-    this.registers.statusNegative = Util.isNegative(value)
-    this.registers.statusZero = Util.isZero(value)
+    const result = Util.sub(value, 1)
+    this.ram.write(addr, result)
+    this.registers.statusNegative = Util.isNegative(result)
+    this.registers.statusZero = Util.isZero(result)
   },
 
   /* Xをインクリメントする */
   INX: function() {
-    this.registers.indexX++
+    this.registers.indexX = Util.add(this.registers.indexX, 1)
     const value = this.registers.indexX
     this.registers.statusNegative = Util.isNegative(value)
     this.registers.statusZero = Util.isZero(value)
@@ -200,7 +209,7 @@ export default {
 
   /* Yをインクリメントする */
   INY: function() {
-    this.registers.indexY++
+    this.registers.indexY = Util.add(this.registers.indexY, 1)
     const value = this.registers.indexY
     this.registers.statusNegative = Util.isNegative(value)
     this.registers.statusZero = Util.isZero(value)
@@ -208,7 +217,7 @@ export default {
 
   /* Xをデクリメント */
   DEX: function() {
-    this.registers.indexX--
+    this.registers.indexX = Util.sub(this.registers.indexX, 1)
     const value = this.registers.indexX
     this.registers.statusNegative = Util.isNegative(value)
     this.registers.statusZero = Util.isZero(value)
@@ -216,20 +225,38 @@ export default {
 
   /* Yをデクリメント*/
   DEY: function() {
-    this.registers.indexY--
+    this.registers.indexY = Util.sub(this.registers.indexY, 1)
     const value = this.registers.indexY
+    this.registers.statusNegative = Util.isNegative(value)
+    this.registers.statusZero = Util.isZero(value)
+  },
+
+  /* acc & memory[addr)
+   * フラグ
+   *   - negative
+   *   - zero
+   * */
+  AND: function(addr) {
+    const value = this.registers.acc & this.ram.read(addr)
+    this.registers.acc = value
     this.registers.statusNegative = Util.isNegative(value)
     this.registers.statusZero = Util.isZero(value)
   },
 
   /* accとメモリを論理XOR演算してaccに結果を返す*/
   EOR: function(addr) {
-    this.registers.acc = this.registers.acc ^ this.ram.read(addr)
+    const value = this.registers.acc ^ this.ram.read(addr)
+    this.registers.acc = value
+    this.registers.statusNegative = Util.isNegative(value)
+    this.registers.statusZero = Util.isZero(value)
   },
 
   /* accとメモリを論理OR演算して結果をaccへ返す */
   ORA: function(addr) {
-    this.registers.acc = this.registers.acc | this.ram.read(addr)
+    const value = this.registers.acc | this.ram.read(addr)
+    this.registers.acc = value
+    this.registers.statusNegative = Util.isNegative(value)
+    this.registers.statusZero = Util.isZero(value)
   },
 
   /* メモリを左へローテートする */
@@ -272,24 +299,62 @@ export default {
     this.registers.acc = (this.registers.acc >> 1) | carry
   },
 
-       /* acc + memory + carryFlag
-        * フラグ
-        *   - negative
-        *   - overflow
-        *   - zero
-        *   - carry
-        * */
+  /* acc + memory + carryFlag
+   * フラグ
+   *   - negative
+   *   - overflow
+   *   - zero
+   *   - carry
+   * */
   ADC: function(addr) {
-    const added = this.registers.acc + this.ram.read(addr)
-    this.registers.acc = added + this.registers.statusCarry
-    this.registers.statusCarry = (added > 0xff) & 1
+    const accValue = this.registers.acc
+    const memValue = this.ram.read(addr)
+    const added = accValue + memValue
+
+    this.registers.acc = (added + this.registers.statusCarry) & 0xff
+    this.registers.statusCarry = (added + this.registers.statusCarry > 0xff) & 1
+    this.registers.statusZero = Util.isZero(this.registers.acc)
+    this.registers.statusNegative = Util.isNegative(this.registers.acc)
+
+    const accNegativeBit = Util.isNegative(accValue)
+    const memNegativeBit = Util.isNegative(memValue)
+
+    if (accNegativeBit === memNegativeBit) {
+      const resultNegativeBit = this.registers.acc >> 7
+      if (resultNegativeBit !== accNegativeBit) {
+        this.registers.statusOverflow = 1
+      } else {
+        this.registers.statusOverflow = 0
+      }
+    } else {
+      this.registers.statusOverflow = 0
+    }
   },
 
   /* (acc - メモリ - キャリーフラグ)を演算してaccへ返す */
   SBC: function(addr) {
-    const subed = this.registers.acc - this.ram.read(addr)
-    this.registers.acc = subed - this.registers.statusCarry
-    this.registers.statusCarry = (subed < 0x00) & 1
+    const accValue = this.registers.acc
+    const memValue = this.ram.read(addr)
+    const subed = accValue - memValue - (!this.registers.statusCarry & 1)
+
+    this.registers.acc = subed & 0xff
+    this.registers.statusCarry = !(subed < 0) & 1
+    this.registers.statusZero = Util.isZero(this.registers.acc)
+    this.registers.statusNegative = Util.isNegative(this.registers.acc)
+
+    const accNegativeBit = Util.isNegative(accValue)
+    const memNegativeBit = Util.isNegative(memValue)
+
+    if (accNegativeBit !== memNegativeBit) {
+      const resultNegativeBit = this.registers.acc >> 7
+      if (resultNegativeBit !== accNegativeBit) {
+        this.registers.statusOverflow = 1
+      } else {
+        this.registers.statusOverflow = 0
+      }
+    } else {
+      this.registers.statusOverflow = 0
+    }
   },
 
   /* accをスタックにプッシュ */
@@ -297,19 +362,27 @@ export default {
     this.stackPush(this.registers.acc)
   },
 
-  /* ステータス・レジスタをスタックにプッシュ */
-  PHP: function() {
-    this.stackPush(this.registers.statusAllRawBits)
-  },
-
   /* スタックからaccにポップアップする */
   PLA: function() {
-    this.registers.acc = this.stackPop()
+    const value = this.stackPop()
+    this.registers.acc = value
+    this.registers.statusZero = Util.isZero(value)
+    this.registers.statusNegative = Util.isNegative(value)
   },
 
-  /* スタックからPにポップアップする */
+  /* ステータス・レジスタをスタックにプッシュ
+   * ステータスレジスタにBRKがセットされてからプッシュされる
+   * プッシュ後はクリアされるのでスタックに保存されたステータスレジスタだけBRKが有効になる
+   * */
+  PHP: function() {
+    this.stackPush(this.registers.statusAllRawBits | 0x10) //なぜか0x10とのORを取る
+  },
+
+  /* スタックからステータスレジスタにポップアップする
+   * ポップされてからステータスレジスタのBRKがクリアされる
+   */
   PLP: function() {
-    this.registers.allRawBits = this.stackPop()
+    this.registers.statusAllRawBits = this.stackPop() & 0xef // なぜか0xefとのANDを取る
   },
 
   /* アドレスへジャンプする */
@@ -318,23 +391,26 @@ export default {
   },
 
   /* サブルーチンを呼び出す
-   * プログラムカウンタをスタックに積み、addrにジャンプする
+   * JSR命令のアドレスをスタックに積み、addrにジャンプする
    * */
   JSR: function(addr) {
-    const highAddr = this.registers.pc >> 8
-    const lowAddr = this.registers.pc & 0x00ff
+    // JSR命令を読んだ時点でプログラムカウンタがインクリメントされているため、
+    // デクリメントしてJSR命令のアドレスに合わす
+    const jsrAddr = this.registers.pc - 1
+    const highAddr = jsrAddr >> 8
+    const lowAddr = jsrAddr & 0x00ff
 
-    this.stackPush(lowAddr)
     this.stackPush(highAddr)
+    this.stackPush(lowAddr)
     this.registers.pc = addr
   },
 
   /* サブルーチンから復帰する */
   RTS: function() {
-    const highAddr = this.stackPop()
     const lowAddr = this.stackPop()
-    const addr = highAddr << 8 | lowAddr
-    this.registers.pc = addr
+    const highAddr = this.stackPop()
+    const addr = (highAddr << 8) | lowAddr
+    this.registers.pc = addr + 1
   },
 
   /* 割り込みルーチンから復帰する */

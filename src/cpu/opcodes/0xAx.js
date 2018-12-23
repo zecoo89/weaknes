@@ -16,16 +16,27 @@ export default [
   '5',
   '6',
   '7',
-  '8',
-
-  /* 0xA9: LDA immediate */
+  /* 0xa8: TAY implied */
+  function() {
+    Util.execute.call(this, 'TAY', 'implied')
+  },
+  /* 0xa9: LDA immediate */
   function() {
     Util.execute.call(this, 'LDA', 'immediate')
   },
-  '',
-  '',
-  '',
-  '',
-  '',
+  /* 0xaa: TAX implied */
+  function() {
+    Util.execute.call(this, 'TAX', 'implied')
+  },
+  'b',
+  'c',
+  /* 0xad: LDA absolute */
+  function() {
+    Util.execute.call(this, 'LDA', 'absolute')
+  },
+  /* 0xae: LDX absolute */
+  function() {
+    Util.execute.call(this, 'LDX', 'absolute')
+  },
   ''
 ]

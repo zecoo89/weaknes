@@ -2,7 +2,10 @@ import Util from './util'
 
 /* 0xe0 - 0xeF */
 export default [
-  '0',
+  /* 0xe0: CPX immediate */
+  function() {
+    Util.execute.call(this, 'CPX', 'immediate')
+  },
   '1',
   '2',
   '3',
@@ -14,7 +17,10 @@ export default [
   function() {
     Util.execute.call(this, 'INX', 'implied')
   },
-  '9',
+  /* 0xe9: */
+  function() {
+    Util.execute.call(this, 'SBC', 'immediate')
+  },
   /* 0xea: NOP implied */
   function() {
     Util.execute.call(this, 'NOP', 'implied')

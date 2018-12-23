@@ -6,7 +6,10 @@ export default [
   '1',
   '2',
   '3',
-  '4',
+  /* 0x84: STY zeropage */
+  function() {
+    Util.execute.call(this, 'STY', 'zeropage')
+  },
   /* 0x85: STA zeropage */
   function() {
     Util.execute.call(this, 'STA', 'zeropage')
@@ -21,13 +24,19 @@ export default [
     Util.execute.call(this, 'DEY', 'implied')
   },
   '9',
-  'a',
+  /* 0x8a: TXA implied */
+  function() {
+    Util.execute.call(this, 'TXA', 'implied')
+  },
   'b',
   'c',
   /* 0x8d: STA absolute */
   function() {
     Util.execute.call(this, 'STA', 'absolute')
   },
-  'e',
+  /* 0x8e: STX absolute*/
+  function() {
+    Util.execute.call(this, 'STX', 'absolute')
+  },
   'f'
 ]

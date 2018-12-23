@@ -13,7 +13,10 @@ export default [
   '5',
   '6',
   '7',
-  '8',
+  /* 0x98: TYA implied */
+  function() {
+    Util.execute.call(this, 'TYA', 'implied')
+  },
   '9',
   /* 9A: TXS implied */
   function() {

@@ -4,14 +4,14 @@ export default class Register {
     this.indexX_ = 0x00 // アドレッシング、カウンタ等に用いる
     this.indexY_ = 0x00 // 上に同じ
     this.sp_ = 0x01fd // スタックポインタ $0100-$01FF, 初期値は0x01fdっぽい
-    this.status_ = 0x34
+    this.status_ = 0x24
     /*
     status: {
       // ステータスレジスタ：CPUの各種状態を保持する
       negative_: 0,
       overflow_: 0,
       reserved_: 1,
-      break_: 1, // 割り込みBRK発生時にtrue,IRQ発生時にfalse
+      break_: 0, // 割り込みBRK発生時にtrue,IRQ発生時にfalse
       decimal_: 0,
       interrupt_: 1,
       zero_: 0,
@@ -23,14 +23,11 @@ export default class Register {
 
   debugString() {
     return [
-      this.statusNegative,
-      this.statusOverflow,
-      this.statusReserved,
-      this.statusBreak,
-      this.statusDecimal,
-      this.statusInterrupt,
-      this.statusZero,
-      this.statusCarry
+      'A:' + this.acc.toString(16),
+      'X:' + this.indexX.toString(16),
+      'Y:' + this.indexY.toString(16),
+      'P:' + this.statusAllRawBits.toString(16),
+      'SP:' + (this.sp & 0xff).toString(16)
     ].join(' ')
   }
 
@@ -40,6 +37,7 @@ export default class Register {
 
   set statusAllRawBits(bits) {
     this.status_ = bits
+    this.statusReserved = 1 // reservedは常に1にセットされている
   }
 
   get acc() {
@@ -55,7 +53,15 @@ export default class Register {
   }
 
   set indexX(value) {
-    this.indexX_ = value
+    this.indexX_ = value & 0xff
+  }
+
+  get indexY() {
+    return this.indexY_
+  }
+
+  set indexY(value) {
+    this.indexY_ = value & 0xff
   }
 
   get sp() {
@@ -63,7 +69,7 @@ export default class Register {
   }
 
   set sp(value) {
-    this.sp_ = value
+    this.sp_ = 0x0100 | value
   }
 
   get statusNegative() {

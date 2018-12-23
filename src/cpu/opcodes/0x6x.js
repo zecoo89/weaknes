@@ -17,7 +17,10 @@ export default [
   function() {
     Util.execute.call(this, 'PLA', 'implied')
   },
-  '',
+  /* 0x69: ADC immediate */
+  function() {
+    Util.execute.call(this, 'ADC', 'immediate')
+  },
   '',
   '',
   '',
