@@ -10,9 +10,12 @@ export default [
   function() {
     Util.execute.call(this, 'SBC', 'indirectIndex')
   },
-  '2',
-  '3',
-  '4',
+  '2:STP',
+  '3:ISC',
+  /* 0xf4: 2byte NOP (Use zeropage for 2byte)*/
+  function() {
+    Util.execute.call(this, 'NOP', 'zeropage')
+  },
   /* 0xf5: SBC zeropageX */
   function() {
     Util.execute.call(this, 'SBC', 'zeropageX')
@@ -21,7 +24,7 @@ export default [
   function() {
     Util.execute.call(this, 'INC', 'zeropageX')
   },
-  '7',
+  '7:ISC',
   /* 0xf8: SED implied */
   function() {
     Util.execute.call(this, 'SED', 'implied')
@@ -30,9 +33,15 @@ export default [
   function() {
     Util.execute.call(this, 'SBC', 'absoluteY')
   },
-  'a',
-  'b',
-  'c',
+  /* 0xfa: NOP */
+  function() {
+    Util.execute.call(this, 'NOP', 'implied')
+  },
+  'b:ISC',
+  /* 0xfc: 3byte NOP (Use absolute for 3byte)*/
+  function() {
+    Util.execute.call(this, 'NOP', 'absolute')
+  },
   /* 0xfd: SBC absoluteX */
   function() {
     Util.execute.call(this, 'SBC', 'absoluteX')
@@ -41,5 +50,5 @@ export default [
   function() {
     Util.execute.call(this, 'INC', 'absoluteX')
   },
-  'f'
+  'f:ISC'
 ]

@@ -10,9 +10,12 @@ export default [
   function() {
     Util.execute.call(this, 'ADC', 'indirectIndex')
   },
-  '2',
-  '3',
-  '4',
+  '2:STP',
+  '3:RRA',
+  /* 0x74: 2byte NOP (Use zeropage for 2byte)*/
+  function() {
+    Util.execute.call(this, 'NOP', 'zeropage')
+  },
   /* 0x75: ADC zeropageX */
   function() {
     Util.execute.call(this, 'ADC', 'zeropageX')
@@ -21,7 +24,7 @@ export default [
   function() {
     Util.execute.call(this, 'ROR', 'zeropageX')
   },
-  '7',
+  '7:RRA',
   /* 0x78: SEI implied */
   function() {
     Util.execute.call(this, 'SEI', 'implied')
@@ -30,9 +33,15 @@ export default [
   function() {
     Util.execute.call(this, 'ADC', 'absoluteY')
   },
-  'a',
-  'b',
-  'c',
+  /* 0x7a: NOP */
+  function() {
+    Util.execute.call(this, 'NOP', 'implied')
+  },
+  'b:RRA',
+  /* 0x7c: 3byte NOP (Use absolute for 3byte)*/
+  function() {
+    Util.execute.call(this, 'NOP', 'absolute')
+  },
   /* 0x7d: ADC absoluteX */
   function() {
     Util.execute.call(this, 'ADC', 'absoluteX')
@@ -41,5 +50,5 @@ export default [
   function() {
     Util.execute.call(this, 'ROR', 'absoluteX')
   },
-  'f'
+  'f:RRA'
 ]

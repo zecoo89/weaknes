@@ -10,9 +10,12 @@ export default [
   function() {
     Util.execute.call(this, 'CMP', 'indirectIndex')
   },
-  '2',
-  '3',
-  '4',
+  '2:STP',
+  '3:DCP',
+  /* 0xd4: 2byte NOP (Use zeropage for 2byte)*/
+  function() {
+    Util.execute.call(this, 'NOP', 'zeropage')
+  },
   /* 0xd5: CMP zeropageX */
   function() {
     Util.execute.call(this, 'CMP', 'zeropageX')
@@ -21,7 +24,7 @@ export default [
   function() {
     Util.execute.call(this, 'DEC', 'zeropageX')
   },
-  '7',
+  '7:DCP',
   /* 0xd8: CLD implied */
   function() {
     Util.execute.call(this, 'CLD', 'implied')
@@ -30,9 +33,15 @@ export default [
   function() {
     Util.execute.call(this, 'CMP', 'absoluteY')
   },
-  'a',
-  'b',
-  'c',
+  /* 0xda: NOP */
+  function() {
+    Util.execute.call(this, 'NOP', 'implied')
+  },
+  'b:DCP',
+  /* 0xdc: 3byte NOP (Use absolute for 3byte)*/
+  function() {
+    Util.execute.call(this, 'NOP', 'absolute')
+  },
   /* 0xdd: CMP absoluteX */
   function() {
     Util.execute.call(this, 'CMP', 'absoluteX')
@@ -41,5 +50,5 @@ export default [
   function() {
     Util.execute.call(this, 'DEC', 'absoluteX')
   },
-  'f'
+  'f:DCP'
 ]

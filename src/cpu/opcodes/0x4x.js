@@ -10,9 +10,12 @@ export default [
   function() {
     Util.execute.call(this, 'EOR', 'indexIndirect')
   },
-  '2',
-  '3',
-  '4',
+  '2:STP',
+  '3:SRE',
+  /* 0x44: 2byte NOP (Use zeropage for 2byte)*/
+  function() {
+    Util.execute.call(this, 'NOP', 'zeropage')
+  },
   /* 0x45: EOR zeropage */
   function() {
     Util.execute.call(this, 'EOR', 'zeropage')
@@ -21,7 +24,7 @@ export default [
   function() {
     Util.execute.call(this, 'LSR', 'zeropage')
   },
-  '7',
+  '7:SRE',
   /* 0x48: PHA implied */
   function() {
     Util.execute.call(this, 'PHA', 'implied')
@@ -34,7 +37,7 @@ export default [
   function() {
     Util.execute.call(this, 'LSR', 'implied')
   },
-  'b',
+  'b:ALR',
   /* 0x4c: JMP absolute */
   function() {
     Util.execute.call(this, 'JMP', 'absolute')
@@ -47,5 +50,5 @@ export default [
   function() {
     Util.execute.call(this, 'LSR', 'absolute')
   },
-  'f'
+  'f:SRE'
 ]

@@ -77,7 +77,7 @@ export default {
     const highAddr = this.ram.read(highAddr_)
 
     const lowAddr__ = lowAddr | (highAddr << 8)
-    const highAddr__ = ((lowAddr+1) & 0xff) | (highAddr << 8)
+    const highAddr__ = ((lowAddr + 1) & 0xff) | (highAddr << 8)
     const addr = this.ram.read(lowAddr__) | (this.ram.read(highAddr__) << 8)
 
     return addr & 0xffff
@@ -88,7 +88,7 @@ export default {
     const addr_ = (this.ram.read(addr__) + this.registers.indexX) & 0xff
 
     const lowAddr = this.ram.read(addr_)
-    const highAddr = this.ram.read((addr_ + 1) & 0xff ) << 8
+    const highAddr = this.ram.read((addr_ + 1) & 0xff) << 8
 
     const addr = lowAddr | highAddr
 
@@ -100,7 +100,7 @@ export default {
     const addr_ = this.ram.read(addr__)
 
     const lowAddr = this.ram.read(addr_)
-    const highAddr = this.ram.read((addr_ + 1) & 0xff ) << 8
+    const highAddr = this.ram.read((addr_ + 1) & 0xff) << 8
 
     let addr = lowAddr | highAddr
 

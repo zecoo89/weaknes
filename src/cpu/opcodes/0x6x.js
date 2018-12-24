@@ -10,9 +10,12 @@ export default [
   function() {
     Util.execute.call(this, 'ADC', 'indexIndirect')
   },
-  '2',
-  '3',
-  '4',
+  '2:STP',
+  '3:RRA',
+  /* 0x64: 2byte NOP (Use zeropage for 2byte)*/
+  function() {
+    Util.execute.call(this, 'NOP', 'zeropage')
+  },
   /* 0x65: ADC zeropage */
   function() {
     Util.execute.call(this, 'ADC', 'zeropage')
@@ -21,7 +24,7 @@ export default [
   function() {
     Util.execute.call(this, 'ROR', 'zeropage')
   },
-  '7',
+  '7:RRA',
   /* 0x68: PLA implied */
   function() {
     Util.execute.call(this, 'PLA', 'implied')
@@ -34,7 +37,7 @@ export default [
   function() {
     Util.execute.call(this, 'ROR', 'implied')
   },
-  'b',
+  'b:ROR',
   /* 0x6c: JMP indirect */
   function() {
     Util.execute.call(this, 'JMP', 'indirect')
@@ -47,5 +50,5 @@ export default [
   function() {
     Util.execute.call(this, 'ROR', 'absolute')
   },
-  ''
+  'f:RRA'
 ]

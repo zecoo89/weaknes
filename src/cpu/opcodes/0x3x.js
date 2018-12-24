@@ -10,9 +10,12 @@ export default [
   function() {
     Util.execute.call(this, 'AND', 'indirectIndex')
   },
-  '2',
-  '3',
-  '4',
+  '2:STP',
+  '3:RLA',
+  /* 0x34: 2byte NOP (Use zeropage for 2byte)*/
+  function() {
+    Util.execute.call(this, 'NOP', 'zeropage')
+  },
   /* 0x35: AND zeropageX */
   function() {
     Util.execute.call(this, 'AND', 'zeropageX')
@@ -21,7 +24,7 @@ export default [
   function() {
     Util.execute.call(this, 'ROL', 'zeropageX')
   },
-  '7',
+  '7:RLA',
   /* 0x38: SEC implied */
   function() {
     Util.execute.call(this, 'SEC', 'implied')
@@ -30,9 +33,15 @@ export default [
   function() {
     Util.execute.call(this, 'AND', 'absoluteY')
   },
-  'a',
-  'b',
-  'c',
+  /* 0x3a: NOP */
+  function() {
+    Util.execute.call(this, 'NOP', 'implied')
+  },
+  'b:RLA',
+  /* 0x3c: 3byte NOP (Use absolute for 3byte)*/
+  function() {
+    Util.execute.call(this, 'NOP', 'absolute')
+  },
   /* 0x3d: AND absoluteX */
   function() {
     Util.execute.call(this, 'AND', 'absoluteX')
@@ -41,5 +50,5 @@ export default [
   function() {
     Util.execute.call(this, 'ROL', 'absoluteX')
   },
-  'f'
+  'f:RLA'
 ]

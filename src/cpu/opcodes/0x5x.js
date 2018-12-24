@@ -10,9 +10,12 @@ export default [
   function() {
     Util.execute.call(this, 'EOR', 'indirectIndex')
   },
-  '2',
-  '3',
-  '4',
+  '2:STP',
+  '3:SRE',
+  /* 0x54: 2byte NOP (Use zeropage for 2byte)*/
+  function() {
+    Util.execute.call(this, 'NOP', 'zeropage')
+  },
   /* 0x55: EOR zeropageX */
   function() {
     Util.execute.call(this, 'EOR', 'zeropageX')
@@ -21,7 +24,7 @@ export default [
   function() {
     Util.execute.call(this, 'LSR', 'zeropageX')
   },
-  '7',
+  '7:SRE',
   /* 0x58: CLI */
   function() {
     Util.execute.call(this, 'CLI', 'implied')
@@ -30,9 +33,15 @@ export default [
   function() {
     Util.execute.call(this, 'EOR', 'absoluteY')
   },
-  'a',
-  'b',
-  'c',
+  /* 0x5a: NOP */
+  function() {
+    Util.execute.call(this, 'NOP', 'implied')
+  },
+  'b:SRE',
+  /* 0x5c: 3byte NOP (Use absolute for 3byte)*/
+  function() {
+    Util.execute.call(this, 'NOP', 'absolute')
+  },
   /* 0x5d EOR absoluteX */
   function() {
     Util.execute.call(this, 'EOR', 'absoluteX')
@@ -41,5 +50,5 @@ export default [
   function() {
     Util.execute.call(this, 'LSR', 'absoluteX')
   },
-  ''
+  'f:SRE'
 ]

@@ -10,8 +10,8 @@ export default [
   function() {
     Util.execute.call(this, 'STA', 'indirectIndex')
   },
-  '2',
-  '3',
+  '2:STP',
+  '3:AHX',
   /* 0x94: STY zeropageX */
   function() {
     Util.execute.call(this, 'STY', 'zeropageX')
@@ -24,7 +24,7 @@ export default [
   function() {
     Util.execute.call(this, 'STX', 'zeropageY')
   },
-  '7',
+  '7:SAX',
   /* 0x98: TYA implied */
   function() {
     Util.execute.call(this, 'TYA', 'implied')
@@ -37,12 +37,12 @@ export default [
   function() {
     Util.execute.call(this, 'TXS', 'implied')
   },
-  'b',
-  'c',
+  'b:TAS',
+  'c:SHY',
   /* 0x9d: STA absoluteX */
   function() {
     Util.execute.call(this, 'STA', 'absoluteX')
   },
-  'e',
-  'f'
+  'e:SHX',
+  'f:AHX'
 ]

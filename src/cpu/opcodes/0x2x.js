@@ -10,8 +10,8 @@ export default [
   function() {
     Util.execute.call(this, 'AND', 'indexIndirect')
   },
-  '2',
-  '3',
+  '2:STP',
+  '3:RLA',
   /* 0x24: BIT zeropage */
   function() {
     Util.execute.call(this, 'BIT', 'zeropage')
@@ -24,7 +24,7 @@ export default [
   function() {
     Util.execute.call(this, 'ROL', 'zeropage')
   },
-  '7',
+  '7:RLA',
   /* 0x28: PLP implied */
   function() {
     Util.execute.call(this, 'PLP', 'implied')
@@ -37,7 +37,7 @@ export default [
   function() {
     Util.execute.call(this, 'ROL', 'implied')
   },
-  'b',
+  'b:ANC',
   /* 0x2c: BIT absolute */
   function() {
     Util.execute.call(this, 'BIT', 'absolute')
@@ -50,5 +50,5 @@ export default [
   function() {
     Util.execute.call(this, 'ROL', 'absolute')
   },
-  ''
+  'f:RLA'
 ]

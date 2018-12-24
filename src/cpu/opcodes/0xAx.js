@@ -14,7 +14,7 @@ export default [
   function() {
     Util.execute.call(this, 'LDX', 'immediate')
   },
-  '3',
+  '3:LAX',
   /* 0xa4: LDY zeropage */
   function() {
     Util.execute.call(this, 'LDY', 'zeropage')
@@ -27,7 +27,7 @@ export default [
   function() {
     Util.execute.call(this, 'LDX', 'zeropage')
   },
-  '7',
+  '7:LAX',
   /* 0xa8: TAY implied */
   function() {
     Util.execute.call(this, 'TAY', 'implied')
@@ -40,7 +40,7 @@ export default [
   function() {
     Util.execute.call(this, 'TAX', 'implied')
   },
-  'b',
+  'b:LAX',
   /* 0xac: LDY absolute */
   function() {
     Util.execute.call(this, 'LDY', 'absolute')
@@ -53,5 +53,5 @@ export default [
   function() {
     Util.execute.call(this, 'LDX', 'absolute')
   },
-  ''
+  'f:LAX'
 ]

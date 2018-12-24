@@ -101,7 +101,7 @@ export default {
     const msb = Util.msb(value)
     const shifted = (value << 1) & 0xff
 
-    addr ? this.ram.write(addr, shifted) : this.registers.acc = shifted
+    addr ? this.ram.write(addr, shifted) : (this.registers.acc = shifted)
     this.registers.statusNegative = Util.isNegative(shifted)
     this.registers.statusZero = Util.isZero(shifted)
     this.registers.statusCarry = msb
@@ -119,7 +119,7 @@ export default {
     const lsb = Util.lsb(value)
     const shifted = value >> 1
 
-    addr ? this.ram.write(addr, shifted) : this.registers.acc = shifted
+    addr ? this.ram.write(addr, shifted) : (this.registers.acc = shifted)
 
     this.registers.statusNegative = Util.isNegative(shifted)
     this.registers.statusZero = Util.isZero(shifted)
@@ -275,7 +275,7 @@ export default {
     this.registers.statusCarry = msb
     this.registers.statusZero = Util.isZero(rotated)
     this.registers.statusNegative = Util.isNegative(rotated)
-    addr ? this.ram.write(addr, rotated) : this.registers.acc = rotated
+    addr ? this.ram.write(addr, rotated) : (this.registers.acc = rotated)
   },
 
   /* メモリを右へローテートする */
@@ -288,7 +288,7 @@ export default {
     this.registers.statusCarry = lsb
     this.registers.statusZero = Util.isZero(rotated)
     this.registers.statusNegative = Util.isNegative(rotated)
-    addr ? this.ram.write(addr, rotated) : this.registers.acc = rotated
+    addr ? this.ram.write(addr, rotated) : (this.registers.acc = rotated)
   },
 
   /* acc + memory + carryFlag

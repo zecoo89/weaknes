@@ -10,8 +10,11 @@ export default [
   function() {
     Util.execute.call(this, 'SBC', 'indexIndirect')
   },
-  '2',
-  '3',
+  /* 0xe0: 2byte NOP (Use zeropage for 2byte)*/
+  function() {
+    Util.execute.call(this, 'NOP', 'zeropage')
+  },
+  '3:ISC',
   /* 0xe4: CPX zeropage */
   function() {
     Util.execute.call(this, 'CPX', 'zeropage')
@@ -24,7 +27,7 @@ export default [
   function() {
     Util.execute.call(this, 'INC', 'zeropage')
   },
-  '7',
+  '7:ISC',
   /* 0xe8: INX implied */
   function() {
     Util.execute.call(this, 'INX', 'implied')
@@ -37,7 +40,7 @@ export default [
   function() {
     Util.execute.call(this, 'NOP', 'implied')
   },
-  'b',
+  'b:SBC',
   /* 0xec: CPX absolute */
   function() {
     Util.execute.call(this, 'CPX', 'absolute')
@@ -50,5 +53,5 @@ export default [
   function() {
     Util.execute.call(this, 'INC', 'absolute')
   },
-  'f'
+  'f:ISC'
 ]

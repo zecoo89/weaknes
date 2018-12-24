@@ -10,8 +10,8 @@ export default [
   function() {
     Util.execute.call(this, 'LDA', 'indirectIndex')
   },
-  '2',
-  '3',
+  '2:STP',
+  '3:LAX',
   /* 0xb4: LDY zeropageX */
   function() {
     Util.execute.call(this, 'LDY', 'zeropageX')
@@ -24,7 +24,7 @@ export default [
   function() {
     Util.execute.call(this, 'LDX', 'zeropageY')
   },
-  '7',
+  '7:LAX',
   /* 0xb8: CLV implied */
   function() {
     Util.execute.call(this, 'CLV', 'implied')
@@ -37,7 +37,7 @@ export default [
   function() {
     Util.execute.call(this, 'TSX', 'implied')
   },
-  'b',
+  'b:LAS',
   /* 0xbc: LDY absoluteX*/
   function() {
     Util.execute.call(this, 'LDY', 'absoluteX')
@@ -50,5 +50,5 @@ export default [
   function() {
     Util.execute.call(this, 'LDX', 'absoluteY')
   },
-  'f'
+  'f:LAX'
 ]

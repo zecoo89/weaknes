@@ -10,8 +10,11 @@ export default [
   function() {
     Util.execute.call(this, 'CMP', 'indexIndirect')
   },
-  '2',
-  '3',
+  /* 0xc2: 2byte NOP (Use zeropage for 2byte)*/
+  function() {
+    Util.execute.call(this, 'NOP', 'zeropage')
+  },
+  '3:ISC',
   /* 0xc4: CPY zeropage*/
   function() {
     Util.execute.call(this, 'CPY', 'zeropage')
@@ -24,7 +27,7 @@ export default [
   function() {
     Util.execute.call(this, 'DEC', 'zeropage')
   },
-  '7',
+  '7:ISC',
   /* 0xc8: INY implied */
   function() {
     Util.execute.call(this, 'INY', 'implied')
@@ -37,7 +40,7 @@ export default [
   function() {
     Util.execute.call(this, 'DEX', 'implied')
   },
-  'b',
+  'b:SBC',
   /* 0xcc: CPY absolute */
   function() {
     Util.execute.call(this, 'CPY', 'absolute')
@@ -50,5 +53,5 @@ export default [
   function() {
     Util.execute.call(this, 'DEC', 'absolute')
   },
-  ''
+  'f:DCP'
 ]
