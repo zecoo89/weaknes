@@ -52,12 +52,16 @@ const myLog = fs.readFileSync('./log.txt', 'utf8')
 const nestestLines = nestest.split('\n')
 const myLogLines = myLog.split('\n')
 
+/* state
+ * 0: エラーなし
+ * 1: エラーあり
+ * 2: エラーありで、ログも不足している
+ * 3: エラーなしだが、ログが不足している
+ * */
+let state = 0
 for(let i=0;i<nestestLines.length-1;i++) {
   if(!myLogLines[i]) {
-    if(i === nestestLines.length-1) {
-      /* eslint-disable-next-line no-console */
-      console.log('Congratulations! You have no errors!')
-    }
+    state = state === 1 ? 2 : 3
     break
   }
 
@@ -65,5 +69,19 @@ for(let i=0;i<nestestLines.length-1;i++) {
 
   if(result.isError) {
     error(i, myLogLines, nestestLines, result.info)
+    state = 1
   }
 }
+
+if(state === 0) {
+  /* eslint-disable-next-line no-console */
+  console.log('Congratulations! You have no errors!')
+} else if(state === 2) {
+  /* eslint-disable-next-line no-console */
+  console.log('You have errors and your logs are shorter than nestest.log')
+} else if (state === 3) {
+  /* eslint-disable-next-line no-console */
+  console.log('You have no errors but your logs are shorter than nestest.log')
+}
+
+
