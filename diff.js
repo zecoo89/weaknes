@@ -52,12 +52,18 @@ const myLog = fs.readFileSync('./log.txt', 'utf8')
 const nestestLines = nestest.split('\n')
 const myLogLines = myLog.split('\n')
 
-for(let i=0;i<myLogLines.length-1;i++) {
+for(let i=0;i<nestestLines.length-1;i++) {
+  if(!myLogLines[i]) {
+    if(i === nestestLines.length-1) {
+      /* eslint-disable-next-line no-console */
+      console.log('Congratulations! You have no errors!')
+    }
+    break
+  }
+
   const result = diff(i, myLogLines, nestestLines)
 
   if(result.isError) {
     error(i, myLogLines, nestestLines, result.info)
   }
 }
-
-
