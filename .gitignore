@@ -3,7 +3,6 @@ assets/
 .DS_store
 nestest.log
 log.txt
-
-> nes_emu@1.0.0 debug /Users/yuuki-k/Project/weaknes
-> node diff.js
-
+index.html
+index.js
+dist/
