@@ -6,11 +6,17 @@ export default [
   function() {
     Util.execute.call(this, 'BRK', 'implied')
   },
-  '1',
+  /* 0x01: ORA indexIndirect */
+  function() {
+    Util.execute.call(this, 'ORA', 'indexIndirect')
+  },
   '2',
   '3',
   '4',
-  '5',
+  /* 0x05: ORA zeropage */
+  function() {
+    Util.execute.call(this, 'ORA', 'zeropage')
+  },
   /* 0x06 ASL zeropage */
   function() {
     Util.execute.call(this, 'ASL', 'zeropage')
@@ -24,10 +30,19 @@ export default [
   function() {
     Util.execute.call(this, 'ORA', 'immediate')
   },
-  '',
-  '',
-  '',
-  '',
-  '',
+  /* 0x0a: ASL implied(accmulator)*/
+  function() {
+    Util.execute.call(this, 'ASL', 'implied')
+  },
+  'b',
+  'c',
+  /* 0x0d: ORA absolute */
+  function() {
+    Util.execute.call(this, 'ORA', 'absolute')
+  },
+  /* 0x0e: ASL absolute */
+  function() {
+    Util.execute.call(this, 'ASL', 'absolute')
+  },
   ''
 ]

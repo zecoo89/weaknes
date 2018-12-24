@@ -6,28 +6,49 @@ export default [
   function() {
     Util.execute.call(this, 'BCS', 'relative')
   },
-  '1',
+  /* 0xb1: LDA indirectIndex */
+  function() {
+    Util.execute.call(this, 'LDA', 'indirectIndex')
+  },
   '2',
   '3',
-  '4',
-  '5',
-  '6',
+  /* 0xb4: LDY zeropageX */
+  function() {
+    Util.execute.call(this, 'LDY', 'zeropageX')
+  },
+  /* 0xb5: LDA zeropageX */
+  function() {
+    Util.execute.call(this, 'LDA', 'zeropageX')
+  },
+  /* 0xb6: LDX zeropageY */
+  function() {
+    Util.execute.call(this, 'LDX', 'zeropageY')
+  },
   '7',
   /* 0xb8: CLV implied */
   function() {
     Util.execute.call(this, 'CLV', 'implied')
   },
-  '9',
-  /* 0xba: TSX implied*/
+  /* 0xb9: LDA absoluteY */
+  function() {
+    Util.execute.call(this, 'LDA', 'absoluteY')
+  },
+  /* 0xba: TSX implied */
   function() {
     Util.execute.call(this, 'TSX', 'implied')
   },
   'b',
-  'c',
+  /* 0xbc: LDY absoluteX*/
+  function() {
+    Util.execute.call(this, 'LDY', 'absoluteX')
+  },
   /* 0xbd: LDA bsoluteX */
   function() {
     Util.execute.call(this, 'LDA', 'absoluteX')
   },
-  'e',
+  /* 0xbe: LDX absoluteY*/
+  function() {
+    Util.execute.call(this, 'LDX', 'absoluteY')
+  },
   'f'
 ]

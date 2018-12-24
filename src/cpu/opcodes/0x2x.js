@@ -6,9 +6,9 @@ export default [
   function() {
     Util.execute.call(this, 'JSR', 'absolute')
   },
-  /* 0x21: INC indexIndirect */
+  /* 0x21: AND indexIndirect */
   function() {
-    Util.execute.call(this, 'INC', 'indexIndirect')
+    Util.execute.call(this, 'AND', 'indexIndirect')
   },
   '2',
   '3',
@@ -16,8 +16,14 @@ export default [
   function() {
     Util.execute.call(this, 'BIT', 'zeropage')
   },
-  '5',
-  '6',
+  /* 0x25: AND zeropage */
+  function() {
+    Util.execute.call(this, 'AND', 'zeropage')
+  },
+  /* 0x26: ROL zeropage */
+  function() {
+    Util.execute.call(this, 'ROL', 'zeropage')
+  },
   '7',
   /* 0x28: PLP implied */
   function() {
@@ -27,10 +33,22 @@ export default [
   function() {
     Util.execute.call(this, 'AND', 'immediate')
   },
-  '',
-  '',
-  '',
-  '',
-  '',
+  /* 0x2a: ROL implied (accmulator)*/
+  function() {
+    Util.execute.call(this, 'ROL', 'implied')
+  },
+  'b',
+  /* 0x2c: BIT absolute */
+  function() {
+    Util.execute.call(this, 'BIT', 'absolute')
+  },
+  /* 0x2d: AND absolute */
+  function() {
+    Util.execute.call(this, 'AND', 'absolute')
+  },
+  /* 0x2e: ROL absolute*/
+  function() {
+    Util.execute.call(this, 'ROL', 'absolute')
+  },
   ''
 ]

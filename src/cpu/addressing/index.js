@@ -1,3 +1,6 @@
+/* アドレッシングにはaccumulatorもあるが、
+ * accumulatorは直接命令内で参照するので、
+ * 実装の都合上、関数は必要ない。*/
 export default {
   implied: function() {
     return null
@@ -73,18 +76,21 @@ export default {
     const highAddr_ = this.registers.pc++
     const highAddr = this.ram.read(highAddr_)
 
-    const addr_ = lowAddr | (highAddr << 8)
-    const addr = this.ram.read(addr_) | (this.ram.read(addr_ + 1) << 8)
+    const lowAddr__ = lowAddr | (highAddr << 8)
+    const highAddr__ = ((lowAddr+1) & 0xff) | (highAddr << 8)
+    const addr = this.ram.read(lowAddr__) | (this.ram.read(highAddr__) << 8)
 
     return addr & 0xffff
   },
 
   indexIndirect: function() {
     const addr__ = this.registers.pc++
-    let addr_ = this.ram.read(addr__) + this.registers.indexX
-    addr_ = addr_ & 0x00ff
+    const addr_ = (this.ram.read(addr__) + this.registers.indexX) & 0xff
 
-    const addr = this.ram.read(addr_) | (this.ram.read(addr_ + 1) << 8)
+    const lowAddr = this.ram.read(addr_)
+    const highAddr = this.ram.read((addr_ + 1) & 0xff ) << 8
+
+    const addr = lowAddr | highAddr
 
     return addr & 0xffff
   },
@@ -93,8 +99,12 @@ export default {
     const addr__ = this.registers.pc++
     const addr_ = this.ram.read(addr__)
 
-    let addr = this.ram.read(addr_) | (this.ram.read(addr_ + 1) << 8)
-    addr = addr + this.registers.indexY
+    const lowAddr = this.ram.read(addr_)
+    const highAddr = this.ram.read((addr_ + 1) & 0xff ) << 8
+
+    let addr = lowAddr | highAddr
+
+    addr = (addr + this.registers.indexY) & 0xffff
 
     return addr & 0xffff
   },

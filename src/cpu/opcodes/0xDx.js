@@ -6,22 +6,40 @@ export default [
   function() {
     Util.execute.call(this, 'BNE', 'relative')
   },
-  '1',
+  /* 0xd1: CMP indirectIndex */
+  function() {
+    Util.execute.call(this, 'CMP', 'indirectIndex')
+  },
   '2',
   '3',
   '4',
-  '5',
-  '6',
+  /* 0xd5: CMP zeropageX */
+  function() {
+    Util.execute.call(this, 'CMP', 'zeropageX')
+  },
+  /* 0xd6: DEC zeropageX */
+  function() {
+    Util.execute.call(this, 'DEC', 'zeropageX')
+  },
   '7',
   /* 0xd8: CLD implied */
   function() {
     Util.execute.call(this, 'CLD', 'implied')
   },
-  '9',
+  /* 0xd9: CMP absoluteY */
+  function() {
+    Util.execute.call(this, 'CMP', 'absoluteY')
+  },
   'a',
   'b',
   'c',
-  'd',
-  'e',
+  /* 0xdd: CMP absoluteX */
+  function() {
+    Util.execute.call(this, 'CMP', 'absoluteX')
+  },
+  /* 0xde: DEC absoluteX */
+  function() {
+    Util.execute.call(this, 'DEC', 'absoluteX')
+  },
   'f'
 ]

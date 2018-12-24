@@ -45,7 +45,7 @@ export default class Register {
   }
 
   set acc(value) {
-    this.acc_ = value
+    this.acc_ = value & 0xff
   }
 
   get indexX() {

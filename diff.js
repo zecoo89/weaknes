@@ -1,7 +1,3 @@
-//TODO read nestest.log
-//TODO read log.txt
-//１行目から比較
-//
 const extractMyLogElements = (myLogLine) => {
   const elementsArray = myLogLine.split(' ')
   return {
@@ -20,11 +16,11 @@ const extractNestestElements = (nestestLine) => {
   return {
     addr: elementsArray[0],
     instruction: elementsArray[6],
-    A: nestestLine.match(/A:([0-9A-F]+)/)[1],
-    X: nestestLine.match(/X:([0-9A-F]+)/)[1],
-    Y: nestestLine.match(/Y:([0-9A-F]+)/)[1],
+    A: nestestLine.match(/A:([0-9A-F]+) X:/)[1],
+    X: nestestLine.match(/X:([0-9A-F]+) Y:/)[1],
+    Y: nestestLine.match(/Y:([0-9A-F]+) P:/)[1],
     P: nestestLine.match(/P:([0-9A-F]+) SP/)[1],
-    SP: nestestLine.match(/SP:([0-9A-F]+)/)[1],
+    SP: nestestLine.match(/SP:([0-9A-F]+) CYC:/)[1],
   }
 }
 

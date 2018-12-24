@@ -90,18 +90,20 @@ export default {
     this.registers.statusZero = Util.isZero(value)
   },
 
-  /* Aまたはメモリを左へシフト
+  /* accまたはメモリを左へシフト
    * フラグ
    *   - negative
    *   - zero
    *   - carry
    * */
   ASL: function(addr) {
-    const value = this.ram.read(addr)
+    const value = addr ? this.ram.read(addr) : this.registers.acc
     const msb = Util.msb(value)
-    this.ram.write(addr, value << 1)
-    this.registers.statusNegative = Util.isNegative(value)
-    this.registers.statusZero = Util.isZero(value)
+    const shifted = (value << 1) & 0xff
+
+    addr ? this.ram.write(addr, shifted) : this.registers.acc = shifted
+    this.registers.statusNegative = Util.isNegative(shifted)
+    this.registers.statusZero = Util.isZero(shifted)
     this.registers.statusCarry = msb
   },
 
@@ -111,12 +113,16 @@ export default {
    *   - zero
    *   - carry
    * */
+  /* Logical Shift Right */
   LSR: function(addr) {
-    const value = this.ram.read(addr)
+    const value = addr ? this.ram.read(addr) : this.registers.acc
     const lsb = Util.lsb(value)
-    this.ram.write(addr, value >> 1)
-    this.registers.statusNegative = Util.isNegative(value)
-    this.registers.statusZero = Util.isZero(value)
+    const shifted = value >> 1
+
+    addr ? this.ram.write(addr, shifted) : this.registers.acc = shifted
+
+    this.registers.statusNegative = Util.isNegative(shifted)
+    this.registers.statusZero = Util.isZero(shifted)
     this.registers.statusCarry = lsb
   },
 
@@ -262,41 +268,27 @@ export default {
   /* メモリを左へローテートする */
   ROL: function(addr) {
     const carry = this.registers.statusCarry
-    const msb = this.ram.read(addr) >> 7
+    const value = addr ? this.ram.read(addr) : this.registers.acc
+    const msb = value >> 7
+    const rotated = ((value << 1) & 0xff) | carry
 
     this.registers.statusCarry = msb
-    this.ram.write(addr, (this.ram.read(addr) << 1) | carry)
-  },
-
-  /* accを左へローテートする
-   * 実装を考えて、accの場合をROLと分離した
-   * */
-  RLA: function() {
-    const carry = this.registers.statusCarry
-    const msb = this.registers.acc >> 7
-
-    this.registers.statusCarry = msb
-    this.registers.acc = (this.registers.acc << 1) | carry
+    this.registers.statusZero = Util.isZero(rotated)
+    this.registers.statusNegative = Util.isNegative(rotated)
+    addr ? this.ram.write(addr, rotated) : this.registers.acc = rotated
   },
 
   /* メモリを右へローテートする */
   ROR: function(addr) {
     const carry = this.registers.statusCarry << 7
-    const lsb = this.ram.read(addr) & 0x01
+    const value = addr ? this.ram.read(addr) : this.registers.acc
+    const lsb = Util.lsb(value)
+    const rotated = (value >> 1) | carry
 
     this.registers.statusCarry = lsb
-    this.ram.write(addr, (this.ram.read(addr) >> 1) | carry)
-  },
-
-  /* accを右へローテートする
-   * 実装を考えてaccの場合をRORと分離した
-   * */
-  RRA: function() {
-    const carry = this.registers.statusCarry << 7
-    const lsb = this.registers.acc & 0x01
-
-    this.registers.statusCarry = lsb
-    this.registers.acc = (this.registers.acc >> 1) | carry
+    this.registers.statusZero = Util.isZero(rotated)
+    this.registers.statusNegative = Util.isNegative(rotated)
+    addr ? this.ram.write(addr, rotated) : this.registers.acc = rotated
   },
 
   /* acc + memory + carryFlag
@@ -414,7 +406,13 @@ export default {
   },
 
   /* 割り込みルーチンから復帰する */
-  RTI: function() {},
+  RTI: function() {
+    this.registers.statusAllRawBits = this.stackPop()
+
+    const lowAddr = this.stackPop()
+    const highAddr = this.stackPop() << 8
+    this.registers.pc = lowAddr | highAddr
+  },
 
   /* キャリーフラグがクリアされているときにブランチする */
   BCC: function(addr) {
@@ -499,7 +497,9 @@ export default {
   },
 
   /* IRQ割り込みを許可する */
-  CLI: function() {},
+  CLI: function() {
+    this.registers.statusInterrupt = 1
+  },
 
   /* オーバーフローフラグをクリアする */
   CLV: function() {

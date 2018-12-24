@@ -2,8 +2,14 @@ import Util from './util'
 
 /* 0x40 - 0x4F */
 export default [
-  '0',
-  '1',
+  /* 0x40: RTI implied */
+  function() {
+    Util.execute.call(this, 'RTI', 'implied')
+  },
+  /* 0x41: EOR indexIndirect */
+  function() {
+    Util.execute.call(this, 'EOR', 'indexIndirect')
+  },
   '2',
   '3',
   '4',
@@ -11,7 +17,10 @@ export default [
   function() {
     Util.execute.call(this, 'EOR', 'zeropage')
   },
-  '6',
+  /* 0x46: LSR zeropage*/
+  function() {
+    Util.execute.call(this, 'LSR', 'zeropage')
+  },
   '7',
   /* 0x48: PHA implied */
   function() {
@@ -21,13 +30,22 @@ export default [
   function() {
     Util.execute.call(this, 'EOR', 'immediate')
   },
-  'a',
+  /* 0x4a: LSR implied(accumulator) */
+  function() {
+    Util.execute.call(this, 'LSR', 'implied')
+  },
   'b',
-  /* 0x4c: JMP Absolute */
+  /* 0x4c: JMP absolute */
   function() {
     Util.execute.call(this, 'JMP', 'absolute')
   },
-  'd',
-  'e',
+  /* 0x4d: EOR absolute*/
+  function() {
+    Util.execute.call(this, 'EOR', 'absolute')
+  },
+  /* 0x4e: LSR absolute*/
+  function() {
+    Util.execute.call(this, 'LSR', 'absolute')
+  },
   'f'
 ]

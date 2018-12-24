@@ -6,22 +6,40 @@ export default [
   function() {
     Util.execute.call(this, 'BVS', 'relative')
   },
-  '1',
+  /* 0x71: ADC indirectIndex */
+  function() {
+    Util.execute.call(this, 'ADC', 'indirectIndex')
+  },
   '2',
   '3',
   '4',
-  '5',
-  '6',
+  /* 0x75: ADC zeropageX */
+  function() {
+    Util.execute.call(this, 'ADC', 'zeropageX')
+  },
+  /* 0x76: ROR zeropageX */
+  function() {
+    Util.execute.call(this, 'ROR', 'zeropageX')
+  },
   '7',
   /* 0x78: SEI implied */
   function() {
     Util.execute.call(this, 'SEI', 'implied')
   },
-  '9',
+  /* 0x79: ADC absoluteY */
+  function() {
+    Util.execute.call(this, 'ADC', 'absoluteY')
+  },
   'a',
   'b',
   'c',
-  'd',
-  'e',
+  /* 0x7d: ADC absoluteX */
+  function() {
+    Util.execute.call(this, 'ADC', 'absoluteX')
+  },
+  /* 0x7e: ROR absoluteX */
+  function() {
+    Util.execute.call(this, 'ROR', 'absoluteX')
+  },
   'f'
 ]

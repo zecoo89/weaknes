@@ -6,12 +6,24 @@ export default [
   function() {
     Util.execute.call(this, 'CPY', 'immediate')
   },
-  '1',
+  /* 0xc1: CMP indexIndirect */
+  function() {
+    Util.execute.call(this, 'CMP', 'indexIndirect')
+  },
   '2',
   '3',
-  '4',
-  '5',
-  '6',
+  /* 0xc4: CPY zeropage*/
+  function() {
+    Util.execute.call(this, 'CPY', 'zeropage')
+  },
+  /* 0xc5: CMP zeropage */
+  function() {
+    Util.execute.call(this, 'CMP', 'zeropage')
+  },
+  /* 0xc6: DEC zeropage*/
+  function() {
+    Util.execute.call(this, 'DEC', 'zeropage')
+  },
   '7',
   /* 0xc8: INY implied */
   function() {
@@ -25,9 +37,18 @@ export default [
   function() {
     Util.execute.call(this, 'DEX', 'implied')
   },
-  '',
-  '',
-  '',
-  '',
+  'b',
+  /* 0xcc: CPY absolute */
+  function() {
+    Util.execute.call(this, 'CPY', 'absolute')
+  },
+  /* 0xcd: CMP absolute*/
+  function() {
+    Util.execute.call(this, 'CMP', 'absolute')
+  },
+  /* 0xce: DEC absolute */
+  function() {
+    Util.execute.call(this, 'DEC', 'absolute')
+  },
   ''
 ]
