@@ -55,16 +55,21 @@ export default class Cpu {
   /* 0x8000~のメモリにROM内のPRG-ROMを読み込む*/
   set prgRom(prgRom) {
     //this.interruptVectors(prgRom)
-    const startAddr = 0xffff - prgRom.length
-    this.registers.pc = startAddr
 
+    let startAddr = 0x8000
     for (let i = 0; i < prgRom.length; i++) {
-      //this.memory[startAddr+i] = prgRom[i]
       this.ram.write(startAddr + i, prgRom[i])
     }
 
-    // プログラムカウンタの初期値を0xFFFCから設定する
-    //this.registers.pc = this.ram.read(0xfffc) << 2
+    startAddr = 0xc000
+    // 0xc000~に0x8000~のコピーを置く
+    for (let i = 0; i < prgRom.length; i++) {
+      this.ram.write(startAddr + i, prgRom[i])
+    }
+
+    // プログラムカウンタの初期値を0xFFFDから設定する
+    const resetAddr = this.ram.read(0xfffd) << 8
+    this.registers.pc = resetAddr ? resetAddr : 0x8000
   }
 
   /* スタック領域に対する操作*/

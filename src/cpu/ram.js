@@ -10,9 +10,8 @@ export default class Ram {
     parts.bus && (this.bus = parts.bus)
   }
 
-  /*TODO 各ポート(addr)にアクセスがあった場合にはバスに書き込む */
   write(addr, value) {
-    if (addr >= 0x2000 && addr <= 0x2007) {
+    if (addr >= 0x2000 && addr <= 0x2007 && addr !== 0x2002) {
       this.bus.write(addr, value)
       return
     }
@@ -23,6 +22,10 @@ export default class Ram {
 
   /*TODO コントローラ用のポート */
   read(addr) {
+    if (addr >= 0x2000 && addr <= 0x2007) {
+      return this.bus.read(addr)
+    }
+
     return this.memory[addr]
   }
 }

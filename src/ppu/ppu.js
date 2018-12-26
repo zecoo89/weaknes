@@ -6,33 +6,23 @@ export default class Ppu {
   }
 
   init() {
-    /* About VRAM
-     * 0x0000 - 0x0fff : Pattern table 0
-     * 0x1000 - 0x1fff : Pattern table 1
-     * 0x2000 - 0x23bf : Name table 0
-     * 0x23c0 - 0x23ff : Attribute table 0
-     * 0x2400 - 0x27bf : Name table 1
-     * 0x2bc0 - 0x2bbf : Attribute table 1
-     * 0x2c00 - 0x2fbf : Name table 2
-     * 0x2bc0 - 0x2bff : Attribute table 2
-     * 0x2c00 - 0x2fbf : Name table 3
-     * 0x2fc0 - 0x2fff : Attribute table 3
-     * 0x3000 - 0x3eff : Mirror of 0x2000 - 0x2fff
-     * 0x3f00 - 0x3f0f : Background palette
-     * 0x3f10 - 0x3f1f : Sprite palette
-     * 0x3f20 - 0x3fff : Mirror of 0x3f00 0 0x3f1f
-     * */
     this.vram = new Vram()
+    this.setting = 0x00 // PPUの基本設定
+    this.screenSetting = 0x00 // PPUの表示設定
+    this.spriteAddr = 0x00 // スプライトRAMへの書き込みアドレス
+    this.state = 0xff
+    this.vp = null // 画面の更新位置
+    this.horizontalScroll = 0x00 // 水平スクロールの設定
+    this.verticalScroll = 0x00 // 垂直スクロールの設定
   }
 
   connect(parts) {
     if (parts.bus) {
-      parts.bus.connect({ vram: this.vram })
+      parts.bus.connect({ ppu: this })
     }
 
     if (parts.renderer) {
       this.renderer = parts.renderer
-      this.vram.connect(this)
     }
   }
 
@@ -45,11 +35,25 @@ export default class Ppu {
       const tile = this.tiles[tileId]
       /* タイルが使用するパレットを取得 */
       const paletteId = this.selectPalette(tileId)
-      const palette = this.selectBackgroundPalettes(paletteId)
+      //const palette = this.selectBackgroundPalettes(paletteId)
+      const palette = this.selectSpritePalettes(paletteId)
 
       /* タイルとパレットをRendererに渡す */
       this.renderer.write(tile, palette)
     }
+  }
+
+  writeSprite(setting) {
+    const tileId = setting.tileId + 256 // bg = 0 ~ 255, sprite = 256~512
+    const tile = this.tiles[tileId]
+    const paletteId = setting.paletteId
+
+    const palette = this.selectSpritePalettes(paletteId)
+
+    const x = setting.x
+    const y = setting.y
+
+    this.renderer.writeSprite(tile, palette, x, y)
   }
 
   /* 0x0000 - 0x1fffのメモリにCHR-ROMを読み込む */
@@ -132,7 +136,7 @@ export default class Ppu {
   }
 
   /* $3F10-$3F1Fからスプライトパレットを取得する */
-  selectSpritePaletts(number) {
+  selectSpritePalettes(number) {
     const palette = []
 
     const start = 0x3f10 + number * 4

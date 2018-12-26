@@ -25,6 +25,11 @@ export default class Renderer {
     this.context.putImageData(image, x, y)
   }
 
+  writeSprite(tile, palette, x, y) {
+    const image = this.generateTileImage(tile, palette)
+    this.context.putImageData(image, x, y)
+  }
+
   generateTileImage(tile, palette) {
     const image = this.context.createImageData(8, 8)
 
