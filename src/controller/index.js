@@ -1,0 +1,50 @@
+export default class Controller {
+  constructor() {
+    // 0: A, 1: B, 2: SELECT, 3: START, 4: UP, 5: DOWN, 6: LEFT, 7: RIGHT
+    this.button = new Array(8).fill(0)
+
+    this.run()
+  }
+
+  run() {
+    this.runKeyListener()
+  }
+
+  runKeyListener() {
+    document.addEventListener('keydown', this.handler.bind(this))
+    document.addEventListener('keyup', this.handler.bind(this))
+  }
+
+  handler(e) {
+    const value = e.type === 'keydown' ? 1 : 0
+
+    switch (e.keyCode) {
+      case 37: // ← key
+        this.button[6] = value
+        break
+      case 38: // ↑ key
+        this.button[4] = value
+        break
+      case 39: // → key
+        this.button[7] = value
+        break
+      case 40: // ↓ key
+        this.button[5] = value
+        break
+      case 65: // a
+        this.button[0] = value
+        break
+      case 83: // s
+        this.button[1] = value
+        break
+      case 75: // k
+        this.button[2] = value
+        break
+      case 76: // l
+        this.button[3] = value
+        break
+      default:
+        break
+    }
+  }
+}

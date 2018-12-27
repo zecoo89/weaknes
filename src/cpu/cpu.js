@@ -22,6 +22,7 @@ export default class Cpu {
 
   connect(parts) {
     parts.bus && this.ram.connect(parts)
+    parts.controller && this.ram.connect(parts)
   }
 
   reset() {
@@ -32,7 +33,8 @@ export default class Cpu {
   run() {
     const execute = this.eval.bind(this)
 
-    Util.isNodejs() ? setInterval(execute, 10) : execute()
+    //Util.isNodejs() ? setInterval(execute, 10) : execute()
+    setInterval(execute, 10)
   }
 
   // 命令を処理する
