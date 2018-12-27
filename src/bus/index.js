@@ -30,13 +30,13 @@ export default class Bus {
         break
       case 0x2005:
         this.scrollSetting = value
-      break
-        /* vramへ書き込む際のアドレスを決める
-         * 1回目：上位アドレス
-         * 2回目：下位アドレス */
+        break
+      /* vramへ書き込む際のアドレスを決める
+       * 1回目：上位アドレス
+       * 2回目：下位アドレス */
       case 0x2006:
         this.vramAddr = value
-      break
+        break
       /* vramへ書き込む */
       case 0x2007:
         this.ppu.vram.write(this.ppu.vp++, value)
@@ -105,7 +105,7 @@ export default class Bus {
   set spriteWriteSetting(value) {
     this.spriteWriteSetting_.push(value)
 
-    if(this.spriteWriteSetting_.length === 4) {
+    if (this.spriteWriteSetting_.length === 4) {
       this.ppu.writeSprite(this.spriteWriteSetting)
       this.spriteWriteSetting_.length = 0
     }
