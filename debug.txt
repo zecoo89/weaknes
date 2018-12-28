@@ -1,4 +1,0 @@
-
-> nes_emu@1.0.0 debug /Users/yuuki-k/Project/weaknes
-> node diff.js
-
