@@ -53,5 +53,6 @@ export default class Util {
     }
 
     instruction.call()
+    this.cycle += opcode.cycle
   }
 }
