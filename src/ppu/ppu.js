@@ -1,4 +1,5 @@
 import Vram from './vram'
+import Oam from './oam'
 
 export default class Ppu {
   constructor() {
@@ -7,53 +8,19 @@ export default class Ppu {
 
   init() {
     this.vram = new Vram()
+    this.oam = new Oam()
+
+    this.scrollSetting_ = []
+    this.spriteWriteSetting_ = []
+
     this.setting = 0x00 // PPUの基本設定
     this.screenSetting = 0x00 // PPUの表示設定
-    this.spriteAddr = 0x00 // スプライトRAMへの書き込みアドレス
     this.state = 0xff
-    this.vp = null // 画面の更新位置
-    this.horizontalScroll = 0x00 // 水平スクロールの設定
-    this.verticalScroll = 0x00 // 垂直スクロールの設定
   }
 
   connect(parts) {
-    if (parts.bus) {
-      parts.bus.connect({ ppu: this })
-    }
-
-    if (parts.renderer) {
-      this.renderer = parts.renderer
-    }
-  }
-
-  /* $2000 - $23BFのネームテーブルを更新する */
-  refreshDisplay() {
-    /* タイル(8x8)を32*30個 */
-    for (let i = 0x2000; i <= 0x23bf; i++) {
-      const tileId = this.vram.read(i)
-      /* タイルを指定 */
-      const tile = this.tiles[tileId]
-      /* タイルが使用するパレットを取得 */
-      const paletteId = this.selectPalette(tileId)
-      //const palette = this.selectBackgroundPalettes(paletteId)
-      const palette = this.selectSpritePalettes(paletteId)
-
-      /* タイルとパレットをRendererに渡す */
-      this.renderer.write(tile, palette)
-    }
-  }
-
-  writeSprite(setting) {
-    const tileId = setting.tileId + 256 // bg = 0 ~ 255, sprite = 256~512
-    const tile = this.tiles[tileId]
-    const paletteId = setting.paletteId
-
-    const palette = this.selectSpritePalettes(paletteId)
-
-    const x = setting.x
-    const y = setting.y
-
-    this.renderer.writeSprite(tile, palette, x, y)
+    parts.cpu && this.oam.connect(parts)
+    parts.renderer && (this.renderer = parts.renderer)
   }
 
   /* 0x0000 - 0x1fffのメモリにCHR-ROMを読み込む */
@@ -64,6 +31,40 @@ export default class Ppu {
 
     /* CHR領域からタイルを抽出しておく */
     this.extractTiles()
+  }
+
+  /* $2000 - $23BFのネームテーブルを更新する */
+  refreshDisplay() {
+    /* タイル(8x8)を32*30個 */
+    for (let i = 0x2000; i <= 0x23bf; i++) {
+      const tileId = this.vram.read(i)
+      // タイルを指定
+      const tile = this.tiles[tileId]
+      // タイルが使用するパレットを取得
+      const paletteId = this.selectPalette(tileId)
+      //const palette = this.selectBackgroundPalettes(paletteId)
+      const palette = this.selectSpritePalettes(paletteId)
+
+      // タイルとパレットをRendererに渡す
+      this.renderer.write(tile, palette)
+    }
+
+    this.writeSprite(0)
+    this.writeSprite(1)
+  }
+
+  writeSprite(id) {
+    const setting = this.oam.readSpriteAttr(id)
+    const tileId = setting.tileId + 256 // bg = 0 ~ 255, sprite = 256~512
+    const tile = this.tiles[tileId]
+    const paletteId = setting.paletteId
+
+    const palette = this.selectSpritePalettes(paletteId)
+
+    const x = setting.x
+    const y = setting.y
+
+    this.renderer.writeSprite(tile, palette, x, y)
   }
 
   // 8x8のタイルをすべてvramのCHRから抽出しておく
@@ -146,5 +147,16 @@ export default class Ppu {
     }
 
     return palette
+  }
+
+  set scrollSetting(value) {
+    if (this.scrollSetting_.length < 1) {
+      this.scrollSetting_.push(value)
+    } else {
+      this.scrollSetting_.push(value)
+      this.horizontalScroll = this.scrollSetting_[0]
+      this.verticalScroll = this.scrollSetting_[1]
+      this.scrollSetting_.length = 0
+    }
   }
 }

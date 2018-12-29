@@ -21,7 +21,8 @@ export default class Cpu {
   }
 
   connect(parts) {
-    parts.bus && this.ram.connect(parts)
+    parts.ppu && (this.ppu = parts.ppu)
+    parts.ppu && this.ram.connect(parts)
     parts.controller && this.ram.connect(parts)
   }
 
