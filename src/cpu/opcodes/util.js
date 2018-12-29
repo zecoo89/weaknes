@@ -6,10 +6,10 @@ export default class Util {
     let prefix = '$'
     let value
 
-    if (addressing.name === 'bound immediate') {
+    if (addressing.name === 'immediate') {
       prefix = '#$'
       value = this.ram.read(value_)
-    } else if (addressing.name === 'bound implied') {
+    } else if (addressing.name === 'implied') {
       prefix = ''
       value = ''
     } else {
@@ -35,15 +35,17 @@ export default class Util {
     console.log(chars)
   }
 
-  static execute(instructionName, addressingName) {
+  static execute(opcode) {
     let addrOfOpcode
     if (this.isDebug) {
       addrOfOpcode = this.registers.pc - 1
     }
 
+    const addressingName = opcode.addressing
     const addressing = Addressing[addressingName].bind(this)
     const addr = addressing.call()
 
+    const instructionName = opcode.instruction
     const instruction = Instructions[instructionName].bind(this, addr)
 
     if (this.isDebug) {

@@ -1,57 +1,43 @@
-import Util from './util'
-
 /* 0xc0 - 0xcF */
 export default [
   /* 0xc0: CPY immediate */
-  function() {
-    Util.execute.call(this, 'CPY', 'immediate')
-  },
+
+  { instruction: 'CPY', addressing: 'immediate' },
   /* 0xc1: CMP indexIndirect */
-  function() {
-    Util.execute.call(this, 'CMP', 'indexIndirect')
-  },
-  /* 0xc2: 2byte NOP (Use zeropage for 2byte)*/
-  function() {
-    Util.execute.call(this, 'NOP', 'zeropage')
-  },
-  '3:ISC',
+
+  { instruction: 'CMP', addressing: 'indexIndirect' },
+  /* 0xc2: 2byte NOP (Use zeropage for 2byte}*/
+
+  { instruction: 'NOP', addressing: 'zeropage' },
+  { instruction: 'ISC', addressing: 'null' },
   /* 0xc4: CPY zeropage*/
-  function() {
-    Util.execute.call(this, 'CPY', 'zeropage')
-  },
+
+  { instruction: 'CPY', addressing: 'zeropage' },
   /* 0xc5: CMP zeropage */
-  function() {
-    Util.execute.call(this, 'CMP', 'zeropage')
-  },
+
+  { instruction: 'CMP', addressing: 'zeropage' },
   /* 0xc6: DEC zeropage*/
-  function() {
-    Util.execute.call(this, 'DEC', 'zeropage')
-  },
-  '7:ISC',
+
+  { instruction: 'DEC', addressing: 'zeropage' },
+  { instruction: 'ISC', addressing: 'null' },
   /* 0xc8: INY implied */
-  function() {
-    Util.execute.call(this, 'INY', 'implied')
-  },
+
+  { instruction: 'INY', addressing: 'implied' },
   /* 0xc9: CMP immediate */
-  function() {
-    Util.execute.call(this, 'CMP', 'immediate')
-  },
+
+  { instruction: 'CMP', addressing: 'immediate' },
   /* 0xca: DEX implied */
-  function() {
-    Util.execute.call(this, 'DEX', 'implied')
-  },
-  'b:SBC',
+
+  { instruction: 'DEX', addressing: 'implied' },
+  { instruction: 'SBC', addressing: 'null' },
   /* 0xcc: CPY absolute */
-  function() {
-    Util.execute.call(this, 'CPY', 'absolute')
-  },
+
+  { instruction: 'CPY', addressing: 'absolute' },
   /* 0xcd: CMP absolute*/
-  function() {
-    Util.execute.call(this, 'CMP', 'absolute')
-  },
+
+  { instruction: 'CMP', addressing: 'absolute' },
   /* 0xce: DEC absolute */
-  function() {
-    Util.execute.call(this, 'DEC', 'absolute')
-  },
-  'f:DCP'
+
+  { instruction: 'DEC', addressing: 'absolute' },
+  { instruction: 'DCP', addressing: 'null' }
 ]

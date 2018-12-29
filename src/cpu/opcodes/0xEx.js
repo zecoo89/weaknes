@@ -1,57 +1,43 @@
-import Util from './util'
-
 /* 0xe0 - 0xeF */
 export default [
   /* 0xe0: CPX immediate */
-  function() {
-    Util.execute.call(this, 'CPX', 'immediate')
-  },
+
+  { instruction: 'CPX', addressing: 'immediate' },
   /* 0xe1: SBC indexIndirect */
-  function() {
-    Util.execute.call(this, 'SBC', 'indexIndirect')
-  },
-  /* 0xe0: 2byte NOP (Use zeropage for 2byte)*/
-  function() {
-    Util.execute.call(this, 'NOP', 'zeropage')
-  },
-  '3:ISC',
+
+  { instruction: 'SBC', addressing: 'indexIndirect' },
+  /* 0xe0: 2byte NOP (Use zeropage for 2byte}*/
+
+  { instruction: 'NOP', addressing: 'zeropage' },
+  { instruction: 'ISC', addressing: 'null' },
   /* 0xe4: CPX zeropage */
-  function() {
-    Util.execute.call(this, 'CPX', 'zeropage')
-  },
+
+  { instruction: 'CPX', addressing: 'zeropage' },
   /* 0xe5: SBC zeropage*/
-  function() {
-    Util.execute.call(this, 'SBC', 'zeropage')
-  },
+
+  { instruction: 'SBC', addressing: 'zeropage' },
   /* 0xe6: INC zeropage*/
-  function() {
-    Util.execute.call(this, 'INC', 'zeropage')
-  },
-  '7:ISC',
+
+  { instruction: 'INC', addressing: 'zeropage' },
+  { instruction: 'ISC', addressing: 'null' },
   /* 0xe8: INX implied */
-  function() {
-    Util.execute.call(this, 'INX', 'implied')
-  },
+
+  { instruction: 'INX', addressing: 'implied' },
   /* 0xe9: SBC immediate */
-  function() {
-    Util.execute.call(this, 'SBC', 'immediate')
-  },
+
+  { instruction: 'SBC', addressing: 'immediate' },
   /* 0xea: NOP implied */
-  function() {
-    Util.execute.call(this, 'NOP', 'implied')
-  },
-  'b:SBC',
+
+  { instruction: 'NOP', addressing: 'implied' },
+  { instruction: 'SBC', addressing: 'null' },
   /* 0xec: CPX absolute */
-  function() {
-    Util.execute.call(this, 'CPX', 'absolute')
-  },
+
+  { instruction: 'CPX', addressing: 'absolute' },
   /* 0xed: SBC absolute */
-  function() {
-    Util.execute.call(this, 'SBC', 'absolute')
-  },
+
+  { instruction: 'SBC', addressing: 'absolute' },
   /* 0xee: INC absolute*/
-  function() {
-    Util.execute.call(this, 'INC', 'absolute')
-  },
-  'f:ISC'
+
+  { instruction: 'INC', addressing: 'absolute' },
+  { instruction: 'ISC', addressing: 'null' }
 ]

@@ -1,57 +1,43 @@
-import Util from './util'
-
 /* 0x80 - 0x8F */
 export default [
-  /* 0x80: 2byte NOP (Use zeropage for 2byte)*/
-  function() {
-    Util.execute.call(this, 'NOP', 'zeropage')
-  },
+  /* 0x80: 2byte NOP (Use zeropage for 2byte}*/
+
+  { instruction: 'NOP', addressing: 'zeropage' },
   /* 0x81: STA indexIndirect */
-  function() {
-    Util.execute.call(this, 'STA', 'indexIndirect')
-  },
-  /* 0x82: 2byte NOP (Use zeropage for 2byte)*/
-  function() {
-    Util.execute.call(this, 'NOP', 'zeropage')
-  },
-  '3:SAX',
+
+  { instruction: 'STA', addressing: 'indexIndirect' },
+  /* 0x82: 2byte NOP (Use zeropage for 2byte}*/
+
+  { instruction: 'NOP', addressing: 'zeropage' },
+  { instruction: 'SAX', addressing: 'null' },
   /* 0x84: STY zeropage */
-  function() {
-    Util.execute.call(this, 'STY', 'zeropage')
-  },
+
+  { instruction: 'STY', addressing: 'zeropage' },
   /* 0x85: STA zeropage */
-  function() {
-    Util.execute.call(this, 'STA', 'zeropage')
-  },
+
+  { instruction: 'STA', addressing: 'zeropage' },
   /* 0x86: STX Zeropage */
-  function() {
-    Util.execute.call(this, 'STX', 'zeropage')
-  },
-  '7:SAX',
+
+  { instruction: 'STX', addressing: 'zeropage' },
+  { instruction: 'SAX', addressing: 'null' },
   /* 0x88: DEY implied */
-  function() {
-    Util.execute.call(this, 'DEY', 'implied')
-  },
-  /* 0x89: 2byte NOP (Use zeropage for 2byte)*/
-  function() {
-    Util.execute.call(this, 'NOP', 'zeropage')
-  },
+
+  { instruction: 'DEY', addressing: 'implied' },
+  /* 0x89: 2byte NOP (Use zeropage for 2byte}*/
+
+  { instruction: 'NOP', addressing: 'zeropage' },
   /* 0x8a: TXA implied */
-  function() {
-    Util.execute.call(this, 'TXA', 'implied')
-  },
-  'b:XAA',
+
+  { instruction: 'TXA', addressing: 'implied' },
+  { instruction: 'XAA', addressing: 'null' },
   /* 0x8c STY absolute */
-  function() {
-    Util.execute.call(this, 'STY', 'absolute')
-  },
+
+  { instruction: 'STY', addressing: 'absolute' },
   /* 0x8d: STA absolute */
-  function() {
-    Util.execute.call(this, 'STA', 'absolute')
-  },
+
+  { instruction: 'STA', addressing: 'absolute' },
   /* 0x8e: STX absolute*/
-  function() {
-    Util.execute.call(this, 'STX', 'absolute')
-  },
-  'f:SAX'
+
+  { instruction: 'STX', addressing: 'absolute' },
+  { instruction: 'SAX', addressing: 'null' }
 ]

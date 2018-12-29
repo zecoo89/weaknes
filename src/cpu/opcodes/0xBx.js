@@ -1,54 +1,41 @@
-import Util from './util'
-
 /* 0xb0 - 0xbF */
 export default [
   /* 0xb0: BCS implied */
-  function() {
-    Util.execute.call(this, 'BCS', 'relative')
-  },
+
+  { instruction: 'BCS', addressing: 'relative' },
   /* 0xb1: LDA indirectIndex */
-  function() {
-    Util.execute.call(this, 'LDA', 'indirectIndex')
-  },
-  '2:STP',
-  '3:LAX',
+
+  { instruction: 'LDA', addressing: 'indirectIndex' },
+  { instruction: 'STP', addressing: 'null' },
+  { instruction: 'LAX', addressing: 'null' },
   /* 0xb4: LDY zeropageX */
-  function() {
-    Util.execute.call(this, 'LDY', 'zeropageX')
-  },
+
+  { instruction: 'LDY', addressing: 'zeropageX' },
   /* 0xb5: LDA zeropageX */
-  function() {
-    Util.execute.call(this, 'LDA', 'zeropageX')
-  },
+
+  { instruction: 'LDA', addressing: 'zeropageX' },
   /* 0xb6: LDX zeropageY */
-  function() {
-    Util.execute.call(this, 'LDX', 'zeropageY')
-  },
-  '7:LAX',
+
+  { instruction: 'LDX', addressing: 'zeropageY' },
+  { instruction: 'LAX', addressing: 'null' },
   /* 0xb8: CLV implied */
-  function() {
-    Util.execute.call(this, 'CLV', 'implied')
-  },
+
+  { instruction: 'CLV', addressing: 'implied' },
   /* 0xb9: LDA absoluteY */
-  function() {
-    Util.execute.call(this, 'LDA', 'absoluteY')
-  },
+
+  { instruction: 'LDA', addressing: 'absoluteY' },
   /* 0xba: TSX implied */
-  function() {
-    Util.execute.call(this, 'TSX', 'implied')
-  },
-  'b:LAS',
+
+  { instruction: 'TSX', addressing: 'implied' },
+  { instruction: 'LAS', addressing: 'null' },
   /* 0xbc: LDY absoluteX*/
-  function() {
-    Util.execute.call(this, 'LDY', 'absoluteX')
-  },
+
+  { instruction: 'LDY', addressing: 'absoluteX' },
   /* 0xbd: LDA bsoluteX */
-  function() {
-    Util.execute.call(this, 'LDA', 'absoluteX')
-  },
+
+  { instruction: 'LDA', addressing: 'absoluteX' },
   /* 0xbe: LDX absoluteY*/
-  function() {
-    Util.execute.call(this, 'LDX', 'absoluteY')
-  },
-  'f:LAX'
+
+  { instruction: 'LDX', addressing: 'absoluteY' },
+  { instruction: 'LAX', addressing: 'null' }
 ]

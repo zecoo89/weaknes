@@ -1,54 +1,41 @@
-import Util from './util'
-
 /* 0xf0 - 0xff */
 export default [
   /* 0xf0: BEQ relative */
-  function() {
-    Util.execute.call(this, 'BEQ', 'relative')
-  },
+
+  { instruction: 'BEQ', addressing: 'relative' },
   /* 0xf1: SBC indirectIndex */
-  function() {
-    Util.execute.call(this, 'SBC', 'indirectIndex')
-  },
-  '2:STP',
-  '3:ISC',
-  /* 0xf4: 2byte NOP (Use zeropage for 2byte)*/
-  function() {
-    Util.execute.call(this, 'NOP', 'zeropage')
-  },
+
+  { instruction: 'SBC', addressing: 'indirectIndex' },
+  { instruction: 'STP', addressing: 'null' },
+  { instruction: 'ISC', addressing: 'null' },
+  /* 0xf4: 2byte NOP (Use zeropage for 2byte}*/
+
+  { instruction: 'NOP', addressing: 'zeropage' },
   /* 0xf5: SBC zeropageX */
-  function() {
-    Util.execute.call(this, 'SBC', 'zeropageX')
-  },
+
+  { instruction: 'SBC', addressing: 'zeropageX' },
   /* 0xf6: INC zeropageX */
-  function() {
-    Util.execute.call(this, 'INC', 'zeropageX')
-  },
-  '7:ISC',
+
+  { instruction: 'INC', addressing: 'zeropageX' },
+  { instruction: 'ISC', addressing: 'null' },
   /* 0xf8: SED implied */
-  function() {
-    Util.execute.call(this, 'SED', 'implied')
-  },
+
+  { instruction: 'SED', addressing: 'implied' },
   /* 0xf9 SBC absoluteY */
-  function() {
-    Util.execute.call(this, 'SBC', 'absoluteY')
-  },
+
+  { instruction: 'SBC', addressing: 'absoluteY' },
   /* 0xfa: NOP */
-  function() {
-    Util.execute.call(this, 'NOP', 'implied')
-  },
-  'b:ISC',
-  /* 0xfc: 3byte NOP (Use absolute for 3byte)*/
-  function() {
-    Util.execute.call(this, 'NOP', 'absolute')
-  },
+
+  { instruction: 'NOP', addressing: 'implied' },
+  { instruction: 'ISC', addressing: 'null' },
+  /* 0xfc: 3byte NOP (Use absolute for 3byte}*/
+
+  { instruction: 'NOP', addressing: 'absolute' },
   /* 0xfd: SBC absoluteX */
-  function() {
-    Util.execute.call(this, 'SBC', 'absoluteX')
-  },
+
+  { instruction: 'SBC', addressing: 'absoluteX' },
   /* 0xfe: INC absoluteX */
-  function() {
-    Util.execute.call(this, 'INC', 'absoluteX')
-  },
-  'f:ISC'
+
+  { instruction: 'INC', addressing: 'absoluteX' },
+  { instruction: 'ISC', addressing: 'null' }
 ]

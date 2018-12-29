@@ -2,6 +2,7 @@ import Registers from './registers'
 import Ram from './ram'
 import opcodes from './opcodes'
 import Util from '../util'
+import OpcodeUtil from './opcodes/util'
 
 /* 6502 CPU */
 export default class Cpu {
@@ -12,10 +13,7 @@ export default class Cpu {
 
   init() {
     this.registers = new Registers()
-    //this.opcodes = opcodes
-    this.opcodes = opcodes.map(opcode => {
-      return typeof opcode === 'function' ? opcode.bind(this) : opcode
-    })
+    this.opcodes = opcodes
 
     this.ram = new Ram()
   }
@@ -43,11 +41,7 @@ export default class Cpu {
     const addr = this.registers.pc++
     const opcode = this.ram.read(addr)
 
-    if (typeof this.opcodes[opcode] !== 'function') {
-      throw new Error('0x' + opcode.toString(16) + ' is not implemented')
-    }
-
-    this.opcodes[opcode].call()
+    OpcodeUtil.execute.call(this, this.opcodes[opcode])
 
     if (!Util.isNodejs()) {
       const fn = this.eval.bind(this)

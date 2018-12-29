@@ -1,57 +1,43 @@
-import Util from './util'
-
 /* 0xA0 - 0xAF */
 export default [
   /* 0xa0: LDY immediate*/
-  function() {
-    Util.execute.call(this, 'LDY', 'immediate')
-  },
+
+  { instruction: 'LDY', addressing: 'immediate' },
   /* 0xa1: LDA indexIndirect */
-  function() {
-    Util.execute.call(this, 'LDA', 'indexIndirect')
-  },
+
+  { instruction: 'LDA', addressing: 'indexIndirect' },
   /* 0xA2: LDX immediate */
-  function() {
-    Util.execute.call(this, 'LDX', 'immediate')
-  },
-  '3:LAX',
+
+  { instruction: 'LDX', addressing: 'immediate' },
+  { instruction: 'LAX', addressing: 'null' },
   /* 0xa4: LDY zeropage */
-  function() {
-    Util.execute.call(this, 'LDY', 'zeropage')
-  },
+
+  { instruction: 'LDY', addressing: 'zeropage' },
   /* 0xa5: LDA zeropage */
-  function() {
-    Util.execute.call(this, 'LDA', 'zeropage')
-  },
+
+  { instruction: 'LDA', addressing: 'zeropage' },
   /* 0xa6 LDX zeropage */
-  function() {
-    Util.execute.call(this, 'LDX', 'zeropage')
-  },
-  '7:LAX',
+
+  { instruction: 'LDX', addressing: 'zeropage' },
+  { instruction: 'LAX', addressing: 'null' },
   /* 0xa8: TAY implied */
-  function() {
-    Util.execute.call(this, 'TAY', 'implied')
-  },
+
+  { instruction: 'TAY', addressing: 'implied' },
   /* 0xa9: LDA immediate */
-  function() {
-    Util.execute.call(this, 'LDA', 'immediate')
-  },
+
+  { instruction: 'LDA', addressing: 'immediate' },
   /* 0xaa: TAX implied */
-  function() {
-    Util.execute.call(this, 'TAX', 'implied')
-  },
-  'b:LAX',
+
+  { instruction: 'TAX', addressing: 'implied' },
+  { instruction: 'LAX', addressing: 'null' },
   /* 0xac: LDY absolute */
-  function() {
-    Util.execute.call(this, 'LDY', 'absolute')
-  },
+
+  { instruction: 'LDY', addressing: 'absolute' },
   /* 0xad: LDA absolute */
-  function() {
-    Util.execute.call(this, 'LDA', 'absolute')
-  },
+
+  { instruction: 'LDA', addressing: 'absolute' },
   /* 0xae: LDX absolute */
-  function() {
-    Util.execute.call(this, 'LDX', 'absolute')
-  },
-  'f:LAX'
+
+  { instruction: 'LDX', addressing: 'absolute' },
+  { instruction: 'LAX', addressing: 'null' }
 ]

@@ -1,54 +1,41 @@
-import Util from './util'
-
 /* 0x30 - 0x3F */
 export default [
   /* 0x30: BMI relative */
-  function() {
-    Util.execute.call(this, 'BMI', 'relative')
-  },
+
+  { instruction: 'BMI', addressing: 'relative' },
   /* 0x31: AND indirectIndex */
-  function() {
-    Util.execute.call(this, 'AND', 'indirectIndex')
-  },
-  '2:STP',
-  '3:RLA',
-  /* 0x34: 2byte NOP (Use zeropage for 2byte)*/
-  function() {
-    Util.execute.call(this, 'NOP', 'zeropage')
-  },
+
+  { instruction: 'AND', addressing: 'indirectIndex' },
+  { instruction: 'STP', addressing: 'null' },
+  { instruction: 'RLA', addressing: 'null' },
+  /* 0x34: 2byte NOP (Use zeropage for 2byte}*/
+
+  { instruction: 'NOP', addressing: 'zeropage' },
   /* 0x35: AND zeropageX */
-  function() {
-    Util.execute.call(this, 'AND', 'zeropageX')
-  },
+
+  { instruction: 'AND', addressing: 'zeropageX' },
   /* 0x36 ROL zeropageX */
-  function() {
-    Util.execute.call(this, 'ROL', 'zeropageX')
-  },
-  '7:RLA',
+
+  { instruction: 'ROL', addressing: 'zeropageX' },
+  { instruction: 'RLA', addressing: 'null' },
   /* 0x38: SEC implied */
-  function() {
-    Util.execute.call(this, 'SEC', 'implied')
-  },
+
+  { instruction: 'SEC', addressing: 'implied' },
   /* 0x39: AND absoluteY*/
-  function() {
-    Util.execute.call(this, 'AND', 'absoluteY')
-  },
+
+  { instruction: 'AND', addressing: 'absoluteY' },
   /* 0x3a: NOP */
-  function() {
-    Util.execute.call(this, 'NOP', 'implied')
-  },
-  'b:RLA',
-  /* 0x3c: 3byte NOP (Use absolute for 3byte)*/
-  function() {
-    Util.execute.call(this, 'NOP', 'absolute')
-  },
+
+  { instruction: 'NOP', addressing: 'implied' },
+  { instruction: 'RLA', addressing: 'null' },
+  /* 0x3c: 3byte NOP (Use absolute for 3byte}*/
+
+  { instruction: 'NOP', addressing: 'absolute' },
   /* 0x3d: AND absoluteX */
-  function() {
-    Util.execute.call(this, 'AND', 'absoluteX')
-  },
+
+  { instruction: 'AND', addressing: 'absoluteX' },
   /* 0x32: ROL absoluteX */
-  function() {
-    Util.execute.call(this, 'ROL', 'absoluteX')
-  },
-  'f:RLA'
+
+  { instruction: 'ROL', addressing: 'absoluteX' },
+  { instruction: 'RLA', addressing: 'null' }
 ]
