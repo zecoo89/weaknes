@@ -9,6 +9,7 @@ export default class Cpu {
   constructor(isDebug) {
     this.init()
     this.isDebug = isDebug
+    this.cycle = 0
   }
 
   init() {
@@ -42,6 +43,11 @@ export default class Cpu {
     const opcode = this.ram.read(addr)
 
     OpcodeUtil.execute.call(this, this.opcodes[opcode])
+
+    if(this.cycle > 300) {
+      this.ppu.refreshDisplay()
+      this.cycle = 0
+    }
 
     if (!Util.isNodejs()) {
       const fn = this.eval.bind(this)

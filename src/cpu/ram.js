@@ -24,7 +24,6 @@ export default class Ram {
         break
       case 0x2004:
         this.ppu.oam.write(value)
-        this.ppu.refreshDisplay()
         break
       case 0x2005:
         this.ppu.scrollSetting = value
@@ -37,7 +36,6 @@ export default class Ram {
         break
       case 0x4014:
         this.ppu.oam.dma(value)
-        this.ppu.refreshDisplay()
         break
       default:
         this.memory[addr] = value
