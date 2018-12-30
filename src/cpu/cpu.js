@@ -38,9 +38,9 @@ export default class Cpu {
 
   // 命令を処理する
   eval() {
-    for(;;){
+    for (;;) {
       const addr = this.registers.pc++
-        const opcode = this.ram.read(addr)
+      const opcode = this.ram.read(addr)
 
       OpcodeUtil.execute.call(this, this.opcodes[opcode])
 
@@ -80,7 +80,7 @@ export default class Cpu {
     this.registers.sp--
   }
 
-    stackPop() {
-      return this.ram.read(++this.registers.sp)
-    }
+  stackPop() {
+    return this.ram.read(++this.registers.sp)
+  }
 }
