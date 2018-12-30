@@ -33,26 +33,25 @@ export default class Cpu {
   run() {
     const execute = this.eval.bind(this)
 
-    //Util.isNodejs() ? setInterval(execute, 10) : execute()
-    setInterval(execute, 10)
+    Util.isNodejs() ? setInterval(execute, 10) : execute()
   }
 
   // 命令を処理する
   eval() {
-    const addr = this.registers.pc++
-    const opcode = this.ram.read(addr)
+    for(;;){
+      const addr = this.registers.pc++
+        const opcode = this.ram.read(addr)
 
-    OpcodeUtil.execute.call(this, this.opcodes[opcode])
+      OpcodeUtil.execute.call(this, this.opcodes[opcode])
 
-    if(this.cycle > 300) {
-      this.ppu.refreshDisplay()
-      this.cycle = 0
+      if (this.cycle > 300) {
+        this.ppu.refreshDisplay()
+        this.cycle = 0
+        break
+      }
     }
 
-    if (!Util.isNodejs()) {
-      const fn = this.eval.bind(this)
-      window.requestAnimationFrame(fn)
-    }
+    window.requestAnimationFrame(this.eval.bind(this))
   }
 
   /* 0x8000~のメモリにROM内のPRG-ROMを読み込む*/
@@ -81,7 +80,7 @@ export default class Cpu {
     this.registers.sp--
   }
 
-  stackPop() {
-    return this.ram.read(++this.registers.sp)
-  }
+    stackPop() {
+      return this.ram.read(++this.registers.sp)
+    }
 }
