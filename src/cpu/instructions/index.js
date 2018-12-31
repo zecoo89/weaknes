@@ -97,11 +97,12 @@ export default {
    *   - carry
    * */
   ASL: function(addr) {
-    const value = addr ? this.ram.read(addr) : this.registers.acc
+    const isRam = addr !== null || addr !== undefined
+    const value = isRam ? this.ram.read(addr) : this.registers.acc
     const msb = Util.msb(value)
     const shifted = (value << 1) & 0xff
 
-    addr ? this.ram.write(addr, shifted) : (this.registers.acc = shifted)
+    isRam ? this.ram.write(addr, shifted) : (this.registers.acc = shifted)
     this.registers.statusNegative = Util.isNegative(shifted)
     this.registers.statusZero = Util.isZero(shifted)
     this.registers.statusCarry = msb
@@ -115,11 +116,12 @@ export default {
    * */
   /* Logical Shift Right */
   LSR: function(addr) {
-    const value = addr ? this.ram.read(addr) : this.registers.acc
+    const isRam = addr !== null || addr !== undefined
+    const value = isRam ? this.ram.read(addr) : this.registers.acc
     const lsb = Util.lsb(value)
     const shifted = value >> 1
 
-    addr ? this.ram.write(addr, shifted) : (this.registers.acc = shifted)
+    isRam ? this.ram.write(addr, shifted) : (this.registers.acc = shifted)
 
     this.registers.statusNegative = Util.isNegative(shifted)
     this.registers.statusZero = Util.isZero(shifted)
@@ -267,28 +269,30 @@ export default {
 
   /* メモリを左へローテートする */
   ROL: function(addr) {
-    const carry = this.registers.statusCarry
-    const value = addr ? this.ram.read(addr) : this.registers.acc
+    const carry = this.registers.statusCarr
+    const isRam = addr !== null || addr !== undefined
+    const value = isRam ? this.ram.read(addr) : this.registers.acc
     const msb = value >> 7
     const rotated = ((value << 1) & 0xff) | carry
 
     this.registers.statusCarry = msb
     this.registers.statusZero = Util.isZero(rotated)
     this.registers.statusNegative = Util.isNegative(rotated)
-    addr ? this.ram.write(addr, rotated) : (this.registers.acc = rotated)
+    isRam ? this.ram.write(addr, rotated) : (this.registers.acc = rotated)
   },
 
   /* メモリを右へローテートする */
   ROR: function(addr) {
     const carry = this.registers.statusCarry << 7
-    const value = addr ? this.ram.read(addr) : this.registers.acc
+    const isRam = addr !== null || addr !== undefined
+    const value = isRam ? this.ram.read(addr) : this.registers.acc
     const lsb = Util.lsb(value)
     const rotated = (value >> 1) | carry
 
     this.registers.statusCarry = lsb
     this.registers.statusZero = Util.isZero(rotated)
     this.registers.statusNegative = Util.isNegative(rotated)
-    addr ? this.ram.write(addr, rotated) : (this.registers.acc = rotated)
+    isRam ? this.ram.write(addr, rotated) : (this.registers.acc = rotated)
   },
 
   /* acc + memory + carryFlag
