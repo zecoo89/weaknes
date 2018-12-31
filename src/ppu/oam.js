@@ -5,11 +5,10 @@ export default class Oam {
   constructor() {
     this.pointer = 0x00
     this.pOffset = 0 // pointerからのオフセット(0~3)
-    this.memory = new Uint8Array(0xff)
+    this.memory = new Array(0xff).fill(0)
   }
 
   connect(parts) {
-    // DMA用に接続しておく
     parts.cpu && (this.ram = parts.cpu.ram)
   }
 
@@ -40,11 +39,6 @@ export default class Oam {
     return this.memory[addr]
   }
 
-  readSpriteAttr(id) {
-    const attr = this.formatSpriteSettingData(id)
-    return attr
-  }
-
   // DMA(Direct Memory Access)
   dma(value) {
     const start = value << 8
@@ -56,6 +50,17 @@ export default class Oam {
         this.memory[addr++] = this.ram.read(i + j)
       }
     }
+  }
+
+  attrs() {
+    const attrs_ = []
+
+    for (let i = 0; i < 64; i++) {
+      const attr = this.formatSpriteSettingData(i)
+      attrs_.push(attr)
+    }
+
+    return attrs_
   }
 
   formatSpriteSettingData(id) {
@@ -71,14 +76,14 @@ export default class Oam {
   extractAttr(attr) {
     const paletteId = attr & 0x03
     const priority = (attr >> 5) & 0x01
-    const horizontalScroll = (attr >> 6) & 0x01
-    const verticalScroll = (attr >> 7) & 0x01
+    const isHorizontalFlip = (attr >> 6) & 0x01
+    const isVerticalFlip = (attr >> 7) & 0x01
 
     return {
       paletteId,
       priority,
-      horizontalScroll,
-      verticalScroll
+      isHorizontalFlip,
+      isVerticalFlip
     }
   }
 }

@@ -42,10 +42,20 @@ export default class Util {
     }
 
     const addressingName = opcode.addressing
+
+    if (!Addressing[addressingName]) {
+      throw new Error(opcode.instruction + ' ' + opcode.addressing)
+    }
+
     const addressing = Addressing[addressingName].bind(this)
     const addr = addressing.call()
 
     const instructionName = opcode.instruction
+
+    if (!Instructions[instructionName]) {
+      throw new Error(opcode.instruction + ' ' + opcode.addressing)
+    }
+
     const instruction = Instructions[instructionName].bind(this, addr)
 
     if (this.isDebug) {

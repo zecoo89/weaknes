@@ -1,11 +1,8 @@
 export default class Ram {
   constructor() {
-    this.memory = new Uint8Array(0x10000)
+    this.memory = new Uint8Array(0x10000).fill(0)
   }
 
-  /* Memory mapped I/Oであるため，バス(Bus)を接続しておく
-   * PPU等へはBusを通してデータのやり取りを行う
-   * */
   connect(parts) {
     parts.ppu && (this.ppu = parts.ppu)
     parts.controller && (this.controller = parts.controller)
@@ -45,7 +42,9 @@ export default class Ram {
   read(addr) {
     switch (addr) {
       case 0x2002:
-        return this.ppu.state
+        //TODO 二回書き込むタイプのレジスタは途中で他のところにアクセスするとリセットされる？
+        this.ppu.scrollSetting_.length = 0
+        return this.ppu.registers.status.raw
       case 0x2007:
         return this.ppu.vram.read(addr)
       case 0x4016:

@@ -1,5 +1,6 @@
 import Vram from './vram'
 import Oam from './oam'
+import Registers from './registers'
 
 export default class Ppu {
   constructor() {
@@ -9,13 +10,22 @@ export default class Ppu {
   init() {
     this.vram = new Vram()
     this.oam = new Oam()
+    this.registers = new Registers()
 
     this.scrollSetting_ = []
-    this.spriteWriteSetting_ = []
+    this.horizontalScroll = 0
+    this.verticalScroll = 0
 
     this.setting = 0x00 // PPUの基本設定
     this.screenSetting = 0x00 // PPUの表示設定
     this.state = 0xff
+
+    this.backgroundData = []
+    this.spritesData = []
+
+    this.pointer = 0
+    this.width = 32
+    this.height = 30
   }
 
   connect(parts) {
@@ -33,38 +43,52 @@ export default class Ppu {
     this.extractTiles()
   }
 
-  /* $2000 - $23BFのネームテーブルを更新する */
-  refreshDisplay() {
-    /* タイル(8x8)を32*30個 */
-    for (let i = 0x2000; i <= 0x23bf; i++) {
-      const tileId = this.vram.read(i)
-      // タイルを指定
-      const tile = this.tiles[tileId]
-      // タイルが使用するパレットを取得
-      const paletteId = this.selectPalette(tileId)
-      //const palette = this.selectBackgroundPalettes(paletteId)
-      const palette = this.selectSpritePalettes(paletteId)
-
-      // タイルとパレットをRendererに渡す
-      this.renderer.write(tile, palette)
-    }
-
-    this.writeSprite(0)
-    this.writeSprite(1)
+  run() {
+    this.generateBackgroundData()
+    this.generateSpritesData()
   }
 
-  writeSprite(id) {
-    const setting = this.oam.readSpriteAttr(id)
-    const tileId = setting.tileId + 256 // bg = 0 ~ 255, sprite = 256~512
-    const tile = this.tiles[tileId]
-    const paletteId = setting.paletteId
+  generateBackgroundData() {
+    this.backgroundData.length = 0
+    /* Prepare tile(8x8) * (32*30) */
+    for (let i = 0x2000; i <= 0x23bf; i++) {
+      const tileId = this.vram.read(i)
+      const tile = this.tiles[tileId]
+      const paletteId = this.selectPalette(tileId)
+      const palette = this.selectBackgroundPalettes(paletteId)
+      const x = (this.pointer % this.width) * 8
+      const y = ((this.pointer - (this.pointer % this.width)) / this.width) * 8
+      this.pointer++
 
-    const palette = this.selectSpritePalettes(paletteId)
+      this.backgroundData.push({
+        tile,
+        palette,
+        x,
+        y
+      })
+    }
+    this.pointer = 0
+  }
 
-    const x = setting.x
-    const y = setting.y
+  generateSpritesData() {
+    this.spritesData.length = 0
+    const attrs = this.oam.attrs()
 
-    this.renderer.writeSprite(tile, palette, x, y)
+    attrs.forEach(attr => {
+      const tileId = attr.tileId + 256
+      const tile = this.tiles[tileId]
+      const paletteId = attr.paletteId
+      const palette = this.selectSpritePalettes(paletteId)
+
+      this.spritesData.push({
+        tile,
+        palette,
+        x: attr.x,
+        y: attr.y,
+        isHorizontalFlip: attr.isHorizontalFlip,
+        isVerticalFlip: attr.isVerticalFlip
+      })
+    })
   }
 
   // 8x8のタイルをすべてvramのCHRから抽出しておく
@@ -127,8 +151,11 @@ export default class Ppu {
   selectBackgroundPalettes(number) {
     const palette = []
 
-    const start = 0x3f00 + number * 4
+    const start = 0x3f00 + number * 4 + 1
     const end = 0x3f00 + number * 4 + 4
+
+    // パレット4色の1色目は0x3f00をミラーする
+    palette.push(this.vram.read(0x3f00))
     for (let i = start; i < end; i++) {
       palette.push(this.vram.read(i))
     }
@@ -140,8 +167,11 @@ export default class Ppu {
   selectSpritePalettes(number) {
     const palette = []
 
-    const start = 0x3f10 + number * 4
+    const start = 0x3f10 + number * 4 + 1
     const end = 0x3f10 + number * 4 + 4
+
+    // パレット4色の1色目は0x3f00をミラーする
+    palette.push(this.vram.read(0x3f00))
     for (let i = start; i < end; i++) {
       palette.push(this.vram.read(i))
     }
@@ -151,11 +181,11 @@ export default class Ppu {
 
   set scrollSetting(value) {
     if (this.scrollSetting_.length < 1) {
+      this.horizontalScroll = value
       this.scrollSetting_.push(value)
     } else {
       this.scrollSetting_.push(value)
-      this.horizontalScroll = this.scrollSetting_[0]
-      this.verticalScroll = this.scrollSetting_[1]
+      this.verticalScroll = value
       this.scrollSetting_.length = 0
     }
   }

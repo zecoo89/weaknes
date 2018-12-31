@@ -36,7 +36,7 @@ export default class Cpu {
     Util.isNodejs() ? setInterval(execute, 10) : execute()
   }
 
-  // 命令を処理する
+  // Run instructions of 1/60 frame
   eval() {
     for (;;) {
       const addr = this.registers.pc++
@@ -44,8 +44,26 @@ export default class Cpu {
 
       OpcodeUtil.execute.call(this, this.opcodes[opcode])
 
-      if (this.cycle > 300) {
-        this.ppu.refreshDisplay()
+      if (this.cycle > 27000) {
+        //TODO レジスタをすべて保存してからnmiアドレスに遷移する
+        const addr = this.registers.pc
+        const highAddr = addr >> 8
+        const lowAddr = addr & 0x00ff
+        this.stackPush(highAddr)
+        this.stackPush(lowAddr)
+        const statusBits = this.registers.statusAllRawBits
+        this.stackPush(statusBits)
+        this.registers.pc = this.nmi
+
+        //Vblank分のサイクルを実行する
+        this.cycle = 0
+        for (; this.cycle < 3000; ) {
+          const addr = this.registers.pc++
+          const opcode = this.ram.read(addr)
+          OpcodeUtil.execute.call(this, this.opcodes[opcode])
+        }
+        //背景とスプライトのデータを更新する
+        this.ppu.run()
         this.cycle = 0
         break
       }
@@ -56,8 +74,6 @@ export default class Cpu {
 
   /* 0x8000~のメモリにROM内のPRG-ROMを読み込む*/
   set prgRom(prgRom) {
-    //this.interruptVectors(prgRom)
-
     let startAddr = 0x8000
     for (let i = 0; i < prgRom.length; i++) {
       this.ram.write(startAddr + i, prgRom[i])
@@ -72,6 +88,8 @@ export default class Cpu {
     // プログラムカウンタの初期値を0xFFFDから設定する
     const resetAddr = this.ram.read(0xfffd) << 8
     this.registers.pc = resetAddr ? resetAddr : 0x8000
+
+    this.nmi = this.ram.read(0xfffa) | (this.ram.read(0xfffb) << 8)
   }
 
   /* スタック領域に対する操作*/
