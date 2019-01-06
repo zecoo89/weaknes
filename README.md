@@ -1,6 +1,6 @@
 # Weaknes
 
-Weaknes is a NES emulator written by JavaScript and no practical now.
+Weaknes is a NES emulator written by JavaScript.
 
 ## Usage
 
