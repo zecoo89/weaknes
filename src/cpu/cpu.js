@@ -44,30 +44,33 @@ export default class Cpu {
 
       OpcodeUtil.execute.call(this, this.opcodes[opcode])
 
-      if (this.cycle > 27000) {
-        //TODO レジスタをすべて保存してからnmiアドレスに遷移する
-        const addr = this.registers.pc
-        const highAddr = addr >> 8
-        const lowAddr = addr & 0x00ff
-        this.stackPush(highAddr)
-        this.stackPush(lowAddr)
-        const statusBits = this.registers.statusAllRawBits
-        this.stackPush(statusBits)
-        this.registers.pc = this.nmi
+      if (this.cycle > 30000) break
+    }
 
-        //Vblank分のサイクルを実行する
-        this.cycle = 0
-        for (; this.cycle < 3000; ) {
-          const addr = this.registers.pc++
-          const opcode = this.ram.read(addr)
-          OpcodeUtil.execute.call(this, this.opcodes[opcode])
-        }
-        //背景とスプライトのデータを更新する
-        this.ppu.run()
-        this.cycle = 0
-        break
+    const isInterruptable = this.ppu.setting >> 7
+    if(isInterruptable) {
+      //TODO レジスタをすべて保存してからnmiアドレスに遷移する
+      const addr = this.registers.pc
+      const highAddr = addr >> 8
+      const lowAddr = addr & 0x00ff
+      this.stackPush(highAddr)
+      this.stackPush(lowAddr)
+      const statusBits = this.registers.statusAllRawBits
+      this.stackPush(statusBits)
+      this.registers.pc = this.nmi
+
+      //Vblank分のサイクルを実行する
+      this.cycle = 0
+      for (; this.cycle < 3000; ) {
+        const addr = this.registers.pc++
+        const opcode = this.ram.read(addr)
+        OpcodeUtil.execute.call(this, this.opcodes[opcode])
       }
     }
+
+    //背景とスプライトのデータを更新する
+    this.ppu.run()
+    this.cycle = 0
 
     window.requestAnimationFrame(this.eval.bind(this))
   }
@@ -98,7 +101,7 @@ export default class Cpu {
     this.registers.sp--
   }
 
-  stackPop() {
-    return this.ram.read(++this.registers.sp)
-  }
+    stackPop() {
+      return this.ram.read(++this.registers.sp)
+    }
 }

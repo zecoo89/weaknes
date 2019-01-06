@@ -16,7 +16,7 @@ export default class Ppu {
     this.horizontalScroll = 0
     this.verticalScroll = 0
 
-    this.setting = 0x00 // PPUの基本設定
+    this.setting = 0x08 // PPUの基本設定
     this.screenSetting = 0x00 // PPUの表示設定
     this.state = 0xff
 
@@ -54,7 +54,7 @@ export default class Ppu {
     for (let i = 0x2000; i <= 0x23bf; i++) {
       const tileId = this.vram.read(i)
       const tile = this.tiles[tileId]
-      const paletteId = this.selectPalette(tileId)
+      const paletteId = this.selectPalette(i)
       const palette = this.selectBackgroundPalettes(paletteId)
       const x = (this.pointer % this.width) * 8
       const y = ((this.pointer - (this.pointer % this.width)) / this.width) * 8
@@ -137,22 +137,38 @@ export default class Ppu {
 
   /* 属性テーブルから該当パレットの番号を取得する */
   selectPalette(n) {
-    const blockPosition = ((n - (n % 64)) / 64) * 8 + ((n % 64) - (n % 4)) / 4
-    const bitPosition = n % 4
     const start = 0x23c0
+    const blockPosition = this.blockPosition(n)
+    const bitPosition = this.bitPosition(n)
 
-    const block = this.vram.read(start + blockPosition)
-    const bit = (block >> bitPosition) & 0x03
+    const block = this.vram.read(start+ blockPosition * 2)
+    const bit = block >> (bitPosition * 2)
 
     return bit
+  }
+
+  blockPosition(n) {
+    const x = (n % 32)
+    const y = ((n - (n % 32)) / 32 - (((n - (n % 32)) / 32) % 2)) * 16 / 2
+    const blockPosition = y + (x - (x % 2)) / 2
+
+    return blockPosition
+  }
+
+  bitPosition(n) {
+    const x = n % 2
+    const y = ((n - n % 32) / 32) % 2
+    const bitPosition = y * 2 + x
+
+    return bitPosition
   }
 
   /* $3F00-$3F0Fからバックグラウンド(背景)パレットを取得する */
   selectBackgroundPalettes(number) {
     const palette = []
 
-    const start = 0x3f00 + number * 4 + 1
-    const end = 0x3f00 + number * 4 + 4
+    const start = 0x3f01 + number * 4
+    const end = 0x3f01 + number * 4 + 3
 
     // パレット4色の1色目は0x3f00をミラーする
     palette.push(this.vram.read(0x3f00))
@@ -167,8 +183,8 @@ export default class Ppu {
   selectSpritePalettes(number) {
     const palette = []
 
-    const start = 0x3f10 + number * 4 + 1
-    const end = 0x3f10 + number * 4 + 4
+    const start = 0x3f11 + number * 4
+    const end = 0x3f11 + number * 4 + 3
 
     // パレット4色の1色目は0x3f00をミラーする
     palette.push(this.vram.read(0x3f00))
