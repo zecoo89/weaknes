@@ -9,7 +9,8 @@ Weaknes is a NES emulator written by JavaScript and no practical now.
 npm install
 npm run build
 ```
-### Sample index.js
+### Usage of NES emulator
+#### index.js
 ```
 async function main() {
   const path = './assets/nestest/nestest.nes'
@@ -35,7 +36,7 @@ async function main() {
 
 main()
 ```
-### Sample index.html
+### index.html
 ```
 <!DOCTYPE html>
 <html>
@@ -51,9 +52,47 @@ main()
 </html>
 ```
 
+### Usage of Tool
+#### index.js
+```
+const Rom = NesPack.Rom
+
+const data = await fetch(path)
+.then(response => response.arrayBuffer())
+.then(buffer => new Uint8Array(buffer))
+
+const rom = new Rom(data)
+nes.rom = rom
+
+const Tool = NesPack.Tool
+const tool = new Tool(rom)
+
+const palette = [0x31, 0x3d, 0x2d, 0x1f]
+
+// First argument is id of HTML Canvas's tag
+tool.dumpChrRom('chr-dump', palette)
+```
+
+#### index.html
+
+```
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="icon" href="data:;base64,iVBORwOKGO=" />
+    <title>Renderer of NES emulator</title>
+  </head>
+  <body>
+    <canvas id="chr-dump" width="300" height="240"></canvas>
+    <script src="dist/bundle.js"></script>
+    <script src="index.js"></script>
+  </body>
+</html>
+```
+
 ### Run server
 ```
 npm run serve
 ```
-
 After run server, open http://localhost:1234
