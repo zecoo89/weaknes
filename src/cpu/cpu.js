@@ -89,7 +89,7 @@ export default class Cpu {
     }
 
     // プログラムカウンタの初期値を0xFFFDから設定する
-    const resetAddr = this.ram.read(0xfffd) << 8
+    const resetAddr = this.ram.read(0xfffd) << 8 | this.ram.read(0xfffc)
     this.registers.pc = resetAddr ? resetAddr : 0x8000
 
     this.nmi = this.ram.read(0xfffa) | (this.ram.read(0xfffb) << 8)
