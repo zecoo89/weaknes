@@ -538,42 +538,198 @@ export default {
     // 何もしない
   },
 
-  /* ドキュメントに存在しない
-   * NOPと同じ扱いにしとく
-   * */
-  ISC: function() {
+  /* Following, Illegal opcodes */
 
+  /* INC then SBC */
+  ISC: function(addr) {
+    // INC
+    const value = this.ram.read(addr)
+    const result = Util.add(value, 1)
+    this.ram.write(addr, result)
+    this.registers.statusNegative = Util.isNegative(result)
+    this.registers.statusZero = Util.isZero(result)
+
+    // SBC
+    const accValue = this.registers.acc
+    const memValue = this.ram.read(addr)
+    const subed = accValue - memValue - (!this.registers.statusCarry & 1)
+
+    this.registers.acc = subed & 0xff
+    this.registers.statusCarry = !(subed < 0) & 1
+    this.registers.statusZero = Util.isZero(this.registers.acc)
+    this.registers.statusNegative = Util.isNegative(this.registers.acc)
+
+    const accNegativeBit = Util.isNegative(accValue)
+    const memNegativeBit = Util.isNegative(memValue)
+
+    if (accNegativeBit !== memNegativeBit) {
+      const resultNegativeBit = this.registers.acc >> 7
+      if (resultNegativeBit !== accNegativeBit) {
+        this.registers.statusOverflow = 1
+      } else {
+        this.registers.statusOverflow = 0
+      }
+    } else {
+      this.registers.statusOverflow = 0
+    }
   },
 
-  //上に同じ
-  SLO: function() {
+  // ASL then ORA
+  SLO: function(addr) {
+    // ASL
+    const isRam = Util.isRam(addr)
+    const aslValue = isRam ? this.ram.read(addr) : this.registers.acc
+    const msb = Util.msb(aslValue)
+    const shifted = (aslValue << 1) & 0xff
 
+    isRam ? this.ram.write(addr, shifted) : (this.registers.acc = shifted)
+    this.registers.statusNegative = Util.isNegative(shifted)
+    this.registers.statusZero = Util.isZero(shifted)
+    this.registers.statusCarry = msb
+
+    // ORA
+    const value = this.registers.acc | this.ram.read(addr)
+    this.registers.acc = value
+    this.registers.statusNegative = Util.isNegative(value)
+    this.registers.statusZero = Util.isZero(value)
   },
 
-  //上に同じ
-  LAX: function() {
-
+  /* AとXにram[addr]をロードする */
+  LAX: function(addr) {
+    const value = this.ram.read(addr)
+    this.registers.acc = value
+    this.registers.indexX = value
+    this.registers.statusNegative = Util.isNegative(value)
+    this.registers.statusZero = Util.isZero(value)
   },
 
-  //上に同じ
-  SAX: function() {
+  /* AとXのANDをaddrにストアする */
+  SAX: function(addr) {
+    const value = this.registers.acc & this.registers.indexX
 
+    this.ram.write(addr, value)
   },
 
-  DCP: function() {
+  /* DEC then CMP */
+  DCP: function(addr) {
+    // DEC
+    const value = this.ram.read(addr)
+    const decResult = Util.sub(value, 1)
+    this.ram.write(addr, decResult)
+    this.registers.statusNegative = Util.isNegative(decResult)
+    this.registers.statusZero = Util.isZero(decResult)
 
+
+    const result = this.registers.acc - this.ram.read(addr)
+    this.registers.statusZero = Util.isZero(result)
+    this.registers.statusNegative = Util.isNegative(result)
+
+    if (result >= 0) {
+      this.registers.statusCarry = 1
+    } else {
+      this.registers.statusCarry = 0
+    }
   },
 
-  RLA: function() {
+  /* ROL then AND */
+  RLA: function(addr) {
+    //ROL
+    const carry = this.registers.statusCarry
+    const isRam = Util.isRam(addr)
+    const rolValue = isRam ? this.ram.read(addr) : this.registers.acc
+    const msb = rolValue >> 7
+    const rotated = ((rolValue << 1) & 0xff) | carry
 
+    this.registers.statusCarry = msb
+    this.registers.statusZero = Util.isZero(rotated)
+    this.registers.statusNegative = Util.isNegative(rotated)
+    isRam ? this.ram.write(addr, rotated) : (this.registers.acc = rotated)
+
+    // AND
+    const value = this.registers.acc & this.ram.read(addr)
+    this.registers.acc = value
+    this.registers.statusNegative = Util.isNegative(value)
+    this.registers.statusZero = Util.isZero(value)
   },
 
-  SRE: function() {
+  /* LSRしてからEOR */
+  SRE: function(addr) {
+    //LSR
+    const isRam = Util.isRam(addr)
+    const lsrValue = isRam ? this.ram.read(addr) : this.registers.acc
+    const lsb = Util.lsb(lsrValue)
+    const shifted = lsrValue >> 1
 
+    isRam ? this.ram.write(addr, shifted) : this.registers.acc = shifted
+
+    this.registers.statusNegative = Util.isNegative(shifted)
+    this.registers.statusZero = Util.isZero(shifted)
+    this.registers.statusCarry = lsb
+
+    //EOR
+    const value = this.registers.acc ^ this.ram.read(addr)
+    this.registers.acc = value
+    this.registers.statusNegative = Util.isNegative(value)
+    this.registers.statusZero = Util.isZero(value)
   },
 
-  RRA: function() {
+  /* RORしてからADC */
+  RRA: function(addr) {
+    // ROR
+    const carry = this.registers.statusCarry << 7
+    const isRam = Util.isRam(addr)
+    const value = isRam ? this.ram.read(addr) : this.registers.acc
+    const lsb = Util.lsb(value)
+    const rotated = (value >> 1) | carry
 
+    this.registers.statusCarry = lsb
+    this.registers.statusZero = Util.isZero(rotated)
+    this.registers.statusNegative = Util.isNegative(rotated)
+    isRam ? this.ram.write(addr, rotated) : (this.registers.acc = rotated)
+
+    // ADC
+    const accValue = this.registers.acc
+    const memValue = this.ram.read(addr)
+    const added = accValue + memValue
+
+    this.registers.acc = (added + this.registers.statusCarry) & 0xff
+    this.registers.statusCarry = (added + this.registers.statusCarry > 0xff) & 1
+    this.registers.statusZero = Util.isZero(this.registers.acc)
+    this.registers.statusNegative = Util.isNegative(this.registers.acc)
+
+    const accNegativeBit = Util.isNegative(accValue)
+    const memNegativeBit = Util.isNegative(memValue)
+
+    if (accNegativeBit === memNegativeBit) {
+      const resultNegativeBit = this.registers.acc >> 7
+      if (resultNegativeBit !== accNegativeBit) {
+        this.registers.statusOverflow = 1
+      } else {
+        this.registers.statusOverflow = 0
+      }
+    } else {
+      this.registers.statusOverflow = 0
+    }
+  },
+
+  /* AND #ram[addr] then LSR acc */
+  ALR: function(addr) {
+    // AND
+    const andValue = this.registers.acc & this.ram.read(addr)
+    this.registers.acc = andValue
+    this.registers.statusNegative = Util.isNegative(andValue)
+    this.registers.statusZero = Util.isZero(andValue)
+
+    // LSR
+    const value = this.registers.acc
+    const lsb = Util.lsb(value)
+    const shifted = value >> 1
+
+    this.registers.acc = shifted
+
+    this.registers.statusNegative = Util.isNegative(shifted)
+    this.registers.statusZero = Util.isZero(shifted)
+    this.registers.statusCarry = lsb
   },
 
   STP: function() {
@@ -586,5 +742,32 @@ export default {
 
   ANC: function() {
 
+  },
+
+  /* AND #ram[addr]してからROR acc
+   * フラグ処理
+   * NとZは通常通り行う。
+   * Cはbit6, Vはbit6とbit5のxor
+   * */
+  ARR: function(addr) {
+    // AND #ram[addr]
+    const andValue = this.registers.acc & this.ram.read(addr)
+    this.registers.acc = andValue
+    this.registers.statusNegative = Util.isNegative(andValue)
+    this.registers.statusZero = Util.isZero(andValue)
+
+    // ROR acc
+    const carry = this.registers.statusCarry << 7
+    const value = this.registers.acc
+    const lsb = Util.lsb(value)
+    const rotated = (value >> 1) | carry
+
+    this.registers.statusCarry = lsb
+    this.registers.statusZero = Util.isZero(rotated)
+    this.registers.statusNegative = Util.isNegative(rotated)
+    this.registers.acc = rotated
+
+    //TODO フラグ処理
+    //https://wiki.nesdev.com/w/index.php/Programming_with_unofficial_opcodes
   }
 }
