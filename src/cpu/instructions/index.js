@@ -97,7 +97,7 @@ export default {
    *   - carry
    * */
   ASL: function(addr) {
-    const isRam = addr !== null || addr !== undefined
+    const isRam = Util.isRam(addr)
     const value = isRam ? this.ram.read(addr) : this.registers.acc
     const msb = Util.msb(value)
     const shifted = (value << 1) & 0xff
@@ -116,7 +116,7 @@ export default {
    * */
   /* Logical Shift Right */
   LSR: function(addr) {
-    const isRam = addr !== null || addr !== undefined
+    const isRam = Util.isRam(addr)
     const value = isRam ? this.ram.read(addr) : this.registers.acc
     const lsb = Util.lsb(value)
     const shifted = value >> 1
@@ -269,8 +269,8 @@ export default {
 
   /* メモリを左へローテートする */
   ROL: function(addr) {
-    const carry = this.registers.statusCarr
-    const isRam = addr !== null || addr !== undefined
+    const carry = this.registers.statusCarry
+    const isRam = Util.isRam(addr)
     const value = isRam ? this.ram.read(addr) : this.registers.acc
     const msb = value >> 7
     const rotated = ((value << 1) & 0xff) | carry
@@ -284,7 +284,7 @@ export default {
   /* メモリを右へローテートする */
   ROR: function(addr) {
     const carry = this.registers.statusCarry << 7
-    const isRam = addr !== null || addr !== undefined
+    const isRam = Util.isRam(addr)
     const value = isRam ? this.ram.read(addr) : this.registers.acc
     const lsb = Util.lsb(value)
     const rotated = (value >> 1) | carry
