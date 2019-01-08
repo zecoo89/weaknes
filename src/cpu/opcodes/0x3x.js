@@ -5,7 +5,7 @@ export default [
   /* 0x31: AND indirectIndex */
   { instruction: 'AND', addressing: 'indirectIndex', cycle: 5 },
   /* TODO This is not implemented */
-  { instruction: 'STP', addressing: 'null', cycle: null },
+  { instruction: 'STP', addressing: 'implied', cycle: 3 },
   /* TODO This is not implemented */
   { instruction: 'RLA', addressing: 'indirectIndex', cycle: 8 },
   /* 0x34: 2byte NOP (Use zeropage for 2byte}*/

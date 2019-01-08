@@ -5,7 +5,7 @@ export default [
   /* 0xb1: LDA indirectIndex */
   { instruction: 'LDA', addressing: 'indirectIndex', cycle: 5 },
   /* TODO This is not implemented */
-  { instruction: 'STP', addressing: 'null', cycle: null },
+  { instruction: 'STP', addressing: 'implied', cycle: 3 },
   /* TODO This is not implemented */
   { instruction: 'LAX', addressing: 'indirectIndex', cycle: 5 },
   /* 0xb4: LDY zeropageX */

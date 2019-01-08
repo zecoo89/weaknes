@@ -5,7 +5,7 @@ export default [
   /* 0x21: AND indexIndirect */
   { instruction: 'AND', addressing: 'indexIndirect', cycle: 6 },
   /* TODO This is not implemented */
-  { instruction: 'STP', addressing: 'null', cycle: null },
+  { instruction: 'STP', addressing: 'implied', cycle: 3 },
   /* TODO This is not implemented */
   { instruction: 'RLA', addressing: 'indexIndirect', cycle: 8 },
   /* 0x24: BIT zeropage */

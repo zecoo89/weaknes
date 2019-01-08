@@ -5,7 +5,7 @@ export default [
   /* 0x71: ADC indirectIndex */
   { instruction: 'ADC', addressing: 'indirectIndex', cycle: 5 },
   /* TODO This is not implemented */
-  { instruction: 'STP', addressing: 'null', cycle: null },
+  { instruction: 'STP', addressing: 'implied', cycle: 3 },
   /* TODO This is not implemented */
   { instruction: 'RRA', addressing: 'indirectIndex', cycle: 8 },
   /* 0x74: 2byte NOP (Use zeropage for 2byte}*/
@@ -23,7 +23,7 @@ export default [
   /* 0x7a: NOP */
   { instruction: 'NOP', addressing: 'implied', cycle: 2 },
   /* TODO This is not implemented */
-  { instruction: 'RRA', addressing: 'null', cycle: 7 },
+  { instruction: 'RRA', addressing: 'absoluteY', cycle: 7 },
   /* 0x7c: 3byte NOP (Use absolute for 3byte}*/
   { instruction: 'NOP', addressing: 'absolute', cycle: 4 },
   /* 0x7d: ADC absoluteX */
@@ -31,5 +31,5 @@ export default [
   /* 0x7e: ROR absoluteX */
   { instruction: 'ROR', addressing: 'absoluteX', cycle: 7 },
   /* TODO This is not implemented */
-  { instruction: 'RRA', addressing: 'null', cycle: 7 }
+  { instruction: 'RRA', addressing: 'absoluteX', cycle: 7 }
 ]

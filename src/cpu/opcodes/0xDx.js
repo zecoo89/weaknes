@@ -5,7 +5,7 @@ export default [
   /* 0xd1: CMP indirectIndex */
   { instruction: 'CMP', addressing: 'indirectIndex', cycle: 5 },
   /* TODO This is not implemented */
-  { instruction: 'STP', addressing: 'null', cycle: null },
+  { instruction: 'STP', addressing: 'implied', cycle: 3 },
   /* TODO This is not implemented */
   { instruction: 'DCP', addressing: 'indirectIndex', cycle: 8 },
   /* 0xd4: 2byte NOP */

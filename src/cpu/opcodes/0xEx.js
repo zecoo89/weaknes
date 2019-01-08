@@ -15,7 +15,7 @@ export default [
   /* 0xe6: INC zeropage*/
   { instruction: 'INC', addressing: 'zeropage', cycle: 5 },
   /* TODO This is not implemented */
-  { instruction: 'ISC', addressing: 'null', cycle: 5 },
+  { instruction: 'ISC', addressing: 'zeropage', cycle: 5 },
   /* 0xe8: INX implied */
   { instruction: 'INX', addressing: 'implied', cycle: 2 },
   /* 0xe9: SBC immediate */

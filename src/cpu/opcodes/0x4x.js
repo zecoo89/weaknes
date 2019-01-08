@@ -5,7 +5,7 @@ export default [
   /* 0x41: EOR indexIndirect */
   { instruction: 'EOR', addressing: 'indexIndirect', cycle: 6 },
   /* TODO This is not implemented */
-  { instruction: 'STP', addressing: 'null', cycle: null },
+  { instruction: 'STP', addressing: 'implied', cycle: 3 },
   /* TODO This is not implemented */
   { instruction: 'SRE', addressing: 'indexIndirect', cycle: 8 },
   /* 0x44: 2byte NOP (Use zeropage for 2byte}*/

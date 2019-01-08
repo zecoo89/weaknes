@@ -121,7 +121,7 @@ export default {
     const lsb = Util.lsb(value)
     const shifted = value >> 1
 
-    isRam ? this.ram.write(addr, shifted) : (this.registers.acc = shifted)
+    isRam ? this.ram.write(addr, shifted) : this.registers.acc = shifted
 
     this.registers.statusNegative = Util.isNegative(shifted)
     this.registers.statusZero = Util.isZero(shifted)
@@ -536,5 +536,55 @@ export default {
   /* 空の命令を実行する */
   NOP: function() {
     // 何もしない
+  },
+
+  /* ドキュメントに存在しない
+   * NOPと同じ扱いにしとく
+   * */
+  ISC: function() {
+
+  },
+
+  //上に同じ
+  SLO: function() {
+
+  },
+
+  //上に同じ
+  LAX: function() {
+
+  },
+
+  //上に同じ
+  SAX: function() {
+
+  },
+
+  DCP: function() {
+
+  },
+
+  RLA: function() {
+
+  },
+
+  SRE: function() {
+
+  },
+
+  RRA: function() {
+
+  },
+
+  STP: function() {
+
+  },
+
+  LAS: function() {
+
+  },
+
+  ANC: function() {
+
   }
 }

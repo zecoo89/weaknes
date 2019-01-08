@@ -5,7 +5,7 @@ export default [
   /* 0x01: ORA indexIndirect */
   { instruction: 'ORA', addressing: 'indexIndirect', cycle: 6 },
   /* TODO This is not implemented*/
-  { instruction: 'STP', addressing: 'null', cycle: null },
+  { instruction: 'STP', addressing: 'implied', cycle: 3 },
   /* TODO This is not implemented*/
   { instruction: 'SLO', addressing: 'zeropage', cycle: 8 },
   /* 0x04: 2byte NOP zeropage */

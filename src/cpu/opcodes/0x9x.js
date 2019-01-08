@@ -5,7 +5,7 @@ export default [
   /* 0x91: STA indirectIndex */
   { instruction: 'STA', addressing: 'indirectIndex', cycle: 6 },
   /* TODO This is not implemented */
-  { instruction: 'STP', addressing: 'null', cycle: null },
+  { instruction: 'STP', addressing: 'implied', cycle: 3 },
   /* TODO This is not implemented */
   { instruction: 'AHX', addressing: 'indirectIndex', cycle: 6 },
   /* 0x94: STY zeropageX */

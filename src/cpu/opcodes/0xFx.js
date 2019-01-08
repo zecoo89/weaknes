@@ -5,7 +5,7 @@ export default [
   /* 0xf1: SBC indirectIndex */
   { instruction: 'SBC', addressing: 'indirectIndex', cycle: 5 },
   /* TODO This is not implemented */
-  { instruction: 'STP', addressing: 'null', cycle: null },
+  { instruction: 'STP', addressing: 'implied', cycle: 3 },
   /* TODO This is not implemented */
   { instruction: 'ISC', addressing: 'indirectIndex', cycle: 8 },
   /* 0xf4: 2byte NOP */
@@ -31,5 +31,5 @@ export default [
   /* 0xfe: INC absoluteX */
   { instruction: 'INC', addressing: 'absoluteX', cycle: 7 },
   /* TODO This is not implemented */
-  { instruction: 'ISC', addressing: 'null', cycle: 7 }
+  { instruction: 'ISC', addressing: 'absoluteX', cycle: 7 }
 ]
