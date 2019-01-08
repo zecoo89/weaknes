@@ -6,8 +6,8 @@ export default [
   { instruction: 'ORA', addressing: 'indexIndirect', cycle: 6 },
   /* TODO This is not implemented*/
   { instruction: 'STP', addressing: 'implied', cycle: 3 },
-  /* TODO This is not implemented*/
-  { instruction: 'SLO', addressing: 'zeropage', cycle: 8 },
+  /* 0x03: SLO zeropage */
+  { instruction: 'SLO', addressing: 'indexIndirect', cycle: 8 },
   /* 0x04: 2byte NOP zeropage */
   { instruction: 'NOP', addressing: 'zeropage', cycle: 3 },
   /* 0x05: ORA zeropage */
