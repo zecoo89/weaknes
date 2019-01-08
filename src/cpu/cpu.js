@@ -72,7 +72,7 @@ export default class Cpu {
     this.ppu.run()
     this.cycle = 0
 
-    window.requestAnimationFrame(this.eval.bind(this))
+    if (!Util.isNodejs()) window.requestAnimationFrame(this.eval.bind(this))
   }
 
   /* 0x8000~のメモリにROM内のPRG-ROMを読み込む*/
