@@ -1,5 +1,6 @@
 export default class Controller {
   constructor() {
+    this.initFlag = 0
     this.buttonId = 0
     // 0: A, 1: B, 2: SELECT, 3: START, 4: UP, 5: DOWN, 6: LEFT, 7: RIGHT
     this.button = new Array(8).fill(0)
@@ -11,10 +12,18 @@ export default class Controller {
     this.runKeyListener()
   }
 
+  write(value) {
+    if ((this.initFlag === 1) & (value === 0)) {
+      this.buttonId = 0
+    }
+
+    this.initFlag = value
+  }
+
   read() {
     const value = this.button[this.buttonId++]
 
-    if (this.buttonId > 7 || value) this.buttonId = 0
+    if (this.buttonId > 7) this.buttonId = 0
 
     return value
   }

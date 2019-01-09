@@ -34,6 +34,9 @@ export default class Ram {
       case 0x4014:
         this.ppu.oam.dma(value)
         break
+      case 0x4016:
+        this.controller ? this.controller.write(value) : null
+        break
       default:
         this.memory[addr] = value
     }
