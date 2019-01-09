@@ -121,7 +121,7 @@ export default {
     const lsb = Util.lsb(value)
     const shifted = value >> 1
 
-    isRam ? this.ram.write(addr, shifted) : this.registers.acc = shifted
+    isRam ? this.ram.write(addr, shifted) : (this.registers.acc = shifted)
 
     this.registers.statusNegative = Util.isNegative(shifted)
     this.registers.statusZero = Util.isZero(shifted)
@@ -619,7 +619,6 @@ export default {
     this.registers.statusNegative = Util.isNegative(decResult)
     this.registers.statusZero = Util.isZero(decResult)
 
-
     const result = this.registers.acc - this.ram.read(addr)
     this.registers.statusZero = Util.isZero(result)
     this.registers.statusNegative = Util.isNegative(result)
@@ -660,7 +659,7 @@ export default {
     const lsb = Util.lsb(lsrValue)
     const shifted = lsrValue >> 1
 
-    isRam ? this.ram.write(addr, shifted) : this.registers.acc = shifted
+    isRam ? this.ram.write(addr, shifted) : (this.registers.acc = shifted)
 
     this.registers.statusNegative = Util.isNegative(shifted)
     this.registers.statusZero = Util.isZero(shifted)
@@ -732,17 +731,11 @@ export default {
     this.registers.statusCarry = lsb
   },
 
-  STP: function() {
+  STP: function() {},
 
-  },
+  LAS: function() {},
 
-  LAS: function() {
-
-  },
-
-  ANC: function() {
-
-  },
+  ANC: function() {},
 
   /* AND #ram[addr]してからROR acc
    * フラグ処理

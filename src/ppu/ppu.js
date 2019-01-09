@@ -141,15 +141,15 @@ export default class Ppu {
     const blockPosition = this.blockPosition(n)
     const bitPosition = this.bitPosition(n)
 
-    const block = this.vram.read(start+ blockPosition * 2)
+    const block = this.vram.read(start + blockPosition * 2)
     const bit = block >> (bitPosition * 2)
 
     return bit
   }
 
   blockPosition(n) {
-    const x = (n % 32)
-    const y = ((n - (n % 32)) / 32 - (((n - (n % 32)) / 32) % 2)) * 16 / 2
+    const x = n % 32
+    const y = (((n - (n % 32)) / 32 - (((n - (n % 32)) / 32) % 2)) * 16) / 2
     const blockPosition = y + (x - (x % 2)) / 2
 
     return blockPosition
@@ -157,7 +157,7 @@ export default class Ppu {
 
   bitPosition(n) {
     const x = n % 2
-    const y = ((n - n % 32) / 32) % 2
+    const y = ((n - (n % 32)) / 32) % 2
     const bitPosition = y * 2 + x
 
     return bitPosition

@@ -13,7 +13,6 @@ describe('PPU', () => {
     expect(ppu.blockPosition(100)).toBe(18)
   })
 
-
   test('calculate a bit position of a block', () => {
     const ppu = new Ppu()
 

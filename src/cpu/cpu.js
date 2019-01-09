@@ -48,7 +48,7 @@ export default class Cpu {
     }
 
     const isInterruptable = this.ppu.setting >> 7
-    if(isInterruptable) {
+    if (isInterruptable) {
       //TODO レジスタをすべて保存してからnmiアドレスに遷移する
       const addr = this.registers.pc
       const highAddr = addr >> 8
@@ -89,7 +89,7 @@ export default class Cpu {
     }
 
     // プログラムカウンタの初期値を0xFFFDから設定する
-    const resetAddr = this.ram.read(0xfffd) << 8 | this.ram.read(0xfffc)
+    const resetAddr = (this.ram.read(0xfffd) << 8) | this.ram.read(0xfffc)
     this.registers.pc = resetAddr ? resetAddr : 0x8000
 
     this.nmi = this.ram.read(0xfffa) | (this.ram.read(0xfffb) << 8)
@@ -101,7 +101,7 @@ export default class Cpu {
     this.registers.sp--
   }
 
-    stackPop() {
-      return this.ram.read(++this.registers.sp)
-    }
+  stackPop() {
+    return this.ram.read(++this.registers.sp)
+  }
 }
