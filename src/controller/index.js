@@ -1,3 +1,5 @@
+import Util from '../util'
+
 export default class Controller {
   constructor() {
     this.initFlag = 0
@@ -9,7 +11,8 @@ export default class Controller {
   }
 
   run() {
-    this.runKeyListener()
+    // Node.jsじゃなければキー入力を受け付ける
+    !Util.isNodejs() ? this.runKeyListener() : null
   }
 
   write(value) {
