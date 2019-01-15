@@ -21,8 +21,9 @@ export default class Cpu {
 
   connect(parts) {
     parts.ppu && (this.ppu = parts.ppu)
-    parts.ppu && this.ram.connect(parts)
-    parts.controller && this.ram.connect(parts)
+    parts.ppu && this.ram.connect({ ppu: parts.ppu })
+    parts.apu && this.ram.connect({ apu: parts.apu })
+    parts.controller && this.ram.connect({ controller: parts.controller })
   }
 
   reset() {

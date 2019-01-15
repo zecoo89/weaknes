@@ -1,23 +1,24 @@
 import Cpu from './cpu'
 import Ppu from './ppu'
+import Apu from './apu'
 import Controller from './controller'
-import Util from './util'
 
 export default class Nes {
   constructor(isDebug) {
     this.cpu = new Cpu(isDebug)
     this.ppu = new Ppu()
+    this.apu = new Apu()
+    this.controller = new Controller()
+
     this.ppu.connect({ cpu: this.cpu })
     this.cpu.connect({ ppu: this.ppu })
-
-    if (!Util.isNodejs()) {
-      this.controller = new Controller()
-      this.cpu.connect({ controller: this.controller })
-    }
+    this.cpu.connect({ apu: this.apu })
+    this.cpu.connect({ controller: this.controller })
   }
 
-  connect(renderer) {
-    this.ppu.connect({ renderer })
+  connect(parts) {
+    parts.renderer && this.ppu.connect({ renderer: parts.renderer })
+    parts.audio && this.apu.connect({ audio: parts.audio })
   }
 
   get rom() {

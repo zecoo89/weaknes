@@ -5,6 +5,7 @@ export default class Ram {
 
   connect(parts) {
     parts.ppu && (this.ppu = parts.ppu)
+    parts.apu && (this.apu = parts.apu)
     parts.controller && (this.controller = parts.controller)
   }
 
@@ -31,6 +32,27 @@ export default class Ram {
       case 0x2007:
         this.ppu.vram.write(this.ppu.vram.pointer, value)
         break
+      case 0x4000:
+      case 0x4001:
+      case 0x4002:
+      case 0x4003:
+      case 0x4004:
+      case 0x4005:
+      case 0x4006:
+      case 0x4007:
+      case 0x4008:
+      case 0x400a:
+      case 0x400b:
+      case 0x400c:
+      case 0x400e:
+      case 0x400f:
+      case 0x4010:
+      case 0x4011:
+      case 0x4012:
+      case 0x4013:
+      case 0x4015:
+        this.apu.write(addr, value)
+        break
       case 0x4014:
         this.ppu.oam.dma(value)
         break
@@ -50,6 +72,26 @@ export default class Ram {
         return this.ppu.registers.status.raw
       case 0x2007:
         return this.ppu.vram.read(addr)
+      case 0x4000:
+      case 0x4001:
+      case 0x4002:
+      case 0x4003:
+      case 0x4004:
+      case 0x4005:
+      case 0x4006:
+      case 0x4007:
+      case 0x4008:
+      case 0x400a:
+      case 0x400b:
+      case 0x400c:
+      case 0x400e:
+      case 0x400f:
+      case 0x4010:
+      case 0x4011:
+      case 0x4012:
+      case 0x4013:
+      case 0x4015:
+        return this.apu.read(addr)
       case 0x4016:
         return this.controller ? this.controller.read() : 0x0
       default:
