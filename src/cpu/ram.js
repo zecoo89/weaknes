@@ -12,25 +12,14 @@ export default class Ram {
   write(addr, value) {
     switch (addr) {
       case 0x2000:
-        this.ppu.setting = value
-        break
       case 0x2001:
-        this.ppu.screenSetting = value
-        break
       case 0x2003:
-        this.ppu.oam.pointer = value
-        break
       case 0x2004:
-        this.ppu.oam.write(value)
-        break
       case 0x2005:
-        this.ppu.scrollSetting = value
-        break
       case 0x2006:
-        this.ppu.vram.pointer = value
-        break
       case 0x2007:
-        this.ppu.vram.write(this.ppu.vram.pointer, value)
+      case 0x4014:
+        this.ppu.registers[addr].write(value)
         break
       case 0x4000:
       case 0x4001:
@@ -51,10 +40,7 @@ export default class Ram {
       case 0x4012:
       case 0x4013:
       case 0x4015:
-        this.apu.write(addr, value)
-        break
-      case 0x4014:
-        this.ppu.oam.dma(value)
+        this.apu ? this.apu.write(addr, value) : null
         break
       case 0x4016:
         this.controller ? this.controller.write(value) : null
@@ -65,13 +51,13 @@ export default class Ram {
   }
 
   read(addr) {
+    if(addr !== 0x2005)
+      this.ppu.registers[0x2005].resetRewriteCycles()
+
     switch (addr) {
       case 0x2002:
-        //TODO 二回書き込むタイプのレジスタは途中で他のところにアクセスするとリセットされる？
-        this.ppu.scrollSetting_.length = 0
-        return this.ppu.registers.status.raw
       case 0x2007:
-        return this.ppu.vram.read(addr)
+        return this.ppu.registers[addr].read()
       case 0x4000:
       case 0x4001:
       case 0x4002:

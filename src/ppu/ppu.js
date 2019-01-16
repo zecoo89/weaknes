@@ -1,6 +1,6 @@
 import Vram from './vram'
 import Oam from './oam'
-import Registers from './registers'
+import RegistersFactory from './registers'
 
 export default class Ppu {
   constructor() {
@@ -10,15 +10,9 @@ export default class Ppu {
   init() {
     this.vram = new Vram()
     this.oam = new Oam()
-    this.registers = new Registers()
+    this.registers = RegistersFactory.create(this)
 
-    this.scrollSetting_ = []
-    this.horizontalScroll = 0
-    this.verticalScroll = 0
-
-    this.setting = 0x08 // PPUの基本設定
-    this.screenSetting = 0x00 // PPUの表示設定
-    this.state = 0xff
+    this.oam.connect({ ppu: this })
 
     this.backgroundData = []
     this.spritesData = []
@@ -193,16 +187,5 @@ export default class Ppu {
     }
 
     return palette
-  }
-
-  set scrollSetting(value) {
-    if (this.scrollSetting_.length < 1) {
-      this.horizontalScroll = value
-      this.scrollSetting_.push(value)
-    } else {
-      this.scrollSetting_.push(value)
-      this.verticalScroll = value
-      this.scrollSetting_.length = 0
-    }
   }
 }

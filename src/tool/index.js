@@ -4,6 +4,7 @@ import Renderer from '../renderer'
 export default class Tool {
   constructor(rom) {
     this.rom = rom
+    this.padding = 2
   }
 
   dumpChrRom(id, palette) {
@@ -20,11 +21,11 @@ export default class Tool {
       const image = renderer.generateTileImage(tiles[i], palette)
       renderer.renderSprite(image, x, y)
 
-      x += 9
+      x += 8 + this.padding
 
-      if (x >= 288) {
+      if (x >= (8 + this.padding) * 32) {
         x = 0
-        y += 9
+        y += 8 + this.padding
       }
     }
   }

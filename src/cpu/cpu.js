@@ -39,6 +39,8 @@ export default class Cpu {
 
   // Run instructions of 1/60 frame
   eval() {
+
+    this.cycle = 0
     for (;;) {
       const addr = this.registers.pc++
       const opcode = this.ram.read(addr)
@@ -48,7 +50,10 @@ export default class Cpu {
       if (this.cycle > 30000) break
     }
 
-    const isInterruptable = this.ppu.setting >> 7
+    /* Vblankをセットする */
+    this.ppu.registers[0x2002].setVblank()
+
+    const isInterruptable = this.ppu.registers[0x2000].isNmiInterruptable()
     if (isInterruptable) {
       //TODO レジスタをすべて保存してからnmiアドレスに遷移する
       const addr = this.registers.pc
@@ -59,19 +64,22 @@ export default class Cpu {
       const statusBits = this.registers.statusAllRawBits
       this.stackPush(statusBits)
       this.registers.pc = this.nmi
-
-      //Vblank分のサイクルを実行する
-      this.cycle = 0
-      for (; this.cycle < 3000; ) {
-        const addr = this.registers.pc++
-        const opcode = this.ram.read(addr)
-        OpcodeUtil.execute.call(this, this.opcodes[opcode])
-      }
     }
+
+    //Vblank分のサイクルを実行する
+    this.cycle = 0
+    for (; this.cycle < 3000; ) {
+      const addr = this.registers.pc++
+        const opcode = this.ram.read(addr)
+      OpcodeUtil.execute.call(this, this.opcodes[opcode])
+    }
+
+
+    /* Vblankをクリアする */
+    this.ppu.registers[0x2002].clearVblank()
 
     //背景とスプライトのデータを更新する
     this.ppu.run()
-    this.cycle = 0
 
     if (!Util.isNodejs()) window.requestAnimationFrame(this.eval.bind(this))
   }
@@ -102,7 +110,7 @@ export default class Cpu {
     this.registers.sp--
   }
 
-  stackPop() {
-    return this.ram.read(++this.registers.sp)
-  }
+    stackPop() {
+      return this.ram.read(++this.registers.sp)
+    }
 }

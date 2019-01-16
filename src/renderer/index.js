@@ -14,7 +14,7 @@ export default class Renderer {
   }
 
   connect(nes) {
-    this.ppu = nes.ppu
+    this.nes = nes
   }
 
   run() {
@@ -29,7 +29,7 @@ export default class Renderer {
   }
 
   renderBackground() {
-    const backgroundData = this.ppu.backgroundData
+    const backgroundData = this.nes.ppu.backgroundData
 
     backgroundData.forEach(data => {
       const image = this.generateTileImage(data.tile, data.palette)
@@ -37,8 +37,8 @@ export default class Renderer {
       this.backgroundContext.putImageData(image, data.x + 256, data.y)
     })
 
-    const x = this.ppu.horizontalScroll
-    const y = this.ppu.verticalScroll
+    const x = this.nes.ppu.registers[0x2005].horizontalScrollPosition
+    const y = this.nes.ppu.registers[0x2005].verticalScrollPosition
 
     const width = 256
     const height = 240
@@ -47,7 +47,7 @@ export default class Renderer {
   }
 
   renderSprites() {
-    const spritesData = this.ppu.spritesData
+    const spritesData = this.nes.ppu.spritesData
     spritesData.forEach(data => {
       const image = this.generateTileImage(
         data.tile,
@@ -69,13 +69,13 @@ export default class Renderer {
     let jSign = 1,
       jOffset = 0
     if (isHorizontalFlip) {
-      ;(jSign = -1), (jOffset = 7)
+      (jSign = -1), (jOffset = 7)
     }
 
     let iSign = 1,
       iOffset = 0
     if (isVerticalFlip) {
-      ;(iSign = -1), (iOffset = 7)
+      (iSign = -1), (iOffset = 7)
     }
 
     for (let i = 0; i < 8; i++) {

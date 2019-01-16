@@ -3,13 +3,13 @@
  * */
 export default class Oam {
   constructor() {
-    this.pointer = 0x00
     this.pOffset = 0 // pointerからのオフセット(0~3)
     this.memory = new Array(0xff).fill(0)
   }
 
   connect(parts) {
-    parts.cpu && (this.ram = parts.cpu.ram)
+    parts.cpu && (this.cpu = parts.cpu)
+    parts.ppu && (this.ppu = parts.ppu)
   }
 
   /* pointerの指すメモリにvalue(スプライトの設定)を書き込む
@@ -27,7 +27,8 @@ export default class Oam {
    * 4th byte: point x
    * */
   write(value) {
-    const addr = this.pointer + this.pOffset++
+    const pointer = this.ppu.registers[0x2003].read()
+    const addr = pointer + this.pOffset++
     this.memory[addr] = value
 
     if (this.pOffset > 3) {
@@ -47,7 +48,7 @@ export default class Oam {
 
     for (let i = start; i < end; i += 4) {
       for (let j = 0; j < 4; j++) {
-        this.memory[addr++] = this.ram.read(i + j)
+        this.memory[addr++] = this.cpu.ram.read(i + j)
       }
     }
   }
