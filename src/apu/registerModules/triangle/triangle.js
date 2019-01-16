@@ -21,7 +21,7 @@ export default {
 
     this.triangleWaveCh.duration.value = bits >> 3
 
-    this.audio.sound('triangle', this.triangleWaveCh)
+    this.audio ? this.audio.sound('triangle', this.triangleWaveCh) : null
   },
 
   makeTriangleWaveCh: function() {

@@ -20,7 +20,7 @@ export default {
 
   0x4003: function(bits) {
     setSquareWaveTimeruency2(this.squareWaveCh1, bits)
-    this.audio.sound('square', this.squareWaveCh1)
+    this.audio ? this.audio.sound('square', this.squareWaveCh1) : null
   },
 
   0x4004: function(bits) {
@@ -37,7 +37,7 @@ export default {
 
   0x4007: function(bits) {
     setSquareWaveTimeruency2(this.squareWaveCh2, bits)
-    this.audio.sound('square', this.squareWaveCh2)
+    this.audio ? this.audio.sound('square', this.squareWaveCh2) : null
   },
 
   makeSquareWaveCh: function() {
