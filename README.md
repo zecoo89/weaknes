@@ -2,8 +2,7 @@
 
 Weaknes is a NES emulator written by JavaScript.
 
-![nestest1](./images/nestest1.png | width=100)
-![nestest2](./images/nestest2.png | width=100)
+|![nestest1](./images/nestest1.png) | ![nestest2](./images/nestest2.png)|
 
 ## Usage
 
