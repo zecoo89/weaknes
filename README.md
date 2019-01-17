@@ -7,13 +7,13 @@ Weaknes is a NES emulator written by JavaScript.
 ## Usage
 
 ### Build
-```
-npm install
-npm run build
+```console
+$ npm install
+$ npm run build
 ```
 ### Usage of NES emulator
 #### index.js
-```
+```javascript
 async function main() {
   const path = './assets/nestest/nestest.nes'
   const Nes = NesPack.Nes
@@ -39,7 +39,7 @@ async function main() {
 main()
 ```
 ### index.html
-```
+```html
 <!DOCTYPE html>
 <html>
   <head>
@@ -56,7 +56,7 @@ main()
 
 ### Usage of Tool
 #### index.js
-```
+```javascript
 const Rom = NesPack.Rom
 
 const data = await fetch(path)
@@ -77,7 +77,7 @@ tool.dumpChrRom('chr-dump', palette)
 
 #### index.html
 
-```
+```html
 <!DOCTYPE html>
 <html>
   <head>
@@ -94,7 +94,7 @@ tool.dumpChrRom('chr-dump', palette)
 ```
 
 ### Run server
-```
-npm run serve
+```console
+$ npm run serve
 ```
 After run server, open http://localhost:1234
