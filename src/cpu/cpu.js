@@ -39,21 +39,17 @@ export default class Cpu {
   frame() {
     this.cycles(27000)
 
-    /* Vblankをセットする */
     this.ppu.registers[0x2002].setVblank()
-
-    const isInterruptable = this.ppu.registers[0x2000].isNmiInterruptable()
-    if (isInterruptable) this.nmi()
-
-    //Vblank分のサイクルを実行する
+    this.isInterruptable() ? this.nmi() : null
     this.cycles(3000)
-
-    /* Vblankをクリアする */
     this.ppu.registers[0x2002].clearVblank()
 
-    //背景とスプライトのデータを更新する
     this.ppu.run()
 
+    this.nextFrame()
+  }
+
+  nextFrame() {
     if (!isNodejs()) window.requestAnimationFrame(this.frame.bind(this))
   }
 
@@ -65,6 +61,10 @@ export default class Cpu {
     const addr = this.registers.pc++
     const opcode = this.ram.read(addr)
     OpcodeUtil.execute.call(this, this.opcodes[opcode])
+  }
+
+  isInterruptable() {
+    return this.ppu.registers[0x2000].isNmiInterruptable()
   }
 
   nmi() {
