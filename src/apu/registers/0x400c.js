@@ -1,4 +1,4 @@
-import BaseRegister from '../../utils/baseRegister'
+import { BaseRegister } from '../../utils'
 
 export default class X400c extends BaseRegister {
   isDurationDisabled() {

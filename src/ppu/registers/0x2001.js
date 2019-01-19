@@ -1,4 +1,4 @@
-import BaseRegister from '../../utils/baseRegister'
+import { BaseRegister } from '../../utils'
 
 /* PPUの表示設定 */
 export default class X2001 extends BaseRegister {

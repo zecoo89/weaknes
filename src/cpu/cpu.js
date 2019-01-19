@@ -1,7 +1,7 @@
 import Registers from './registers'
 import Ram from './ram'
 import opcodes from './opcodes'
-import Util from '../util'
+import { isNodejs } from '../util'
 import OpcodeUtil from './opcodes/util'
 
 /* 6502 CPU */
@@ -34,7 +34,7 @@ export default class Cpu {
   run() {
     const execute = this.eval.bind(this)
 
-    Util.isNodejs() ? setInterval(execute, 10) : execute()
+    isNodejs() ? setInterval(execute, 10) : execute()
   }
 
   // Run instructions of 1/60 frame
@@ -81,7 +81,7 @@ export default class Cpu {
     //背景とスプライトのデータを更新する
     this.ppu.run()
 
-    if (!Util.isNodejs()) window.requestAnimationFrame(this.eval.bind(this))
+    if (!isNodejs()) window.requestAnimationFrame(this.eval.bind(this))
   }
 
   /* 0x8000~のメモリにROM内のPRG-ROMを読み込む*/
