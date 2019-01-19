@@ -1,7 +1,7 @@
 import Registers from './registers'
 import Ram from './ram'
 import opcodes from './opcodes'
-import { isNodejs } from '../util'
+import { isNodejs } from '../utils'
 import OpcodeUtil from './opcodes/util'
 
 /* 6502 CPU */

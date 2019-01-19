@@ -16,7 +16,7 @@ export default class Apu {
   }
 
   readRegister(addr) {
-    return this.registers[addr]
+    return this.registers[addr].read()
   }
 
   writeRegister(addr, value) {
