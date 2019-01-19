@@ -13,9 +13,8 @@ export default class Cpu {
 
   init() {
     this.registers = new Registers()
-    this.opcodes = opcodes
-
     this.ram = new Ram()
+    this.opcodes = opcodes
     this.cycle = 0
   }
 
@@ -32,46 +31,22 @@ export default class Cpu {
   }
 
   run() {
-    const execute = this.eval.bind(this)
-
-    isNodejs() ? setInterval(execute, 10) : execute()
+    const frame = this.frame.bind(this)
+    isNodejs() ? setInterval(frame, 10) : frame()
   }
 
   // Run instructions of 1/60 frame
-  eval() {
-    this.cycle = 0
-    for (;;) {
-      const addr = this.registers.pc++
-      const opcode = this.ram.read(addr)
-
-      OpcodeUtil.execute.call(this, this.opcodes[opcode])
-
-      if (this.cycle > 30000) break
-    }
+  frame() {
+    this.cycles(27000)
 
     /* Vblankをセットする */
     this.ppu.registers[0x2002].setVblank()
 
     const isInterruptable = this.ppu.registers[0x2000].isNmiInterruptable()
-    if (isInterruptable) {
-      //TODO レジスタをすべて保存してからnmiアドレスに遷移する
-      const addr = this.registers.pc
-      const highAddr = addr >> 8
-      const lowAddr = addr & 0x00ff
-      this.stackPush(highAddr)
-      this.stackPush(lowAddr)
-      const statusBits = this.registers.statusAllRawBits
-      this.stackPush(statusBits)
-      this.registers.pc = this.nmi
-    }
+    if (isInterruptable) this.nmi()
 
     //Vblank分のサイクルを実行する
-    this.cycle = 0
-    for (; this.cycle < 3000; ) {
-      const addr = this.registers.pc++
-      const opcode = this.ram.read(addr)
-      OpcodeUtil.execute.call(this, this.opcodes[opcode])
-    }
+    this.cycles(3000)
 
     /* Vblankをクリアする */
     this.ppu.registers[0x2002].clearVblank()
@@ -79,7 +54,28 @@ export default class Cpu {
     //背景とスプライトのデータを更新する
     this.ppu.run()
 
-    if (!isNodejs()) window.requestAnimationFrame(this.eval.bind(this))
+    if (!isNodejs()) window.requestAnimationFrame(this.frame.bind(this))
+  }
+
+  cycles(cycles) {
+    for (this.cycle = 0; this.cycle < cycles; ) this.eval()
+  }
+
+  eval() {
+    const addr = this.registers.pc++
+    const opcode = this.ram.read(addr)
+    OpcodeUtil.execute.call(this, this.opcodes[opcode])
+  }
+
+  nmi() {
+    const addr = this.registers.pc
+    const highAddr = addr >> 8
+    const lowAddr = addr & 0x00ff
+    this.stackPush(highAddr)
+    this.stackPush(lowAddr)
+    const statusBits = this.registers.statusAllRawBits
+    this.stackPush(statusBits)
+    this.registers.pc = this.nmiAddr
   }
 
   /* 0x8000~のメモリにROM内のPRG-ROMを読み込む*/
@@ -99,7 +95,7 @@ export default class Cpu {
     const resetAddr = (this.ram.read(0xfffd) << 8) | this.ram.read(0xfffc)
     this.registers.pc = resetAddr ? resetAddr : 0x8000
 
-    this.nmi = this.ram.read(0xfffa) | (this.ram.read(0xfffb) << 8)
+    this.nmiAddr = this.ram.read(0xfffa) | (this.ram.read(0xfffb) << 8)
   }
 
   /* スタック領域に対する操作*/
