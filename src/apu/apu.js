@@ -1,4 +1,5 @@
-import registerModules from './registerModules'
+import RegistersFactory from './registers'
+import Utils from './utils'
 
 export default class Apu {
   constructor() {
@@ -6,32 +7,33 @@ export default class Apu {
   }
 
   init() {
-    this.registers = {}
-    for (let i = 0x4000; i <= 0x4015; i++) {
-      this.registers[i] = 0x00
-    }
-
-    this.initSquareWaveChannels()
+    this.registers = RegistersFactory.create()
   }
 
-  initSquareWaveChannels() {
-    this.squareWaveCh1 = registerModules.makeSquareWaveCh()
-    this.squareWaveCh2 = registerModules.makeSquareWaveCh()
-
-    this.triangleWaveCh = registerModules.makeTriangleWaveCh()
-  }
-
-  // 音声出力用のオブジェクトと接続する
+  /* 音声出力と接続する */
   connect(parts) {
     parts.audio && (this.audio = parts.audio)
   }
 
-  read(addr) {
+  readRegister(addr) {
     return this.registers[addr]
   }
 
-  write(addr, value) {
-    this.registers[addr] = value
-    registerModules[addr].call(this, value)
+  writeRegister(addr, value) {
+    this.registers[addr].write(value)
+
+    let settings
+    switch(addr) {
+      case 0x4003:
+        settings = Utils.extractSettingsOfSquareWaveCh1.call(this)
+        this.audio.sound(settings)
+        break
+      case 0x4007:
+        settings = Utils.extractSettingsOfSquareWaveCh2.call(this)
+        this.audio.sound(settings)
+        break
+      default:
+        break
+    }
   }
 }

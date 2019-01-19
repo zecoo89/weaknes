@@ -40,7 +40,7 @@ export default class Ram {
       case 0x4012:
       case 0x4013:
       case 0x4015:
-        this.apu ? this.apu.write(addr, value) : null
+        this.apu ? this.apu.writeRegister(addr, value) : null
         break
       case 0x4016:
         this.controller ? this.controller.write(value) : null
@@ -77,7 +77,7 @@ export default class Ram {
       case 0x4012:
       case 0x4013:
       case 0x4015:
-        return this.apu.read(addr)
+        return this.apu.readRegister(addr)
       case 0x4016:
         return this.controller ? this.controller.read() : 0x0
       default:
