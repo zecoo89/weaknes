@@ -23,7 +23,7 @@ export default class Apu {
     this.registers[addr].write(value)
 
     let settings
-    switch(addr) {
+    switch (addr) {
       case 0x4003:
         settings = Utils.extractSettingsOfSquareWaveCh1.call(this)
         this.audio.sound(settings)

@@ -69,13 +69,13 @@ export default class Renderer {
     let jSign = 1,
       jOffset = 0
     if (isHorizontalFlip) {
-      (jSign = -1), (jOffset = 7)
+      ;(jSign = -1), (jOffset = 7)
     }
 
     let iSign = 1,
       iOffset = 0
     if (isVerticalFlip) {
-      (iSign = -1), (iOffset = 7)
+      ;(iSign = -1), (iOffset = 7)
     }
 
     for (let i = 0; i < 8; i++) {

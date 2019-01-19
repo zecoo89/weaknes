@@ -11,7 +11,7 @@ export default class X2006 extends BaseRegister {
   }
 
   write(bits) {
-    if(this.isFirst) {
+    if (this.isFirst) {
       this.vramAddrUpper = bits
     } else {
       this.vramAddrLower = bits

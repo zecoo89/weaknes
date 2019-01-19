@@ -51,8 +51,7 @@ export default class Ram {
   }
 
   read(addr) {
-    if(addr !== 0x2005)
-      this.ppu.registers[0x2005].resetRewriteCycles()
+    if (addr !== 0x2005) this.ppu.registers[0x2005].resetRewriteCycles()
 
     switch (addr) {
       case 0x2002:

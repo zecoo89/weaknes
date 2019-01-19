@@ -29,7 +29,7 @@ export default class X2000 extends BaseRegister {
   backgroundChrAddr() {
     const bit = this.readOneBit(4)
 
-    if(bit) {
+    if (bit) {
       return 0x1000
     } else {
       return 0x0000
@@ -41,7 +41,7 @@ export default class X2000 extends BaseRegister {
   spriteChrAddr() {
     const bit = this.readOneBit(3)
 
-    if(bit) {
+    if (bit) {
       return 0x1000
     } else {
       return 0x0000
@@ -54,7 +54,7 @@ export default class X2000 extends BaseRegister {
   vramIncremental() {
     const bit = this.readOneBit(2)
 
-    if(bit) {
+    if (bit) {
       return 32
     } else {
       return 1
@@ -69,7 +69,7 @@ export default class X2000 extends BaseRegister {
   mainScreenAddr() {
     const bits = this.readBits(0, 1)
 
-    switch(bits) {
+    switch (bits) {
       case 0:
         return 0x2000
       case 1:

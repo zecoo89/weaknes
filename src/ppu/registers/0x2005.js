@@ -15,7 +15,7 @@ export default class X2005 extends BaseRegister {
   }
 
   write(bits) {
-    if(this.isFirst) {
+    if (this.isFirst) {
       this.horizontalScrollPosition_ = bits
     } else {
       this.verticalScrollPosition_ = bits

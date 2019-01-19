@@ -41,7 +41,6 @@ describe('BaseRegister', () => {
     let result = register.read()
     expect(result).toBe(0b11111111)
 
-
     register.write(0b11100011)
     register.writeBits(2, 4, 0b010)
     result = register.read()

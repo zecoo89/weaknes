@@ -1,6 +1,6 @@
 export default class BaseRegister {
   constructor(module) {
-    if(module) {
+    if (module) {
       const name = module.constructor.name.toLowerCase()
       this[name] = module
     }
@@ -27,8 +27,10 @@ export default class BaseRegister {
   writeBits(from, to, bits) {
     const width = to - from + 1
 
-    if((bits >> width))
-      throw new Error(`Arg's bits are more than ${width} bits: ${bits.toString(2)}`)
+    if (bits >> width)
+      throw new Error(
+        `Arg's bits are more than ${width} bits: ${bits.toString(2)}`
+      )
 
     let bitHigh = (this.register << (7 - to)) & 0xff00
     bitHigh = bitHigh >> (7 - to)
@@ -44,8 +46,7 @@ export default class BaseRegister {
   }
 
   writeOneBit(order, bit) {
-    if(bit > 0b1)
-      throw new Error('Arg\'s bit is more than 2 bits.')
+    if (bit > 0b1) throw new Error("Arg's bit is more than 2 bits.")
 
     const resetRegister = this.register & (0xff - (0b1 << order))
     this.register = resetRegister | (bit << order)
