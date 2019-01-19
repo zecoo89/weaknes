@@ -9,7 +9,6 @@ export default class Cpu {
   constructor(isDebug) {
     this.init()
     this.isDebug = isDebug
-    this.cycle = 0
   }
 
   init() {
@@ -17,6 +16,7 @@ export default class Cpu {
     this.opcodes = opcodes
 
     this.ram = new Ram()
+    this.cycle = 0
   }
 
   connect(parts) {
