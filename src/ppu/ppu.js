@@ -42,6 +42,19 @@ export default class Ppu {
     this.generateSpritesData()
   }
 
+  readRegister(addr) {
+    if(addr === 0x2002) {
+      this.registers[0x2005].clearLatch()
+      this.registers[0x2006].clearLatch()
+    }
+
+    return this.registers[addr].read()
+  }
+
+  writeRegister(addr, value) {
+    this.registers[addr].write(value)
+  }
+
   generateBackgroundData() {
     this.backgroundData.length = 0
     /* Prepare tile(8x8) * (32*30) */

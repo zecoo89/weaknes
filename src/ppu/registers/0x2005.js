@@ -10,7 +10,7 @@ export default class X2005 extends BaseRegister {
     this.isFirst = true
   }
 
-  resetRewriteCycles() {
+  clearLatch() {
     this.isFirst = true
   }
 

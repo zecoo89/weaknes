@@ -19,7 +19,7 @@ export default class Ram {
       case 0x2006:
       case 0x2007:
       case 0x4014:
-        this.ppu.registers[addr].write(value)
+        this.ppu.writeRegister(addr, value)
         break
       case 0x4000:
       case 0x4001:
@@ -54,7 +54,7 @@ export default class Ram {
     switch (addr) {
       case 0x2002:
       case 0x2007:
-        return this.ppu.registers[addr].read()
+        return this.ppu.readRegister(addr)
       case 0x4000:
       case 0x4001:
       case 0x4002:

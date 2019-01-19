@@ -10,6 +10,10 @@ export default class X2006 extends BaseRegister {
     this.isFirst = true
   }
 
+  clearLatch() {
+    this.isFirst = true
+  }
+
   write(bits) {
     if (this.isFirst) {
       this.vramAddrUpper = bits
