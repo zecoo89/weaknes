@@ -13,7 +13,7 @@ export default class BaseRegister {
   }
 
   write(bits) {
-    this.register = bits && 0xff
+    this.register = bits & 0xff
   }
 
   readBits(from, to) {
@@ -42,7 +42,8 @@ export default class BaseRegister {
   }
 
   readOneBit(order) {
-    return (this.register >> order) & 0b1
+    const bit = (this.register >> order) & 0b1
+    return bit
   }
 
   writeOneBit(order, bit) {
