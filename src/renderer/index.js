@@ -66,16 +66,18 @@ export default class Renderer {
   generateTileImage(tile, palette, isHorizontalFlip, isVerticalFlip) {
     const image = this.context.createImageData(8, 8)
 
-    let jSign = 1,
-      jOffset = 0
+    let jSign = 1
+    let jOffset = 0
     if (isHorizontalFlip) {
-      ;(jSign = -1), (jOffset = 7)
+      jSign = -1
+      jOffset = 7
     }
 
-    let iSign = 1,
-      iOffset = 0
+    let iSign = 1
+    let iOffset = 0
     if (isVerticalFlip) {
-      ;(iSign = -1), (iOffset = 7)
+      iSign = -1
+      iOffset = 7
     }
 
     for (let i = 0; i < 8; i++) {

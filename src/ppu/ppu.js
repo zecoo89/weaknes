@@ -43,7 +43,7 @@ export default class Ppu {
   }
 
   readRegister(addr) {
-    if(addr === 0x2002) {
+    if (addr === 0x2002) {
       this.registers[0x2005].clearLatch()
       this.registers[0x2006].clearLatch()
     }
