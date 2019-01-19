@@ -16,23 +16,6 @@ export default class Vram {
      * 0x3f20 - 0x3fff : Mirror of 0x3f00 0 0x3f1f
      * */
     this.memory = new Uint8Array(0x4000)
-    this.pointer_ = 0x0000
-    this.pAddr = null
-  }
-
-  get pointer() {
-    return this.pointer_++
-  }
-
-  set pointer(addr) {
-    if (this.pAddr !== null) {
-      const highAddr = this.pAddr << 8
-      const lowAddr = addr
-      this.pointer_ = highAddr | lowAddr
-      this.pAddr = null
-    } else {
-      this.pAddr = addr
-    }
   }
 
   write(addr, value) {
