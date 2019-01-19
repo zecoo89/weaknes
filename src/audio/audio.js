@@ -15,7 +15,8 @@ export default class Audio {
     }
   }
 
-  sound(type, settings) {
+  sound(settings) {
+    const type = settings.type
     const oscillator = this.context.createOscillator()
     oscillator.connect(this.context.destination)
     switch (type) {
@@ -56,7 +57,5 @@ export default class Audio {
     oscillator.stop(endTime)
   }
 
-  soundNoise(oscillator, settings) {
-    console.log('sound noise')
-  }
+  soundNoise() {}
 }

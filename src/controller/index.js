@@ -1,4 +1,4 @@
-import Util from '../util'
+import { isNodejs } from '../utils'
 
 export default class Controller {
   constructor() {
@@ -12,7 +12,7 @@ export default class Controller {
 
   run() {
     // Node.jsじゃなければキー入力を受け付ける
-    !Util.isNodejs() ? this.runKeyListener() : null
+    !isNodejs() ? this.runKeyListener() : null
   }
 
   write(value) {
