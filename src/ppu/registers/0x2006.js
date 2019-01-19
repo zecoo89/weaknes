@@ -1,4 +1,4 @@
-import BaseRegister from './baseRegister'
+import BaseRegister from '../../utils/baseRegister'
 
 /* VRAMへの書き込みアドレス */
 export default class X2006 extends BaseRegister {

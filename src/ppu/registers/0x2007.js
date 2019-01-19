@@ -1,4 +1,4 @@
-import BaseRegister from './baseRegister'
+import BaseRegister from '../../utils/baseRegister'
 
 export default class X2007 extends BaseRegister {
   constructor(ppu) {

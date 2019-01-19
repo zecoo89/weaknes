@@ -1,4 +1,4 @@
-import BaseRegister from './baseRegister'
+import BaseRegister from '../../utils/baseRegister'
 
 /* スクロールの設定を行う */
 export default class X2005 extends BaseRegister {

@@ -1,4 +1,4 @@
-import BaseRegister from './baseRegister'
+import BaseRegister from '../../utils/baseRegister'
 
 /* OAMへ書き込む */
 export default class X2004 extends BaseRegister {
