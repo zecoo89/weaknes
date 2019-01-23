@@ -9,11 +9,18 @@ export default class Renderer {
     this.tiles = []
     this.backgroundPalette = []
     this.spritePalette = []
-    this.backgrounds = []
-    this.sprites = []
+    this.backgrounds = this.initLayer(256, 240)
+    this.sprites = this.initLayer(256, 240)
     this.layerOfBackground = []
     this.layerOfSprite = []
-    this.pixels = []
+    this._pixels = this.initLayer(256, 240)
+  }
+
+  initLayer(width, height) {
+    const layer = new Array(height)
+    return layer.forEach((e, i, arr) => {
+      arr[i] = new Array(width).fill([0,0,0,0])
+    })
   }
 
   connect(parts) {
@@ -22,49 +29,34 @@ export default class Renderer {
     parts.registers ? (this.registers = parts.registers) : null
   }
 
-  pixels() {
-    return this.pixels
+  get pixels() {
+    return this._pixels
   }
 
-  renderOnePixel() {}
-
-  render() {
-    //TODO
-    //use generator?
-    //loop
-    //render 256 * 240 pixels
+  /* Call from ppu */
+  * render() {
+    for(;;) {
+      for(let h=0;h<240;h++) {
+        for(let w=0;w<256;w++){
+          yield this.renderOnePixel(h, w)
+        }
+      }
+    }
   }
 
-  renderBackground() {
-    this.backgrounds.forEach(data => {
-      const image = this.generateTileImage(data.tile, data.palette)
-      this.backgroundContext.putImageData(image, data.x, data.y)
-      this.backgroundContext.putImageData(image, data.x + 256, data.y)
-    })
-
-    const x = this.registers[0x2005].horizontalScrollPosition
-    const y = this.registers[0x2005].verticalScrollPosition
-
-    const width = 256
-    const height = 240
-    const image = this.backgroundContext.getImageData(x, y, width, height)
-    this.context.putImageData(image, 0, 0)
+  renderOnePixel(h, w) {
+    const pixel = this._pixels[h][w]
+    pixel[0] = this.layerOfBackground[h][w][0]
+    pixel[1] = this.layerOfBackground[h][w][1]
+    pixel[2] = this.layerOfBackground[h][w][2]
+    pixel[3] = this.layerOfBackground[h][w][3]
+    //TODO 0番スプライトとの衝突判断
   }
 
-  renderSprites() {
-    this.sprites.forEach(data => {
-      const image = this.generateTileImage(
-        data.tile,
-        data.palette,
-        data.isHorizontalFlip,
-        data.isVerticalFlip
-      )
-      this.renderSprite(image, data.x, data.y)
-    })
-  }
-
-  renderSprite(image, x, y) {
-    this.context.putImageData(image, x, y)
+  /* Render backgrounds and sprites to each layer */
+  renderAllOnEachLayer() {
+    //TODO render background
+    //TODO render sprites
   }
 
   generateTileImage(tile, palette, isHorizontalFlip, isVerticalFlip) {
@@ -101,20 +93,25 @@ export default class Renderer {
     return image
   }
 
+  renderTile() {
+
+  }
+
   generateBackgrounds() {
-    this.pointer = 0
     this.backgrounds.length = 0
     /* Prepare tile(8x8) * (32*30) */
-    for (let i = 0x2000; i <= 0x23bf; i++) {
-      const tileId = this.vram.read(i)
+    for (let i = 0x000; i <= 0x3bf; i++) {
+      const addr = 0x2000 + i
+      const tileId = this.vram.read(addr)
       const tile = this.tiles[tileId]
-      const paletteId = this.selectPalette(i)
+      const paletteId = this.selectPalette(addr)
       const palette = this.selectBackgroundPalettes(paletteId)
       const x = (this.pointer % this.width) * 8
       const y = ((this.pointer - (this.pointer % this.width)) / this.width) * 8
-      this.pointer++
 
-      this.backgrounds.push({
+      //TODO renderTile to background layer
+
+        this.backgrounds.push({
         tile,
         palette,
         x,

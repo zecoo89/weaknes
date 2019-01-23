@@ -27,7 +27,11 @@ export default class Ppu {
   connect(parts) {
     parts.cpu && (this.cpu = parts.cpu)
     parts.cpu && this.oam.connect(parts)
-    parts.screen && (this.screen = parts.screen)
+
+    if(parts.screen) {
+      this.screen = parts.screen
+      this.screen.pixels = this.renderer.pixels
+    }
   }
 
   cycles(cpuCycles_) {
@@ -36,12 +40,16 @@ export default class Ppu {
     if (this.ppu.registers[0x2002].isVblank()) {
       cpuCycles = 0
     } else {
-      for (; cpuCycles >= 4; cpuCycles -= 4) this.renderer.renderOnePixel()
+      for (; cpuCycles >= 4; cpuCycles -= 4) {
+        this.renderer.render()
+        this.screen.refresh()
+      }
     }
 
     const consumedCpuCycle = cpuCycles - cpuCycles_
     this.cycles += (consumedCpuCycle - (consumedCpuCycle % 3)) / 3
 
+    /*** Judging Vblank begin ***/
     // 61440 = 256 * 240
     if (this.cycles >= 61440) {
       this.ppu.registers[0x2002].setVblank()
@@ -53,7 +61,9 @@ export default class Ppu {
     if (this.cycles >= 61440 + 5120) {
       this.cycles = 0
       this.ppu.registers[0x2002].clearVblank()
+      this.renderer.renderAllOnEachLayer()
     }
+    /*** Judging Vblank end ***/
 
     return consumedCpuCycle
   }
@@ -69,11 +79,6 @@ export default class Ppu {
 
   writeRegister(addr, value) {
     this.registers[addr].write(value)
-  }
-
-  sendDataToScreen() {
-    const pixels = this.renderer.pixels()
-    this.screen.setPixels(pixels)
   }
 
   /* 0x0000 - 0x1fffのメモリにCHR-ROMを読み込む */
