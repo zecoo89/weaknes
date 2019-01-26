@@ -268,7 +268,7 @@ export default class Renderer {
       }
       output += '\n'
     }
-    console.log('---' + tileId + '---')
-    console.log(output)
+    console.log('---' + tileId + '---') // eslint-disable-line
+    console.log(output) // eslint-disable-line
   }
 }

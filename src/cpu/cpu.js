@@ -42,7 +42,7 @@ export default class Cpu {
 
     this.frames++
     if(this.frames >= 60) {
-      console.log('60 frames')
+      console.log('60 frames') // eslint-disable-line
       this.frames = 0
     }
     this.nextFrame()
