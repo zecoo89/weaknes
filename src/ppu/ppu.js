@@ -15,13 +15,15 @@ export default class Ppu {
     this.renderer = new Renderer()
 
     this.oam.connect({ ppu: this })
-    this.registers.connect({
+    this.renderer.connect({
       vram: this.vram,
       oam: this.oam,
       registers: this.registers
     })
 
+    this.preCycles = 0 // PPU cycles before add new cycles
     this.cycles = 0 // PPU cycles
+    this.restOfCpuCycles = 0
   }
 
   connect(parts) {
@@ -34,38 +36,46 @@ export default class Ppu {
     }
   }
 
-  cycles(cpuCycles_) {
-    let cpuCycles = cpuCycles_
+  cycle(_cpuCycles) {
+    let cpuCycles = _cpuCycles + this.restOfCpuCycles
+    this.restOfCpuCycles = 0
 
-    if (this.ppu.registers[0x2002].isVblank()) {
+    if (this.registers[0x2002].isVblank()) {
+      this.preCycles = this.cycles
+      this.cycles += cpuCycles * 3 // ppu cycle = cpu cycle * 3
       cpuCycles = 0
     } else {
       for (; cpuCycles >= 4; cpuCycles -= 4) {
         this.renderer.render()
-        this.screen.refresh()
+
+        this.preCycles = this.cycles
+        this.cycles += 4 * 3 // 4 = cpu cycle, ppu cycle = cpu cycle * 3
+
+        if(this.isBeginVblank()) break
       }
     }
 
-    const consumedCpuCycle = cpuCycles - cpuCycles_
-    this.cycles += (consumedCpuCycle - (consumedCpuCycle % 3)) / 3
+    this.restOfCpuCycles = cpuCycles
 
-    /*** Judging Vblank begin ***/
-    // 61440 = 256 * 240
-    if (this.cycles >= 61440) {
-      this.ppu.registers[0x2002].setVblank()
-    } else {
-      this.ppu.registers[0x2002].clearVblank()
+    /*** Decide to begin or end vblank ***/
+    if (this.isBeginVblank()) {
+      this.screen ? this.screen.refresh() : null
+      this.registers[0x2002].setVblank()
+      this.cpu.isInterruptable() ? this.cpu.nmi() : null
     }
-
-    // 5120 = 256 * 20
-    if (this.cycles >= 61440 + 5120) {
+    if (this.isEndVblank()) {
       this.cycles = 0
-      this.ppu.registers[0x2002].clearVblank()
+      this.registers[0x2002].clearVblank()
       this.renderer.renderAllOnEachLayer()
     }
-    /*** Judging Vblank end ***/
+  }
 
-    return consumedCpuCycle
+  isBeginVblank() {
+    return this.preCycles < 81920 && this.cycles >= 81920
+  }
+
+  isEndVblank() {
+    return this.cycles >= 90000
   }
 
   readRegister(addr) {

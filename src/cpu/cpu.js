@@ -15,7 +15,8 @@ export default class Cpu {
     this.registers = new Registers()
     this.ram = new Ram()
     this.opcodes = opcodes
-    this.cycle = 0
+    this.cycles = 0 //TODO change to cycleCounter
+    this.frames = 0
   }
 
   connect(parts) {
@@ -32,20 +33,18 @@ export default class Cpu {
 
   run() {
     const frame = this.frame.bind(this)
-    isNodejs() ? setInterval(frame, 10) : frame()
+    isNodejs() ? setInterval(frame, 1000/60) : frame()
   }
 
   // Run instructions of 1/60 frame
   frame() {
-    this.cycles(27000)
+    this.cycle(30000)
 
-    this.ppu.registers[0x2002].setVblank()
-    this.isInterruptable() ? this.nmi() : null
-    this.cycles(3000)
-    this.ppu.registers[0x2002].clearVblank()
-
-    this.ppu.run()
-
+    this.frames++
+    if(this.frames >= 60) {
+      console.log('60 frames')
+      this.frames = 0
+    }
     this.nextFrame()
   }
 
@@ -53,14 +52,17 @@ export default class Cpu {
     if (!isNodejs()) window.requestAnimationFrame(this.frame.bind(this))
   }
 
-  cycles(cycles) {
-    for (this.cycle = 0; this.cycle < cycles; ) this.eval()
+  cycle(_cycles) {
+    for (this.cycles = 0; this.cycles < _cycles; ) {
+      const cycles = this.eval()
+      this.ppu.cycle(cycles)
+    }
   }
 
   eval() {
     const addr = this.registers.pc++
     const opcode = this.ram.read(addr)
-    OpcodeUtil.execute.call(this, this.opcodes[opcode])
+    return OpcodeUtil.execute.call(this, this.opcodes[opcode])
   }
 
   isInterruptable() {

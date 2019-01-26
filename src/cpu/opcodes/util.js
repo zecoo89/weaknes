@@ -63,6 +63,8 @@ export default class Util {
     }
 
     instruction.call()
-    this.cycle += opcode.cycle
+    this.cycles += opcode.cycle
+
+    return opcode.cycle
   }
 }

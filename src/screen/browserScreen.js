@@ -10,23 +10,18 @@ export default class BrowserScreen extends Screen {
 
     let canvas = document.getElementById(id)
     this.context = canvas.getContext('2d')
-
-    const rows = new Array(this.height)
-    this.pixels = rows.map(row => {
-      const line = new Array(this.width).fill([0, 0, 0, 0])
-      row.push(line)
-    })
-    this.image = this.cotext.createImageData(this.width, this.height)
+    this.image = this.context.createImageData(this.width, this.height)
   }
 
   /* Refresh screen */
-  refreshPixel(h, w) {
-    const i = h * this.width + w
+  refreshPixel(x, y) {
+    const i = (y * this.width + x) * 4
+    const pixels = this.pixels
 
-    this.image.data[i] = this.pixels[h][w][0]
-    this.image.data[i + 1] = this.pixels[h][w][1]
-    this.image.data[i + 2] = this.pixels[h][w][2]
-    this.image.data[i + 3] = this.pixels[h][w][3]
+    this.image.data[i] = pixels[y][x][0]
+    this.image.data[i + 1] = pixels[y][x][1]
+    this.image.data[i + 2] = pixels[y][x][2]
+    this.image.data[i + 3] = pixels[y][x][3]
   }
 
   afterRefresh() {

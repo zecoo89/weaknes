@@ -1,32 +1,49 @@
 import Ppu from '../ppu'
-import Renderer from '../renderer'
+import colors from '../ppu/renderer/colors'
 
 export default class Tool {
-  constructor(rom) {
-    this.rom = rom
+  constructor(id, palette) {
     this.padding = 2
+    this.ppu = new Ppu()
+    this.id = id
+    this.palette = palette
+
+    let canvas = document.getElementById(id)
+    this.context = canvas.getContext('2d')
+    this.image = this.context.createImageData(8, 8)
   }
 
-  dumpChrRom(id, palette) {
-    const ppu = new Ppu()
-    const renderer = new Renderer(id)
+  set rom(rom) {
+    this.ppu.chrRom = rom.chrRom
+  }
 
-    ppu.chrRom = this.rom.chrRom
-    const tiles = ppu.tiles
-
-    let x = 0,
-      y = 0
+  dumpChrRom() {
+    const tiles = this.ppu.renderer.tiles
 
     for (let i = 0; i < tiles.length; i++) {
-      const image = renderer.generateTileImage(tiles[i], palette)
-      renderer.renderSprite(image, x, y)
+      const x = (i % 32) * (8 + this.padding)
+      const y = ((i - (i % 32)) / 32) * (8 + this.padding)
 
-      x += 8 + this.padding
+      const image = this.tileImage(tiles[i])
+      this.context.putImageData(image, x, y)
+    }
+  }
 
-      if (x >= (8 + this.padding) * 32) {
-        x = 0
-        y += 8 + this.padding
+  tileImage(tile) {
+    for(let h=0;h<8;h++) {
+      for(let w=0;w<8;w++) {
+        const i = (h * 8 + w) * 4
+        const tileBit = tile[h][w]
+        const colorId = this.palette[tileBit]
+        const color = colors[colorId]
+
+        this.image.data[i] = color[0]
+        this.image.data[i+1] = color[1]
+        this.image.data[i+2] = color[2]
+        this.image.data[i+3] = 255
       }
     }
+
+    return this.image
   }
 }

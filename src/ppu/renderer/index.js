@@ -6,21 +6,39 @@ export default class Renderer {
   }
 
   init() {
+    this.width = 32
+    this.height = 30
     this.tiles = []
-    this.backgroundPalette = []
-    this.spritePalette = []
-    this.backgrounds = this.initLayer(256, 240)
-    this.sprites = this.initLayer(256, 240)
-    this.layerOfBackground = []
-    this.layerOfSprite = []
-    this._pixels = this.initLayer(256, 240)
+    this.background = this.createLayer(256*2, 240*2)
+    this.sprites = this.createLayer(256*2, 240*2)
+    this._pixels = this.createLayer(256, 240)
+    this.pointer = 0
   }
 
-  initLayer(width, height) {
+  createLayer(width, height) {
     const layer = new Array(height)
-    return layer.forEach((e, i, arr) => {
-      arr[i] = new Array(width).fill([0,0,0,0])
-    })
+
+    for(let i=0;i<height;i++) {
+      layer[i] = new Array(width)
+
+      for(let j=0;j<width;j++) {
+        layer[i][j] = [0, 0, 0, 0]
+      }
+    }
+
+    return layer
+  }
+
+  initLayer(layer) {
+    for(let i=0;i<layer.length;i++) {
+      for(let j=0;j<layer[i].length;j++) {
+        layer[i][j][0] = 0
+        layer[i][j][1] = 0
+        layer[i][j][2] = 0
+        layer[i][j][3] = 0
+      }
+    }
+
   }
 
   connect(parts) {
@@ -34,111 +52,133 @@ export default class Renderer {
   }
 
   /* Call from ppu */
-  * render() {
-    for(;;) {
-      for(let h=0;h<240;h++) {
-        for(let w=0;w<256;w++){
-          yield this.renderOnePixel(h, w)
-        }
-      }
+  render() {
+    const width = 256
+    const height = 240
+    const x = this.pointer % width
+    const y = (this.pointer - (this.pointer % width)) / width
+
+    this.pointer++
+    if(this.pointer >= width * height) {
+      this.pointer = 0
     }
+
+    this.renderOnePixel(x, y)
   }
 
-  renderOnePixel(h, w) {
-    const pixel = this._pixels[h][w]
-    pixel[0] = this.layerOfBackground[h][w][0]
-    pixel[1] = this.layerOfBackground[h][w][1]
-    pixel[2] = this.layerOfBackground[h][w][2]
-    pixel[3] = this.layerOfBackground[h][w][3]
+  renderOnePixel(x, y) {
+    const pixel = this.pixels[y][x]
+    pixel[0] = this.background[y][x][0]
+    pixel[1] = this.background[y][x][1]
+    pixel[2] = this.background[y][x][2]
+    pixel[3] = this.background[y][x][3]
+
+    if(this.sprites[y][x][3] !== 0) {
+      pixel[0] = this.sprites[y][x][0]
+      pixel[1] = this.sprites[y][x][1]
+      pixel[2] = this.sprites[y][x][2]
+      pixel[3] = this.sprites[y][x][3]
+    }
     //TODO 0番スプライトとの衝突判断
   }
 
   /* Render backgrounds and sprites to each layer */
   renderAllOnEachLayer() {
-    //TODO render background
-    //TODO render sprites
+    this.renderBackground()
+    this.renderSprites()
   }
 
-  generateTileImage(tile, palette, isHorizontalFlip, isVerticalFlip) {
-    const image = this.context.createImageData(8, 8)
-
-    let jSign = 1
-    let jOffset = 0
-    if (isHorizontalFlip) {
-      jSign = -1
-      jOffset = 7
-    }
-
-    let iSign = 1
-    let iOffset = 0
-    if (isVerticalFlip) {
-      iSign = -1
-      iOffset = 7
-    }
-
-    for (let i = 0; i < 8; i++) {
-      for (let j = 0; j < 8; j++) {
-        const k = i * 8 + j
-        const l = (i * iSign + iOffset) * 8 + j * jSign + jOffset
-        const bit = tile[k]
-        const paletteId = palette[bit]
-        const color = colors[paletteId]
-
-        image.data[l * 4] = color[0]
-        image.data[l * 4 + 1] = color[1]
-        image.data[l * 4 + 2] = color[2]
-        image.data[l * 4 + 3] = 255 // 透明度
-      }
-    }
-    return image
-  }
-
-  renderTile() {
-
-  }
-
-  generateBackgrounds() {
-    this.backgrounds.length = 0
-    /* Prepare tile(8x8) * (32*30) */
+  renderBackground() {
     for (let i = 0x000; i <= 0x3bf; i++) {
       const addr = 0x2000 + i
       const tileId = this.vram.read(addr)
-      const tile = this.tiles[tileId]
       const paletteId = this.selectPalette(addr)
       const palette = this.selectBackgroundPalettes(paletteId)
-      const x = (this.pointer % this.width) * 8
-      const y = ((this.pointer - (this.pointer % this.width)) / this.width) * 8
+      const x = (i % this.width) * 8
+      const y = ((i - (i % this.width)) / this.width) * 8
 
-      //TODO renderTile to background layer
-
-        this.backgrounds.push({
-        tile,
-        palette,
-        x,
-        y
-      })
+      this.renderTile(this.background, tileId, palette, x, y)
     }
   }
 
-  generateSprites() {
-    this.sprites.length = 0
+  renderSprites() {
     const attrs = this.oam.attrs()
 
+    this.initLayer(this.sprites)
     attrs.forEach(attr => {
       const tileId = attr.tileId + 256
-      const tile = this.tiles[tileId]
       const paletteId = attr.paletteId
       const palette = this.selectSpritePalettes(paletteId)
 
-      this.sprites.push({
-        tile,
-        palette,
-        x: attr.x,
-        y: attr.y,
-        isHorizontalFlip: attr.isHorizontalFlip,
-        isVerticalFlip: attr.isVerticalFlip
-      })
+      this.renderTile(
+        this.sprites, tileId, palette,
+        attr.x, attr.y,
+        attr.isHorizontalFlip, attr.isVerticalFlip
+      )
     })
+  }
+
+  renderTile(layer, tileId, palette, x, y, isHorizontalFlip, isVerticalFlip) {
+    const tile = this.tiles[tileId]
+
+    let iStart = 0
+    let iSign = 1
+    let vStart = 0
+    let vSign = 1
+
+    if(isHorizontalFlip) {
+      vStart = 7
+      vSign = -1
+    }
+    if(isVerticalFlip) {
+      iStart = 7
+      iSign = -1
+    }
+
+    for(let h=0,i=iStart;h<8;h++,i+=iSign) {
+      for(let w=0,v=vStart;w<8;w++,v+=vSign) {
+        const tileBit = tile[i][v]
+        const colorId = palette[tileBit]
+        const color = colors[colorId]
+
+        layer[y+h][x+w][0] = color[0]
+        layer[y+h][x+w][1] = color[1]
+        layer[y+h][x+w][2] = color[2]
+        layer[y+h][x+w][3] = 255
+      }
+    }
+  }
+
+  /* $3F00-$3F0Fからバックグラウンド(背景)パレットを取得する */
+  selectBackgroundPalettes(number) {
+    const palette = []
+
+    const start = 0x3f01 + number * 4
+    const end = 0x3f01 + number * 4 + 3
+
+    // パレット4色の1色目は0x3f00をミラーする
+    palette.push(this.vram.read(0x3f00))
+    for (let i = start; i < end; i++) {
+      palette.push(this.vram.read(i))
+    }
+
+    return palette
+  }
+
+  /* $3F10-$3F1Fからスプライトパレットを取得する */
+  selectSpritePalettes(number) {
+    const palette = []
+
+    const start = 0x3f11 + number * 4
+    const end = 0x3f11 + number * 4 + 3
+
+    // パレット4色の1色目は0x3f00をミラーする
+    palette.push(this.vram.read(0x3f00))
+    for (let i = start; i < end; i++) {
+      palette.push(this.vram.read(i))
+    }
+
+    return palette
   }
 
   /* 属性テーブルから該当パレットの番号を取得する */
@@ -169,42 +209,10 @@ export default class Renderer {
     return bitPosition
   }
 
-  /* $3F00-$3F0Fからバックグラウンド(背景)パレットを取得する */
-  selectBackgroundPalettes(number) {
-    this.backgroundPalette.length = 0
-
-    const start = 0x3f01 + number * 4
-    const end = 0x3f01 + number * 4 + 3
-
-    // パレット4色の1色目は0x3f00をミラーする
-    this.backgroundPalette.push(this.vram.read(0x3f00))
-    for (let i = start; i < end; i++) {
-      this.backgroundPalette.push(this.vram.read(i))
-    }
-
-    return this.backgroundPalette
-  }
-
-  /* $3F10-$3F1Fからスプライトパレットを取得する */
-  selectSpritePalettes(number) {
-    this.spritePalette.length = 0
-
-    const start = 0x3f11 + number * 4
-    const end = 0x3f11 + number * 4 + 3
-
-    // パレット4色の1色目は0x3f00をミラーする
-    this.spritePalette.push(this.vram.read(0x3f00))
-    for (let i = start; i < end; i++) {
-      this.spritePalette.push(this.vram.read(i))
-    }
-
-    return this.spritePalette
-  }
-
   extractTiles() {
     for (let i = 0; i < 0x1fff; ) {
       // タイルの下位ビット
-      const lowerBitLines = []
+      const lowerBits = []
       for (let h = 0; h < 8; h++) {
         let byte = this.vram.read(i++)
         const line = []
@@ -214,11 +222,11 @@ export default class Renderer {
           byte = byte >> 1
         }
 
-        lowerBitLines.push(line)
+        lowerBits.push(line)
       }
 
       // タイルの上位ビット
-      const higherBitLines = []
+      const upperBits = []
       for (let h = 0; h < 8; h++) {
         let byte = this.vram.read(i++)
         const line = []
@@ -228,18 +236,33 @@ export default class Renderer {
           byte = byte >> 1
         }
 
-        higherBitLines.push(line)
+        upperBits.push(line)
       }
 
       // 上位ビットと下位ビットを合成する
       const perfectBits = []
       for (let h = 0; h < 8; h++) {
+        const line = []
         for (let j = 0; j < 8; j++) {
-          const perfectBit = lowerBitLines[h][j] | higherBitLines[h][j]
-          perfectBits.push(perfectBit)
+          const perfectBit = lowerBits[h][j] | upperBits[h][j]
+          line.push(perfectBit)
         }
+        perfectBits.push(line)
       }
       this.tiles.push(perfectBits)
     }
+  }
+
+  dumpTile(tileId) {
+    const tile = this.tiles[tileId]
+    let output = ''
+    for(let h=0;h<8;h++) {
+      for(let w=0;w<8;w++) {
+        output += tile[h][w]
+      }
+      output += '\n'
+    }
+    console.log('---' + tileId + '---')
+    console.log(output)
   }
 }

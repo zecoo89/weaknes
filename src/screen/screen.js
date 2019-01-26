@@ -7,25 +7,27 @@ export default class Screen {
 
   beforeRefresh() {}
 
-  * refresh() {
+  refresh() {
     this.beforeRefresh()
 
-    for (let h = 0; h < this.height; h++) {
-      for (let w = 0; w < this.width; w++) {
-        yield this.refreshPixel(h, w)
-      }
-    }
+    for (let h = 0; h < this.height; h++)
+      for (let w = 0; w < this.width; w++)
+        this.refreshPixel(w, h)
 
-    this.postRefresh()
+    this.afterRefresh()
   }
 
   refreshPixel() {
     throw new Error(`refreshPixel isn't implemented in ${this.name}.`)
   }
 
-  postRefresh() {}
+  afterRefresh() {}
 
   set pixels(pixels) {
     this._pixels = pixels
+  }
+
+  get pixels() {
+    return this._pixels
   }
 }

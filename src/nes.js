@@ -17,7 +17,7 @@ export default class Nes {
   }
 
   connect(parts) {
-    parts.renderer && this.ppu.connect({ renderer: parts.renderer })
+    parts.screen && this.ppu.connect({ screen: parts.screen })
     parts.audio && this.apu.connect({ audio: parts.audio })
   }
 

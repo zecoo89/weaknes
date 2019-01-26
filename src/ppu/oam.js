@@ -4,7 +4,7 @@
 export default class Oam {
   constructor() {
     this.pOffset = 0 // pointerからのオフセット(0~3)
-    this.memory = new Array(0xff).fill(0)
+    this.memory = new Array(0x100).fill(0)
   }
 
   connect(parts) {
