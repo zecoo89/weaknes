@@ -18,12 +18,10 @@ export default class BrowserScreen extends Screen {
   /* Refresh screen */
   refreshPixel(x, y) {
     const i = (y * this.width + x) * 4
-    const pixels = this.pixels
+    const rgba = this.pixels.getPixel(x, y).read()
 
-    this.image.data[i] = pixels[y][x][0]
-    this.image.data[i + 1] = pixels[y][x][1]
-    this.image.data[i + 2] = pixels[y][x][2]
-    this.image.data[i + 3] = pixels[y][x][3]
+    for(let j=0;j<4;j++)
+      this.image.data[i+j] = rgba[j]
   }
 
   afterRefresh() {
