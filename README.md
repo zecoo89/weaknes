@@ -17,14 +17,14 @@ $ npm run build
 async function main() {
   const path = './assets/nestest/nestest.nes'
   const Nes = NesPack.Nes
-  const Renderer = NesPack.Renderer
+  const Screen = NesPack.Screen
   const Rom = NesPack.Rom
 
   nes = new Nes()
 
-  /* A Renderer's argument is Canvas tag's id*/
-  const renderer = new Renderer('canvas')
-  nes.connect(renderer)
+  /* A screen's argument is Canvas tag's id */
+  const screen = new Screen.Browser('canvas')
+  nes.connect(screen)
 
   const data = await fetch(path)
   .then(response => response.arrayBuffer())
@@ -44,7 +44,8 @@ main()
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Renderer of NES emulator</title>
+    <link rel="icon" href="data:;base64,iVBORwOKGO=" />
+    <title>Screen of NES emulator</title>
   </head>
   <body>
     <canvas id="canvas" width="256" height="240"></canvas>
@@ -67,12 +68,12 @@ const rom = new Rom(data)
 nes.rom = rom
 
 const Tool = NesPack.Tool
-const tool = new Tool(rom)
-
 const palette = [0x31, 0x3d, 0x2d, 0x1f]
+const tool = new Tool('chr-dump', palette)
+tool.rom = rom
 
-// First argument is id of HTML Canvas's tag
-tool.dumpChrRom('chr-dump', palette)
+tool.dumpChrRom()
+
 ```
 
 #### index.html
