@@ -5,7 +5,9 @@ export default class Screen {
     this._pixels = null
   }
 
-  beforeRefresh() {}
+  beforeRefresh() {
+    throw new Error(`beforeRefresh() isn't implemented in ${this.name}.`)
+  }
 
   refresh() {
     this.beforeRefresh()
@@ -18,10 +20,12 @@ export default class Screen {
   }
 
   refreshPixel() {
-    throw new Error(`refreshPixel isn't implemented in ${this.name}.`)
+    throw new Error(`refreshPixel() isn't implemented in ${this.name}.`)
   }
 
-  afterRefresh() {}
+  afterRefresh() {
+    throw new Error(`afterRefresh() isn't implemented in ${this.name}.`)
+  }
 
   set pixels(pixels) {
     this._pixels = pixels
