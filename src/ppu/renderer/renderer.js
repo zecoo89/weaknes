@@ -55,6 +55,8 @@ export default class Renderer {
   render() {
     const width = 256
     const height = 240
+    const scrollX = this.registers[0x2005].horizontalScrollPosition
+    const scrollY = this.registers[0x2005].verticalScrollPosition
     const x = this.pointer % width
     const y = (this.pointer - (this.pointer % width)) / width
 
@@ -63,15 +65,18 @@ export default class Renderer {
       this.pointer = 0
     }
 
-    this.renderOnePixel(x, y)
+    this.renderOnePixel(x, y, scrollX, scrollY)
   }
 
-  renderOnePixel(x, y) {
+  renderOnePixel(x, y, scrollX, scrollY) {
     const pixel = this.pixels[y][x]
-    pixel[0] = this.background[y][x][0]
-    pixel[1] = this.background[y][x][1]
-    pixel[2] = this.background[y][x][2]
-    pixel[3] = this.background[y][x][3]
+    const bx = x + scrollX
+    const by = y + scrollY
+
+    pixel[0] = this.background[by][bx][0]
+    pixel[1] = this.background[by][bx][1]
+    pixel[2] = this.background[by][bx][2]
+    pixel[3] = this.background[by][bx][3]
 
     if(this.sprites[y][x][3] !== 0) {
       pixel[0] = this.sprites[y][x][0]
@@ -98,6 +103,7 @@ export default class Renderer {
       const y = ((i - (i % this.width)) / this.width) * 8
 
       this.renderTile(this.background, tileId, palette, x, y)
+      this.renderTile(this.background, tileId, palette, x+256, y)
     }
   }
 
