@@ -12,20 +12,41 @@ $ npm install
 $ npm run build
 ```
 ### Usage of NES emulator
-#### index.js
+#### index.js (All-in-one)
 ```javascript
 async function main() {
   const path = './assets/nestest/nestest.nes'
+
+  const AllInOne = NesPack.AllInOne
+  const screenId = 'canvas'
+  const isDebug = false
+  const nes = new AllInOne(screenId, isDebug)
+  await nes.run(path)
+}
+
+main()
+```
+#### index.js(Separated)
+```javascript
+async function main() {
   const Nes = NesPack.Nes
   const Screen = NesPack.Screen
+  const Audio = NesPack.Audio
   const Rom = NesPack.Rom
 
   nes = new Nes()
 
   /* A screen's argument is Canvas tag's id */
   const screen = new Screen.Browser('canvas')
-  nes.connect(screen)
+  const audio = new Audio()
 
+  nes.connect({
+    screen,
+    audio
+  })
+
+  /* Download ROM */
+  const path = './assets/nestest/nestest.nes'
   const data = await fetch(path)
   .then(response => response.arrayBuffer())
   .then(buffer => new Uint8Array(buffer))
