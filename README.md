@@ -78,6 +78,7 @@ main()
 
 ### Usage of Tool
 
+Tool dumps CHR-ROM.
 <img src="./images/tool.png">
 
 #### index.js
