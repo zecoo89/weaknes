@@ -120,8 +120,7 @@ tool.dumpChrRom()
 </html>
 ```
 
-### Run server
+### Run Nes-emulator
 ```console
-$ npm run serve
+$ npm run nes:browser
 ```
-After run server, open http://localhost:1234
