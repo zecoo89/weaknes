@@ -77,6 +77,9 @@ main()
 ```
 
 ### Usage of Tool
+
+<img src="./images/tool.png">
+
 #### index.js
 ```javascript
 const Rom = NesPack.Rom
