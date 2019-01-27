@@ -3,6 +3,7 @@ import Ppu from './ppu'
 import Apu from './apu'
 import Controller from './controller'
 import Screen from './screen'
+import Audio from './audio'
 import Rom from './rom'
 import { isNodejs } from './utils'
 
