@@ -26,7 +26,7 @@ async function main() {
 
 main()
 ```
-#### index.js(Separated)
+#### index.js (Separated)
 ```javascript
 async function main() {
   const Nes = NesPack.Nes
