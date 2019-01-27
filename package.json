@@ -4,12 +4,13 @@
   "description": "",
   "main": "./dist/bundle.js",
   "scripts": {
-    "build": "rollup -c rollup.config.js",
-    "watch:build": "rollup -w -c rollup.config.js",
+    "build": "mkdir -p ./dist && rollup -c rollup.config.js",
+    "watch:build": "mkdir -p ./dist && rollup -w -c rollup.config.js",
     "lint": "eslint ./src/**/*.js",
     "test": "jest ./src",
     "watch:test": "jest --watch ./src",
-    "serve": "http-server . -p 1234",
+    "nes:browser": "concurrently \"http-server . -p 1234\" \"opn http://localhost:1234\"",
+    "nes:nodejs": "node index.js",
     "format": "prettier --config .prettierrc.json \"src/**/*.js\" --write",
     "debug": "node diff.js"
   },
@@ -31,6 +32,8 @@
     "rollup-plugin-node-resolve": "^3.4.0"
   },
   "dependencies": {
+    "concurrently": "^4.1.0",
+    "opn-cli": "^4.0.0",
     "source-map-support": "^0.5.9"
   },
   "engines": {
