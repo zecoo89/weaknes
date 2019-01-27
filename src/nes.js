@@ -55,8 +55,8 @@ export class AllInOne {
   async run(romPath) {
     if(typeof romPath === 'string') {
       const data = isNodejs() ? await this.readFile(romPath) : await this.download(romPath)
-      const rom = new Rom(data)
-      this.nes.rom = rom
+      this.rom = new Rom(data)
+      this.nes.rom = this.rom
     } else if(romPath.constructor.name === 'Rom') {
       this.nes.rom = romPath
     } else {
@@ -67,11 +67,11 @@ export class AllInOne {
   }
 
   async download(romUrl) {
-    const data = await fetch(romUrl)
+    this.data = await fetch(romUrl)
     .then(response => response.arrayBuffer())
     .then(buffer => new Uint8Array(buffer))
 
-    return data
+    return this.data
   }
 
   async readFile(romPath) {
@@ -79,8 +79,16 @@ export class AllInOne {
     const util = require('util')
 
     const readFile = util.promisify(fs.readFile)
-    const data = await readFile(romPath)
+    this.data = await readFile(romPath)
 
-    return data
+    return this.data
+  }
+
+  set rom(rom) {
+    this.rom_ = rom
+  }
+
+  get rom() {
+    return this.rom_
   }
 }
