@@ -24,7 +24,8 @@ export default class Tool {
       const x = (i % 32) * (8 + this.padding)
       const y = ((i - (i % 32)) / 32) * (8 + this.padding)
 
-      const image = this.tileImage(tiles[i])
+      const tile = tiles.select(i)
+      const image = this.tileImage(tile)
       this.context.putImageData(image, x, y)
     }
   }

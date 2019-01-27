@@ -98,6 +98,6 @@ export default class Ppu {
     }
 
     /* CHR領域からタイルを抽出しておく */
-    this.renderer.extractTiles()
+    this.renderer.tiles.extract()
   }
 }

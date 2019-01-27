@@ -44,7 +44,7 @@ export default class Layer {
     this.layer[y][x] = pixel
   }
 
-  writeTile(tile, palette, x, y, isHflip, isVflip) {
+  writeTile(tile, palette, paletteId, x, y, isHflip, isVflip) {
     let iStart = 0
     let iSign = 1
     let vStart = 0
@@ -62,7 +62,7 @@ export default class Layer {
     for(let h=0,i=iStart;h<8;h++,i+=iSign) {
       for(let w=0,v=vStart;w<8;w++,v+=vSign) {
         const tileBit = tile[i][v]
-        const colorId = palette[tileBit]
+        const colorId = palette.select(paletteId, tileBit)
         const rgb = colors[colorId]
         const alpha = 255
 
