@@ -120,7 +120,7 @@ tool.dumpChrRom()
 </html>
 ```
 
-### Run Nes emulator
+### Run NES emulator
 ```console
 $ npm run nes:browser
 ```
