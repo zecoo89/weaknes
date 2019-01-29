@@ -3,7 +3,7 @@ import colors from '../ppu/renderer/colors'
 
 export default class Tool {
   constructor(id, palette) {
-    this.padding = 2
+    this.padding = 0
     this.ppu = new Ppu()
     this.id = id
     this.palette = palette
