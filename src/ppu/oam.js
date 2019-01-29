@@ -3,13 +3,37 @@
  * */
 export default class Oam {
   constructor() {
-    this.pOffset = 0 // pointerからのオフセット(0~3)
-    this.memory = new Array(0x100).fill(0)
+    this.init()
   }
 
   connect(parts) {
     parts.cpu && (this.cpu = parts.cpu)
     parts.ppu && (this.ppu = parts.ppu)
+  }
+
+  init() {
+    this.pOffset = 0 // pointerからのオフセット(0~3)
+    this.memory = new Array(0x100).fill(0)
+    this._attrs = this.createAttrs()
+    this._zeroSpritePosition = { x:null, y:null }
+  }
+
+  createAttrs() {
+    const attrs = new Array(63)
+
+    for(let i=0;i<attrs.length;i++) {
+      attrs[i] = {
+        x: null,
+        y: null,
+        tileId: null,
+        paletteId: null,
+        priority: null,
+        isHorizontalFlip: null,
+        isVerticalFlip: null
+      }
+    }
+
+    return attrs
   }
 
   /* pointerの指すメモリにvalue(スプライトの設定)を書き込む
@@ -29,7 +53,7 @@ export default class Oam {
   write(value) {
     const pointer = this.ppu.registers[0x2003].read()
     const addr = pointer + this.pOffset++
-    this.memory[addr] = value
+      this.memory[addr] = value
 
     if (this.pOffset > 3) {
       this.pOffset = 0
@@ -53,38 +77,41 @@ export default class Oam {
     }
   }
 
-  attrs() {
-    const attrs_ = []
+  zeroSpritePosition() {
+    this._zeroSpritePosition.x = this.memory[3]
+    this._zeroSpritePosition.y = this.memory[0]
 
-    for (let i = 0; i < 64; i++) {
-      const attr = this.formatSpriteSettingData(i)
-      attrs_.push(attr)
+    return this._zeroSpritePosition
+  }
+
+  attrs() {
+    /* No.0 sprite is except */
+    for (let i = 0; i < 63; i++) {
+      this.formatSpriteSettingData(i)
     }
 
-    return attrs_
+    return this._attrs
   }
 
   formatSpriteSettingData(id) {
-    const baseAddr = id * 4
-    return {
-      x: this.memory[baseAddr + 3],
-      y: this.memory[baseAddr + 0],
-      tileId: this.memory[baseAddr + 1],
-      ...this.extractAttr(this.memory[baseAddr + 2])
-    }
+    const baseAddr = (id+1) * 4
+
+    this._attrs[id].x = this.memory[baseAddr + 3]
+    this._attrs[id].y = this.memory[baseAddr + 0]
+    this._attrs[id].tileId = this.memory[baseAddr + 1]
+
+    this.extractAttr(id, this.memory[baseAddr + 2])
   }
 
-  extractAttr(attr) {
+  extractAttr(id, attr) {
     const paletteId = attr & 0x03
     const priority = (attr >> 5) & 0x01
     const isHorizontalFlip = (attr >> 6) & 0x01
     const isVerticalFlip = (attr >> 7) & 0x01
 
-    return {
-      paletteId,
-      priority,
-      isHorizontalFlip,
-      isVerticalFlip
-    }
+    this._attrs[id].paletteId = paletteId
+    this._attrs[id].priority = priority
+    this._attrs[id].isHorizontalFlip = isHorizontalFlip
+    this._attrs[id].isVerticalFlip = isVerticalFlip
   }
 }
