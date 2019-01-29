@@ -1,7 +1,7 @@
 import Registers from './registers'
 import Ram from './ram'
 import opcodes from './opcodes'
-import { isNodejs } from '../utils'
+import { envType as env } from '../utils'
 import OpcodeUtil from './opcodes/util'
 
 /* 6502 CPU */
@@ -33,7 +33,7 @@ export default class Cpu {
 
   run() {
     const frame = this.frame.bind(this)
-    isNodejs() ? setInterval(frame, 1000/60) : frame()
+    env === 'nodejs' ? setInterval(frame, 1000/60) : frame()
   }
 
   // Run instructions of 1/60 frame
@@ -49,7 +49,7 @@ export default class Cpu {
   }
 
   nextFrame() {
-    if (!isNodejs()) window.requestAnimationFrame(this.frame.bind(this))
+    if (env !== 'nodejs') window.requestAnimationFrame(this.frame.bind(this))
   }
 
   cycle(_cycles) {

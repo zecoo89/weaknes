@@ -9,31 +9,32 @@
     "lint": "eslint ./src/**/*.js",
     "test": "jest ./src",
     "watch:test": "jest --watch ./src",
-    "nes:browser": "concurrently \"http-server . -p 1234\" \"opn http://localhost:1234\"",
-    "nes:nodejs": "node index.js",
+    "nes:browser": "node server.js 1234",
+    "nes:electron": "electron ./index.js",
+    "nes:nodejs": "NODE_ENV=development node index.js",
     "format": "prettier --config .prettierrc.json \"src/**/*.js\" --write",
     "debug": "node diff.js"
   },
-  "author": "",
+  "author": "zecoo89",
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.1.6",
     "@babel/preset-env": "^7.1.6",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^23.6.0",
+    "electron": "^4.0.2",
     "eslint": "^5.9.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-node": "^8.0.0",
-    "http-server": "^0.11.1",
+    "express": "^4.16.4",
     "jest-cli": "^23.6.0",
+    "opn": "^5.4.0",
     "prettier": "^1.15.3",
     "rollup": "^0.67.0",
     "rollup-plugin-eslint": "^5.0.0",
     "rollup-plugin-node-resolve": "^3.4.0"
   },
   "dependencies": {
-    "concurrently": "^4.1.0",
-    "opn-cli": "^4.0.0",
     "source-map-support": "^0.5.9"
   },
   "engines": {

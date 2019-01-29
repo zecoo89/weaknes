@@ -1,6 +1,6 @@
 class Main {
   static startElectron() {
-    const { app, BrowserWindow } = require('electron')
+    const { app, BrowserWindow } = require('electron') //eslint-disable-line
 
     const createWindow = () => {
       let win = new BrowserWindow({
@@ -34,7 +34,7 @@ class Main {
     let path
     if (env === 'electron:renderer') {
       NesPack =require('./dist/bundle')
-      path = require('electron').remote.process.argv[2]
+      path = require('electron').remote.process.argv[2] //eslint-disable-line
     } else if (env === 'nodejs') {
       NesPack = require('./dist/bundle')
       path = process.argv[2]

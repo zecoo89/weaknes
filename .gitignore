@@ -3,6 +3,4 @@ assets/
 .DS_store
 nestest.log
 log.txt
-/index.html
-/index.js
 dist/

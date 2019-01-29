@@ -1,4 +1,4 @@
-import { isNodejs } from '../utils'
+import { envType as env } from '../utils'
 
 export default class Controller {
   constructor() {
@@ -12,7 +12,7 @@ export default class Controller {
 
   run() {
     // Node.jsじゃなければキー入力を受け付ける
-    !isNodejs() ? this.runKeyListener() : null
+    env !== 'nodejs' ? this.runKeyListener() : null
   }
 
   write(value) {

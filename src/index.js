@@ -1,3 +1,7 @@
+if(typeof process !== 'undefined' && process.env.NODE_ENV === 'development') {
+  require('source-map-support').install()
+}
+
 import Nes_ from './nes'
 import Rom_ from './rom'
 import Screen_ from './screen'

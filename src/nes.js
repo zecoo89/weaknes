@@ -5,7 +5,7 @@ import Controller from './controller'
 import Screen from './screen'
 import Audio from './audio'
 import Rom from './rom'
-import { isNodejs } from './utils'
+import { envType as env } from './utils'
 
 export default class Nes {
   constructor(isDebug) {
@@ -43,23 +43,27 @@ export default class Nes {
 
 export class AllInOne {
   constructor(screenId, isDebug) {
-    const screen = new Screen.Browser(screenId)
-    const audio = new Audio()
-
     this.nes = new Nes(isDebug)
-    this.nes.connect({
-      screen,
-      audio
-    })
+
+    if(env !== 'nodejs') {
+      const screen = new Screen.Browser(screenId)
+      const audio = new Audio()
+      this.nes.connect({
+        screen,
+        audio
+      })
+    }
   }
 
   async run(romPath) {
-    if(typeof romPath === 'string') {
-      const data = isNodejs() ? await this.readFile(romPath) : await this.download(romPath)
+    if(env === 'browser') {
+      const data = await this.download(romPath)
       this.rom = new Rom(data)
       this.nes.rom = this.rom
-    } else if(romPath.constructor.name === 'Rom') {
-      this.nes.rom = romPath
+    } else if(env === 'nodejs' || env === 'electron:renderer') {
+      const data = await this.readFile(romPath)
+      this.rom = new Rom(data)
+      this.nes.rom = this.rom
     } else {
       throw new Error()
     }

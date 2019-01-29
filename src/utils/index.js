@@ -1,5 +1,5 @@
 import BaseRegister_ from './baseRegister'
-import isNodejs_ from './isNodejs'
+import envType_ from './envType.js'
 
 export const BaseRegister = BaseRegister_
-export const isNodejs = isNodejs_
+export const envType = envType_
