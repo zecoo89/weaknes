@@ -35,6 +35,15 @@ export default class Renderer {
     return this._pixels
   }
 
+  isZeroSpriteOverlapped(x, y) {
+    const zsPosition = this.oam.zeroSpritePosition()
+
+    const isXOverlapped = x >= zsPosition.x && x + 8 <= zsPosition.y
+    const isYOverlapped = y >= zsPosition.y && y + 8 <= zsPosition.x
+
+    return isXOverlapped && isYOverlapped
+  }
+
   /* Call from ppu */
   render() {
     const scrollX = this.registers[0x2005].horizontalScrollPosition
@@ -59,7 +68,12 @@ export default class Renderer {
     if(this.sprites.getPixel(x, y).alpha() !== 0) {
       this.pixels.setPixel(x, y, this.sprites.getPixel(x, y))
     }
-    //TODO 0番スプライトとの衝突判断
+
+    if(this.isZeroSpriteOverlapped(dx, dy)) {
+      this.registers[0x2002].setZeroSpriteFlag()
+    } else {
+      this.registers[0x2002].clearZeroSpriteFlag()
+    }
   }
 
   /* Render backgrounds and sprites to each layer */

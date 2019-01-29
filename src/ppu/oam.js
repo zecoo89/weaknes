@@ -19,7 +19,7 @@ export default class Oam {
   }
 
   createAttrs() {
-    const attrs = new Array(63)
+    const attrs = new Array(64)
 
     for(let i=0;i<attrs.length;i++) {
       attrs[i] = {
@@ -86,7 +86,7 @@ export default class Oam {
 
   attrs() {
     /* No.0 sprite is except */
-    for (let i = 0; i < 63; i++) {
+    for (let i = 0; i < 64; i++) {
       this.formatSpriteSettingData(i)
     }
 
@@ -94,7 +94,7 @@ export default class Oam {
   }
 
   formatSpriteSettingData(id) {
-    const baseAddr = (id+1) * 4
+    const baseAddr = (id) * 4
 
     this._attrs[id].x = this.memory[baseAddr + 3]
     this._attrs[id].y = this.memory[baseAddr + 0]

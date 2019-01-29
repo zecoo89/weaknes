@@ -18,8 +18,16 @@ export default class X2002 extends BaseRegister {
     return !!this.readOneBit(7)
   }
 
+  setZeroSpriteFlag() {
+    this.writeOneBit(6, 1)
+  }
+
+  clearZeroSpriteFlag() {
+    this.writeOneBit(6, 0)
+  }
+
   /* 描画ラインの0番スプライトが衝突したか */
-  isZeroSpriteCollision() {
+  isZeroSpriteOverlapped() {
     return !!this.readOneBit(6)
   }
 
