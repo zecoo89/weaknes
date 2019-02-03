@@ -1,12 +1,12 @@
-import X2000 from './0x2000.js'
-import X2001 from './0x2001.js'
-import X2002 from './0x2002.js'
-import X2003 from './0x2003.js'
-import X2004 from './0x2004.js'
-import X2005 from './0x2005.js'
-import X2006 from './0x2006.js'
-import X2007 from './0x2007.js'
-import X4014 from './0x4014.js'
+import X2000 from './0x2000'
+import X2001 from './0x2001'
+import X2002 from './0x2002'
+import X2003 from './0x2003'
+import X2004 from './0x2004'
+import X2005 from './0x2005'
+import X2006 from './0x2006'
+import X2007 from './0x2007'
+import X4014 from './0x4014'
 
 export default class RegistersFactory {
   static create(ppu) {

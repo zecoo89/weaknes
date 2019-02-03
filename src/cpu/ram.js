@@ -4,6 +4,7 @@ export default class Ram {
   }
 
   connect(parts) {
+    parts.cpu && (this.cpu = parts.cpu)
     parts.ppu && (this.ppu = parts.ppu)
     parts.apu && (this.apu = parts.apu)
     parts.controller && (this.controller = parts.controller)
@@ -18,9 +19,13 @@ export default class Ram {
       case 0x2005:
       case 0x2006:
       case 0x2007:
-      case 0x4014:
         this.ppu.writeRegister(addr, value)
         break
+      case 0x4014:
+        this.ppu.cycles += 513 * 3
+        this.ppu.writeRegister(addr, value)
+        break
+      /*
       case 0x4000:
       case 0x4001:
       case 0x4002:
@@ -42,8 +47,9 @@ export default class Ram {
       case 0x4015:
         this.apu ? this.apu.writeRegister(addr, value) : null
         break
+      */
       case 0x4016:
-        this.controller ? this.controller.write(value) : null
+        this.controller && this.controller.write(value)
         break
       default:
         this.memory[addr] = value
@@ -55,6 +61,7 @@ export default class Ram {
       case 0x2002:
       case 0x2007:
         return this.ppu.readRegister(addr)
+      /*
       case 0x4000:
       case 0x4001:
       case 0x4002:
@@ -75,6 +82,7 @@ export default class Ram {
       case 0x4013:
       case 0x4015:
         return this.apu.readRegister(addr)
+      */
       case 0x4016:
         return this.controller ? this.controller.read() : 0x0
       default:

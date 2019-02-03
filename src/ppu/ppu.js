@@ -21,9 +21,8 @@ export default class Ppu {
       registers: this.registers
     })
 
-    this.preCycles = 0 // PPU cycles before add new cycles
-    this.cycles = 0 // PPU cycles
-    this.restOfCpuCycles = 0
+    this.cycles = 0
+    this.cyclesPerFrame = 89342
   }
 
   connect(parts) {
@@ -36,46 +35,63 @@ export default class Ppu {
     }
   }
 
-  cycle(_cpuCycles) {
-    let cpuCycles = _cpuCycles + this.restOfCpuCycles
-    this.restOfCpuCycles = 0
+  run() {
+    if(this.isHblank()) return
 
-    if (this.registers[0x2002].isVblank()) {
-      this.preCycles = this.cycles
-      this.cycles += cpuCycles * 3 // ppu cycle = cpu cycle * 3
-      cpuCycles = 0
+    if(this.registers[0x2002].isVblank()) {
+      this.runInVblank()
     } else {
-      for (; cpuCycles >= 4; cpuCycles -= 4) {
-        this.renderer.render()
-
-        this.preCycles = this.cycles
-        this.cycles += 4 * 3 // 4 = cpu cycle, ppu cycle = cpu cycle * 3
-
-        if(this.isBeginVblank()) break
-      }
+      this.runInRendering()
     }
+  }
 
-    this.restOfCpuCycles = cpuCycles
+  isHblank() {
+    const x = this.cycles - (this.cycles - (this.cycles % 341))
+    return x >= 256 && x <= 340
+  }
 
-    /*** Decide to begin or end vblank ***/
-    if (this.isBeginVblank()) {
-      this.screen ? this.screen.refresh() : null
-      this.registers[0x2002].setVblank()
-      this.cpu.isInterruptable() ? this.cpu.nmi() : null
-    }
-    if (this.isEndVblank()) {
-      this.cycles = 0
+  runInVblank() {
+    /* Check vblank ending */
+    if(this.renderer.isVblankEnd()) {
       this.registers[0x2002].clearVblank()
-      this.renderer.renderAllOnEachLayer()
+      /* y is 0 ~ 239 */
+      this.registers[0x2005].verticalScrollPosition < 240 && this.renderer.loadAllOnEachLayer()
+      this.renderer.initPixelPosition()
+    }
+    this.renderer.incrementPixelPosition()
+  }
+
+  runInRendering() {
+    this.renderer.render()
+
+    /* Check vblank beginning */
+    if(this.renderer.isVblankStart()) {
+      this.screen && this.screen.refresh()
+      this.registers[0x2002].setVblank()
+      this.registers[0x2000].isNmiInterruptable() && this.cpu.nmi()
+    }
+
+    /* Check zero sprite overlap */
+    if(this.isZeroSpriteOverlapped()) {
+      this.registers[0x2002].setZeroSpriteFlag()
+    } else {
+      this.registers[0x2002].clearZeroSpriteFlag()
     }
   }
 
-  isBeginVblank() {
-    return this.preCycles < 81920 && this.cycles >= 81920
-  }
+  isZeroSpriteOverlapped() {
+    const zsPosition = this.oam.zeroSpritePosition()
+    const position = this.renderer.position
+    const width = this.renderer.width
+    const x = position & (width-1)
+    const y = (position - (position & (width-1))) / width
 
-  isEndVblank() {
-    return this.cycles >= 90000
+    const isXOverlapped = x >= zsPosition.x && x < zsPosition.x + 8
+    const isYOverlapped = y >= zsPosition.y && y < zsPosition.y + 8
+    //const isXOverlapped = x === zsPosition.x
+    //const isYOverlapped = y === zsPosition.y
+
+    return isXOverlapped && isYOverlapped
   }
 
   readRegister(addr) {
@@ -92,12 +108,14 @@ export default class Ppu {
   }
 
   /* 0x0000 - 0x1fffのメモリにCHR-ROMを読み込む */
-  set chrRom(chrRom) {
+  set rom(rom) {
+    const chrRom = rom.chrRom
     for (let i = 0; i < chrRom.length; i++) {
       this.vram.write(i, chrRom[i])
     }
 
-    /* CHR領域からタイルを抽出しておく */
     this.renderer.tiles.extract()
+
+    this.renderer.secondScreenAddr = rom.isVerticalMirror() ? 0x2400 : 0x2800
   }
 }

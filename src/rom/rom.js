@@ -22,6 +22,10 @@ export default class Rom {
     return this.data[5]
   }
 
+  isVerticalMirror() {
+    return !!(this.data[6] & 0x01)
+  }
+
   get START_ADDRESS_OF_CHR_ROM() {
     return this.NES_ROM_HEADER_SIZE + this.SIZE_OF_PRG_ROM
   }

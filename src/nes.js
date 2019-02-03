@@ -18,6 +18,10 @@ export default class Nes {
     this.cpu.connect({ ppu: this.ppu })
     this.cpu.connect({ apu: this.apu })
     this.cpu.connect({ controller: this.controller })
+
+    this.frames = 0
+    this.startTime = 0
+    this.endTime = 0
   }
 
   connect(parts) {
@@ -31,13 +35,44 @@ export default class Nes {
 
   set rom(rom) {
     this._rom = rom
+    this.cpu.rom = this.rom
+    this.ppu.rom = this.rom
   }
 
   run() {
-    this.cpu.prgRom = this.rom.prgRom
-    this.ppu.chrRom = this.rom.chrRom
+    const frame = this.frame.bind(this)
+    env === 'nodejs' ? setInterval(frame, 1000/60) : frame()
+  }
 
-    this.cpu.run()
+  frame() {
+    for(this.ppu.cycles = 0;this.ppu.cycles<this.ppu.cyclesPerFrame;this.ppu.cycles++) {
+      this.cpu.run(1)
+      this.ppu.run()
+    }
+
+    this.calcFps()
+
+    this.nextFrame()
+  }
+
+  nextFrame() {
+    if (env !== 'nodejs') window.requestAnimationFrame(this.frame.bind(this))
+  }
+
+  calcFps() {
+    this.frames++
+
+    if(this.frames === 60) {
+      this.frames = 0
+      this.endTime = Date.now()
+
+      const time = this.endTime - this.startTime
+      const fps = (1000 / time) * 60
+      //eslint-disable-next-line
+      console.log(Math.round(fps * 100) / 100)
+
+      this.startTime = Date.now()
+    }
   }
 }
 

@@ -35,11 +35,9 @@ export default class Util {
     console.log(chars)
   }
 
-  static execute(opcode) {
+  static debug(opcode) {
     let addrOfOpcode
-    if (this.isDebug) {
-      addrOfOpcode = this.registers.pc - 1
-    }
+    addrOfOpcode = this.registers.pc - 1
 
     const addressingName = opcode.addressing
 
@@ -58,12 +56,22 @@ export default class Util {
 
     const instruction = Instructions[instructionName].bind(this, addr)
 
-    if (this.isDebug) {
-      Util.debugString.call(this, instruction, addressing, addr, addrOfOpcode)
-    }
+    Util.debugString.call(this, instruction, addressing, addr, addrOfOpcode)
 
     instruction.call()
-    this.cycles += opcode.cycle
+
+    return opcode.cycle
+  }
+
+  static execute(opcode) {
+    const addressingName = opcode.addressing
+    const addressing = Addressing[addressingName].bind(this)
+    const addr = addressing()
+
+    const instructionName = opcode.instruction
+    const instruction = Instructions[instructionName].bind(this, addr)
+
+    instruction()
 
     return opcode.cycle
   }

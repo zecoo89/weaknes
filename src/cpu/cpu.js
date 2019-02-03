@@ -1,10 +1,9 @@
 import Registers from './registers'
 import Ram from './ram'
 import opcodes from './opcodes'
-import { envType as env } from '../utils'
 import OpcodeUtil from './opcodes/util'
 
-/* 6502 CPU */
+/* 2A03 CPU */
 export default class Cpu {
   constructor(isDebug) {
     this.init()
@@ -14,9 +13,10 @@ export default class Cpu {
   init() {
     this.registers = new Registers()
     this.ram = new Ram()
+    this.ram.connect({cpu: this})
     this.opcodes = opcodes
-    this.cycles = 0 //TODO change to cycleCounter
-    this.frames = 0
+    this.executeOpcode = this.isDebug ? OpcodeUtil.debug.bind(this) : OpcodeUtil.execute.bind(this)
+    this.debtCycles = 0
   }
 
   connect(parts) {
@@ -31,38 +31,35 @@ export default class Cpu {
     this.run()
   }
 
-  run() {
-    const frame = this.frame.bind(this)
-    env === 'nodejs' ? setInterval(frame, 1000/60) : frame()
+  /* Run a cycle */
+  run(cycles) {
+    this.cycles(cycles)
   }
 
-  // Run instructions of 1/60 frame
+  /* Run instructions of 1/60 frame */
   frame() {
-    this.cycle(30000)
-
-    this.frames++
-    if(this.frames >= 60) {
-      console.log('60 frames') // eslint-disable-line
-      this.frames = 0
-    }
-    this.nextFrame()
+    this.cycles(29780)
   }
 
-  nextFrame() {
-    if (env !== 'nodejs') window.requestAnimationFrame(this.frame.bind(this))
-  }
+  /* Run cycles
+   * return actual consumed cycles
+   * */
+  cycles(_cycles) {
+    let cycles = this.debtCycles
 
-  cycle(_cycles) {
-    for (this.cycles = 0; this.cycles < _cycles; ) {
-      const cycles = this.eval()
-      this.ppu.cycle(cycles)
-    }
+    for (; cycles < _cycles;)
+      cycles += this.eval()
+
+    this.debtCycles = cycles - _cycles
+
+    return cycles
   }
 
   eval() {
     const addr = this.registers.pc++
-    const opcode = this.ram.read(addr)
-    return OpcodeUtil.execute.call(this, this.opcodes[opcode])
+    const opcodeId = this.ram.read(addr)
+
+    return this.executeOpcode(this.opcodes[opcodeId])
   }
 
   isInterruptable() {
@@ -81,8 +78,10 @@ export default class Cpu {
   }
 
   /* 0x8000~のメモリにROM内のPRG-ROMを読み込む*/
-  set prgRom(prgRom) {
+  set rom(rom) {
+    const prgRom = rom.prgRom
     let startAddr = 0x8000
+
     for (let i = 0; i < prgRom.length; i++) {
       this.ram.write(startAddr + i, prgRom[i])
     }
@@ -106,7 +105,7 @@ export default class Cpu {
     this.registers.sp--
   }
 
-  stackPop() {
-    return this.ram.read(++this.registers.sp)
-  }
+    stackPop() {
+      return this.ram.read(++this.registers.sp)
+    }
 }

@@ -14,7 +14,7 @@ export default class Tool {
   }
 
   set rom(rom) {
-    this.ppu.chrRom = rom.chrRom
+    this.ppu.rom = rom
   }
 
   dumpChrRom() {

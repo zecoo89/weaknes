@@ -5,7 +5,7 @@ class Main {
     const createWindow = () => {
       let win = new BrowserWindow({
         width: 256,
-        height: 240,
+        height: 360,
         useContentSize: true,
         resizable: false,
         webPreferences: {
@@ -48,7 +48,7 @@ class Main {
     const AllInOne = NesPack.AllInOne
 
     let screenId = null
-    let isDebug = true
+    let isDebug = false
 
     if(env !== 'nodejs') {
       screenId = 'canvas'

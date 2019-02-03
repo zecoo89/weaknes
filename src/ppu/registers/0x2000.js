@@ -82,4 +82,8 @@ export default class X2000 extends BaseRegister {
         throw new Error()
     }
   }
+
+  mainScreenNumber() {
+    return this.readBits(0, 1)
+  }
 }
