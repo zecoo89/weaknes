@@ -14,7 +14,7 @@ export default class Renderer {
     this.tileHeight = 30
     this.tiles = new Tiles()
     this.background = new Layer(256*2, 240*2)
-    this.sprites = new Layer(256*2, 240*2)
+    this.sprites = new Layer(256, 240)
     this._pixels = new Layer(256, 240)
     this.bgPalette = new Palette(0x3f00)
     this.spritesPalette = new Palette(0x3f10)
