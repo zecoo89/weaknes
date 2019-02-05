@@ -48,23 +48,23 @@ class Main {
     const AllInOne = NesPack.AllInOne
 
     let screenId = null
-    let isDebug = false
+    let isDebug = true
 
     if(env !== 'nodejs') {
       screenId = 'canvas'
       isDebug = false
     }
 
-    const nes = new AllInOne(screenId, isDebug)
-    await nes.run(path)
+    const allInOne = new AllInOne(screenId, isDebug)
+    await allInOne.run(path)
 
     /* CHR-ROMを可視化する*/
     const palette = [0x31, 0x3d, 0x2d, 0x1f]
     const Tool = NesPack.Tool
-    const tool = new Tool('chr-dump', palette)
-    tool.rom = nes.rom
+    const tool = new Tool(allInOne.nes)
 
-    tool.dumpChrRom()
+    tool.dumpChrRom('chr-dump', palette)
+    tool.dumpPalette('palette-dump')
   }
 }
 

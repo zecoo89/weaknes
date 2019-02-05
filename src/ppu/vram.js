@@ -19,10 +19,41 @@ export default class Vram {
   }
 
   write(addr, value) {
-    this.memory[addr] = value
+    const filteredAddr = this.filter(addr)
+    this.memory[filteredAddr] = value
   }
 
   read(addr) {
-    return this.memory[addr]
+    const filteredAddr = this.filter(addr)
+    return this.memory[filteredAddr]
+  }
+
+  filter(_addr) {
+    let addr = _addr
+
+    if(addr >= 0x4000 && addr <= 0x7fff) {
+      const size = addr - 0x4000
+      addr = size % 0x4000
+    }
+
+    if(addr >= 0x3f20 && addr <= 0x3fff) {
+      const size = addr - 0x3f20
+      addr = 0x3f00 + size % 0x20
+    }
+
+    switch(addr) {
+      case 0x3f10:
+      case 0x3f14:
+      case 0x3f18:
+      case 0x3f1c:
+        return addr -= 0x10
+      default:
+    }
+
+    if(addr >= 0x2800 && addr <= 0x2fff) {
+      addr -= 0x800
+    }
+
+    return addr
   }
 }

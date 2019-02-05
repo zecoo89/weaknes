@@ -45,8 +45,10 @@ export default class Nes {
   }
 
   frame() {
-    for(this.ppu.cycles = 0;this.ppu.cycles<this.ppu.cyclesPerFrame;this.ppu.cycles++) {
+    for(this.ppu.cycles = 0;this.ppu.cycles<this.ppu.cyclesPerFrame;this.ppu.cycles+=3) {
       this.cpu.run(1)
+      this.ppu.run()
+      this.ppu.run()
       this.ppu.run()
     }
 

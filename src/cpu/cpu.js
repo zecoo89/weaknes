@@ -6,8 +6,8 @@ import OpcodeUtil from './opcodes/util'
 /* 2A03 CPU */
 export default class Cpu {
   constructor(isDebug) {
-    this.init()
     this.isDebug = isDebug
+    this.init()
   }
 
   init() {

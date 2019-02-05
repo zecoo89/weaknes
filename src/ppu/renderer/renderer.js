@@ -71,8 +71,8 @@ export default class Renderer {
   }
 
   renderPixel(x, y, scrollX, scrollY) {
-    const dx = (x + scrollX) & (this.width * 2 - 1) // faster than % operator
-    const dy = (y + scrollY) % (this.height * 2)
+    const dx = (x + scrollX) & (this.endX - 1) // faster than % operator
+    const dy = (y + scrollY) % this.endY
 
     this.pixels.setPixel(x, y, this.background.getPixel(dx, dy))
 
@@ -90,24 +90,23 @@ export default class Renderer {
 
   loadBackground() {
     const screenNum = this.registers[0x2000].mainScreenNumber()
+    const mainScreenStartAddr = 0x2000 + screenNum * 0x400
+    const secondScreenStartAddr = screenNum ? 0x2000 : this.secondScreenStartAddr
+
+    this.loadScreen(mainScreenStartAddr, 0, 0)
+    this.loadScreen(secondScreenStartAddr, this.offsetX, this.offsetY)
+  }
+
+  loadScreen(screenStartAddr, offsetX, offsetY) {
     for (let i = 0x000; i <= 0x3bf; i++) {
-      let addr = 0x2000 + i + screenNum * 0x400
+      let addr = screenStartAddr + i
       let tileId = this.vram.read(addr)
-      let paletteId = this.selectPalette(addr)
+      let paletteId = this.loadPalette(screenStartAddr, i)
       let x = (i & (this.tileWidth-1)) * 8
       let y = ((i - (i & (this.tileWidth-1))) / this.tileWidth) * 8
 
       let tile = this.tiles.select(tileId)
-      this.background.writeTile(tile, this.bgPalette, paletteId, x, y)
-      this.background.writeTile(tile, this.bgPalette, paletteId, x+256, y)
-
-      addr = screenNum ? 0x2000 + i : this.secondScreenAddr + i
-      tileId = this.vram.read(addr)
-      paletteId = this.selectPalette(addr)
-
-      tile = this.tiles.select(tileId)
-      this.background.writeTile(tile, this.bgPalette, paletteId, x, y+240)
-      this.background.writeTile(tile, this.bgPalette, paletteId, x+256, y+240)
+      this.background.writeTile(tile, this.bgPalette, paletteId, x+offsetX, y+offsetY)
     }
   }
 
@@ -133,30 +132,28 @@ export default class Renderer {
   }
 
   /* 属性テーブルから該当パレットの番号を取得する */
-  selectPalette(n) {
-    const start = 0x23c0
-    const blockPosition = this.blockPosition(n)
-    const bitPosition = this.bitPosition(n)
+  loadPalette(nameTableStartAddr, i) {
+    const attrTableStartAddr = nameTableStartAddr + 0x3c0
 
-    const block = this.vram.read(start + blockPosition * 2)
-    const bit = block >> (bitPosition * 2)
+    const byteOffset = this.byteOffset(i)
+    const byte = this.vram.read(attrTableStartAddr + byteOffset)
 
-    return bit
+    const blockOffset = this.blockOffset(i)
+    const block = (byte >> (blockOffset*2)) & 0b11
+
+    return block
   }
 
-  blockPosition(n) {
-    const x = n & (31)
-    const y = (((n - (n & (31))) / 32 - (((n - (n & (31))) / 32) & 1)) * 16) / 2
-    const blockPosition = y + (x - (x & 1)) / 2
-
-    return blockPosition
+  byteOffset(i) {
+    const x = (i >> 2) & 0b111
+    const y = (i >> 7)
+    return x + (y << 3)
   }
 
-  bitPosition(n) {
-    const x = n & 1
-    const y = ((n - (n & 31)) / 32) & 1
-    const bitPosition = y * 2 + x
+  blockOffset(i) {
+    const x = (i >> 1) & 0b1
+    const y = (i >> 6) & 0b1
 
-    return bitPosition
+    return x + (y << 1)
   }
 }

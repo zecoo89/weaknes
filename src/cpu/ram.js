@@ -10,7 +10,20 @@ export default class Ram {
     parts.controller && (this.controller = parts.controller)
   }
 
+  filter(addr) {
+    if(addr >= 0x0800 && addr <= 0x1fff) {
+      const size = addr - 0x800
+      addr = size % 0x800
+    } else if(addr >= 0x2008 && addr <= 0x3FFF) {
+      const size = addr - 0x2008
+      addr = 0x2000 + (size % 0x8)
+    }
+
+    return addr
+  }
+
   write(addr, value) {
+    addr = this.filter(addr)
     switch (addr) {
       case 0x2000:
       case 0x2001:
@@ -57,6 +70,7 @@ export default class Ram {
   }
 
   read(addr) {
+    addr = this.filter(addr)
     switch (addr) {
       case 0x2002:
       case 0x2007:

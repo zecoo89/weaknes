@@ -8,10 +8,6 @@ export default class Palette {
   }
 
   select(paletteId, number) {
-    if(number < 0 || number > 3) throw new Error('number is 0 ~ 3.')
-
-    if(number === 0) return this.vram.read(0x3f00)
-
     const addr = this.startAddr + paletteId * 4 + number
 
     return this.vram.read(addr)
