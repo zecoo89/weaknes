@@ -7,10 +7,11 @@ import X2005 from './0x2005'
 import X2006 from './0x2006'
 import X2007 from './0x2007'
 import X4014 from './0x4014'
+import internalRegisters from './internalRegisters'
 
 export default class RegistersFactory {
   static create(ppu) {
-    return {
+    const registers = {
       0x2000: new X2000(ppu),
       0x2001: new X2001(ppu),
       0x2002: new X2002(ppu),
@@ -21,5 +22,18 @@ export default class RegistersFactory {
       0x2007: new X2007(ppu),
       0x4014: new X4014(ppu)
     }
+
+    registers[0x2000].connect(internalRegisters.t)
+
+    registers[0x2002].connect(internalRegisters.w)
+
+    registers[0x2005].connect(internalRegisters.t)
+    registers[0x2005].connect(internalRegisters.x)
+    registers[0x2005].connect(internalRegisters.w)
+
+    registers[0x2006].connect(internalRegisters.t)
+    registers[0x2006].connect(internalRegisters.w)
+
+    return registers
   }
 }

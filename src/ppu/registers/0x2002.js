@@ -6,6 +6,11 @@ export default class X2002 extends BaseRegister {
     super(ppu)
   }
 
+  read() {
+    this.w.clear()
+    return this.register
+  }
+
   setVblank() {
     this.writeOneBit(7, 1)
   }

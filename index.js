@@ -65,6 +65,7 @@ class Main {
 
     tool.dumpChrRom('chr-dump', palette)
     tool.dumpPalette('palette-dump')
+    tool.dumpBackground('background')
   }
 }
 

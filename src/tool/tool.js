@@ -5,9 +5,47 @@ export default class Tool {
     this.nes = nes
   }
 
-  set rom(rom) {
-    this.ppu.rom = rom
-    this.cpu.rom = rom
+  dumpBackground(id) {
+    setInterval(this._dumpBackground.bind(this, id), 100)
+  }
+
+  _dumpBackground(id) {
+    const width = 256 * 2
+    const height = 240 * 2
+    const canvas = document.getElementById(id)
+    const context = canvas.getContext('2d')
+    const image = context.createImageData(width, height)
+    const bg = this.nes.ppu.renderer.background
+    const sx = this.nes.ppu.renderer.scrollX
+    const sy = this.nes.ppu.renderer.scrollY
+    const ox = this.nes.ppu.renderer.offsetX
+    const oy = this.nes.ppu.renderer.offsetY
+    const tx = sx + ox
+    const ty = sy + oy
+    const ex = this.nes.ppu.renderer.endX
+    const ey = this.nes.ppu.renderer.endY
+
+    for(let y=0;y<height;y++) {
+      for(let x=0;x<width;x++) {
+        const i = (y * width + x) * 4
+        const pixel = bg.getPixel(x % ex, y % ey)
+        const rgb = pixel.rgb()
+
+        const isAreaX =
+          x >= tx && x < tx + 256 ||
+          x < (tx + 256) % width && (tx + 256) != (tx + 256) % width
+        const isAreaY =
+          y >= ty && y < ty + 240 ||
+          y < (ty + 240) % height && (ty + 240) != (ty + 240) % height
+
+        if(isAreaX && isAreaY) {
+          this.setPixel(image, i, rgb, 255)
+        } else {
+          this.setPixel(image, i, rgb, 150)
+        }
+      }
+    }
+    context.putImageData(image, 0, 0)
   }
 
   dumpChrRom(id, palette) {
@@ -28,9 +66,7 @@ export default class Tool {
   }
 
   dumpPalette(id) {
-    setTimeout(this._dumpPalette.bind(this, id), 500)
-    setTimeout(this._dumpPalette.bind(this, id), 1000)
-    setTimeout(this._dumpPalette.bind(this, id), 1500)
+    setInterval(this._dumpPalette.bind(this, id), 100)
   }
 
   _dumpPalette(id) {
@@ -66,13 +102,17 @@ export default class Tool {
         const colorId = palette[tileBit]
         const color = colors[colorId]
 
-        image.data[i] = color[0]
-        image.data[i+1] = color[1]
-        image.data[i+2] = color[2]
-        image.data[i+3] = 255
+        this.setPixel(image, i, color, 255)
       }
     }
 
     return image
+  }
+
+  setPixel(image, i, rgb, alpha) {
+    image.data[i] = rgb[0]
+    image.data[i+1] = rgb[1]
+    image.data[i+2] = rgb[2]
+    image.data[i+3] = alpha
   }
 }

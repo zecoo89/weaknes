@@ -4,25 +4,17 @@ import { BaseRegister } from '../../utils'
 export default class X2006 extends BaseRegister {
   constructor(ppu) {
     super(ppu)
-    this.vramAddrUpper = 0x00
-    this.vramAddrLower = 0x00
-    this.vramAddr_ = 0x0000
-    this.isFirst = true
-  }
-
-  clearLatch() {
-    this.isFirst = true
   }
 
   write(bits) {
-    if (this.isFirst) {
-      this.vramAddrUpper = bits
+    if (this.w.isLatched()) {
+      this.t.writeVramLowAddr(bits)
+      this.vramAddr = this.t.read()
     } else {
-      this.vramAddrLower = bits
-      this.vramAddr_ = (this.vramAddrUpper << 8) | this.vramAddrLower
+      this.t.writeVramHighAddr(bits)
     }
 
-    this.isFirst = this.isFirst ? false : true
+    this.w.toggle()
   }
 
   get vramAddr() {

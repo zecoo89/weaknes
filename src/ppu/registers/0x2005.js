@@ -7,21 +7,19 @@ export default class X2005 extends BaseRegister {
 
     this.horizontalScrollPosition_ = 0x00
     this.verticalScrollPosition_ = 0x00
-    this.isFirst = true
-  }
-
-  clearLatch() {
-    this.isFirst = true
   }
 
   write(bits) {
-    if (this.isFirst) {
-      this.horizontalScrollPosition_ = bits
-    } else {
+    if (this.w.isLatched()) {
+      this.t.writeScrollX(bits)
+      this.x.write(bits)
       this.verticalScrollPosition_ = bits
+    } else {
+      this.t.writeScrollY(bits)
+      this.horizontalScrollPosition_ = bits
     }
 
-    this.isFirst = this.isFirst ? false : true
+    this.w.toggle()
   }
 
   get horizontalScrollPosition() {

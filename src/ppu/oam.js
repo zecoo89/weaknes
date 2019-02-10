@@ -85,7 +85,6 @@ export default class Oam {
   }
 
   attrs() {
-    /* No.0 sprite is except */
     for (let i = 0; i < 64; i++) {
       this.formatSpriteSettingData(i)
     }

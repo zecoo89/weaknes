@@ -31,12 +31,15 @@ export default class Ppu {
 
     if(parts.screen) {
       this.screen = parts.screen
-      this.screen.pixels = this.renderer.pixels
+      this.renderer.connect(parts)
     }
   }
 
   run() {
-    if(this.isHblank()) return
+    if(this.isHblank()) {
+      this.registers[0x2002].clearZeroSpriteFlag()
+      return
+    }
 
     if(this.registers[0x2002].isVblank()) {
       this.runInVblank()
@@ -47,6 +50,8 @@ export default class Ppu {
 
   isHblank() {
     const x = this.cycles - (this.cycles - (this.cycles % 341))
+    //TODO copy t to v
+    //const bits = this.
     return x >= 256 && x <= 340
   }
 
@@ -54,6 +59,7 @@ export default class Ppu {
     /* Check vblank ending */
     if(this.renderer.isVblankEnd()) {
       this.registers[0x2002].clearVblank()
+      this.registers[0x2002].clearZeroSpriteFlag()
       /* y is 0 ~ 239 */
       this.registers[0x2005].verticalScrollPosition < 240 && this.renderer.loadAllOnEachLayer()
       this.renderer.initPixelPosition()
@@ -72,34 +78,36 @@ export default class Ppu {
     }
 
     /* Check zero sprite overlap */
-    if(this.isZeroSpriteOverlapped()) {
+    if(!this.registers[0x2002].isZeroSpriteOverlapped() && this.isZeroSpriteOverlapped()) {
       this.registers[0x2002].setZeroSpriteFlag()
-    } else {
-      this.registers[0x2002].clearZeroSpriteFlag()
     }
   }
 
   isZeroSpriteOverlapped() {
+    const isSpriteEnabled = this.registers[0x2001].isSpriteEnabled()
+    if(!isSpriteEnabled) {
+      return false
+    }
+    const isBackgroundEnabled = this.registers[0x2001].isBackgroundEnabled()
+    if(!isBackgroundEnabled) {
+      return false
+    }
+
     const zsPosition = this.oam.zeroSpritePosition()
     const position = this.renderer.position
     const width = this.renderer.width
     const x = position & (width-1)
     const y = (position - (position & (width-1))) / width
 
-    const isXOverlapped = x >= zsPosition.x && x < zsPosition.x + 8
-    const isYOverlapped = y >= zsPosition.y && y < zsPosition.y + 8
-    //const isXOverlapped = x === zsPosition.x
-    //const isYOverlapped = y === zsPosition.y
+    //const isXOverlapped = x >= zsPosition.x && x < zsPosition.x + 8
+    //const isYOverlapped = y-7 >= zsPosition.y && y-7 < zsPosition.y + 8
+    const isXOverlapped = x === zsPosition.x
+    const isYOverlapped = y === zsPosition.y
 
     return isXOverlapped && isYOverlapped
   }
 
   readRegister(addr) {
-    if (addr === 0x2002) {
-      this.registers[0x2005].clearLatch()
-      this.registers[0x2006].clearLatch()
-    }
-
     return this.registers[addr].read()
   }
 
@@ -117,10 +125,10 @@ export default class Ppu {
     this.renderer.tiles.extract()
 
     this.renderer.isVerticalMirror = rom.isVerticalMirror()
-    this.renderer.offsetX = this.renderer.isVerticalMirror ? 256 : 0
-    this.renderer.offsetY = this.renderer.isVerticalMirror ? 0 : 240
+    this.renderer._offsetX = this.renderer.isVerticalMirror ? 256 : 0
+    this.renderer._offsetY = this.renderer.isVerticalMirror ? 0 : 240
     this.renderer.endX = this.renderer.isVerticalMirror ? this.renderer.width * 2 : this.renderer.width
     this.renderer.endY = this.renderer.isVerticalMirror ? this.renderer.height : this.renderer.height * 2
-    this.renderer.secondScreenStartAddr = rom.isVerticalMirror() ? 0x2400 : 0x2800
+    this.renderer.secondScreenAddr = rom.isVerticalMirror() ? 0x2400 : 0x2800
   }
 }

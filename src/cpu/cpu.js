@@ -86,17 +86,27 @@ export default class Cpu {
       this.ram.write(startAddr + i, prgRom[i])
     }
 
-    startAddr = 0xc000
-    // 0xc000~に0x8000~のコピーを置く
-    for (let i = 0; i < prgRom.length; i++) {
-      this.ram.write(startAddr + i, prgRom[i])
+    if(prgRom.length === 0x4000) {
+      startAddr = 0xc000
+      // 0xc000~に0x8000~のコピーを置く
+      for (let i = 0; i < prgRom.length; i++) {
+        this.ram.write(startAddr + i, prgRom[i])
+      }
+
     }
 
-    // プログラムカウンタの初期値を0xFFFDから設定する
-    const resetAddr = (this.ram.read(0xfffd) << 8) | this.ram.read(0xfffc)
-    this.registers.pc = resetAddr ? resetAddr : 0x8000
-
     this.nmiAddr = this.ram.read(0xfffa) | (this.ram.read(0xfffb) << 8)
+    this.resetAddr = (this.ram.read(0xfffd) << 8) | this.ram.read(0xfffc)
+    this.irqBrkAddr = (this.ram.read(0xfffe) << 8) | this.ram.read(0xffff)
+    // プログラムカウンタの初期値を0xFFFDから設定する
+    this.registers.pc = this.resetAddr ? this.resetAddr : 0x8000
+
+    //eslint-disable-next-line
+    console.log('NMI: 0x' + this.nmiAddr.toString(16))
+    //eslint-disable-next-line
+    console.log('RESET: 0x' + this.resetAddr.toString(16))
+    //eslint-disable-next-line
+    console.log('IRQ/BRK: 0x' + this.irqBrkAddr.toString(16))
   }
 
   /* スタック領域に対する操作*/

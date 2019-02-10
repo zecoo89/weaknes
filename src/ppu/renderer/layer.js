@@ -44,7 +44,24 @@ export default class Layer {
     this.layer[y][x] = pixel
   }
 
-  writeTile(tile, palette, paletteId, x, y, isHflip, isVflip) {
+  writeBgTile(tile, palette, paletteId, x, y) {
+    for(let i=0;i<8;i++) {
+      for(let j=0;j<8;j++) {
+        const tileBit = tile[i][j]
+        const colorId = palette.select(paletteId, tileBit)
+        const rgb = colors[colorId]
+        const alpha = tileBit ? 255 : 0
+        const px = x + j
+        const py = y + i
+
+        if (px < this.width && py < this.height) {
+          this.getPixel(px, py).write(rgb, alpha)
+        }
+      }
+    }
+  }
+
+  writeSpTile(tile, palette, paletteId, x, y, isHflip, isVflip, isSprite, priority) {
     let iStart = 0
     let iSign = 1
     let vStart = 0
@@ -59,14 +76,20 @@ export default class Layer {
       iSign = -1
     }
 
+
     for(let h=0,i=iStart;h<8;h++,i+=iSign) {
       for(let w=0,v=vStart;w<8;w++,v+=vSign) {
         const tileBit = tile[i][v]
         const colorId = palette.select(paletteId, tileBit)
         const rgb = colors[colorId]
-        const alpha = 255
+        const alpha = tileBit ? 255 : 0
+        const px = x + w
+        const py = y + h
 
-        this.getPixel(x+w, y+h).write(rgb, alpha)
+        if (px < this.width && py < this.height) {
+          const pixel = this.getPixel(px, py)
+          !pixel.alpha() && pixel.write(rgb, alpha, priority)
+        }
       }
     }
   }

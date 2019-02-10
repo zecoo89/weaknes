@@ -531,6 +531,15 @@ export default {
   /* ソフトウェア割り込みを起こす*/
   BRK: function() {
     this.registers.statusBreak = 1
+
+    const addr = this.registers.pc
+    const highAddr = addr >> 8
+    const lowAddr = addr & 0x00ff
+    this.stackPush(highAddr)
+    this.stackPush(lowAddr)
+    const statusBits = this.registers.statusAllRawBits
+    this.stackPush(statusBits)
+    this.registers.pc = this.irqBrkAddr
   },
 
   /* 空の命令を実行する */

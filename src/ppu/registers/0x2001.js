@@ -22,22 +22,22 @@ export default class X2001 extends BaseRegister {
   }
 
   /* スプライトを表示するか */
-  isSpriteDisplayed() {
+  isSpriteEnabled() {
     return !!this.readOneBit(4)
   }
 
   /* バックグラウンドを表示するか */
-  isBackgroundDisplayed() {
+  isBackgroundEnabled() {
     return !!this.readOneBit(3)
   }
 
   /* 画面左端8ドットのスプライトを表示するか */
-  isLeftSideSpriteDisplayed() {
+  isLeftSideSpriteEnabled() {
     return !!this.readOneBit(2)
   }
 
   /* 画面左端8ドットのバックグラウンドを表示するか */
-  isLeftSideBackgroundDisplayed() {
+  isLeftSideBackgroundEnabled() {
     return !!this.readOneBit(1)
   }
 

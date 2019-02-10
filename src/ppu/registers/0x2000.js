@@ -7,6 +7,11 @@ export default class X2000 extends BaseRegister {
     this.register = 0b00000100
   }
 
+  write(bits) {
+    this.t.writeScreenNumber(bits)
+    super.write(bits)
+  }
+
   /* VBlank時にNMI割込の発生の有無 */
   isNmiInterruptable() {
     return !!this.readOneBit(7)
@@ -26,39 +31,23 @@ export default class X2000 extends BaseRegister {
 
   /* バックグランド用CHRテーブルの開始アドレス
    * 0x0000 or 0x1000 */
-  backgroundChrAddr() {
-    const bit = this.readOneBit(4)
-
-    if (bit) {
-      return 0x1000
-    } else {
-      return 0x0000
-    }
+  isBackgroundChrBehind() {
+    return !!this.readOneBit(4)
   }
 
   /* スプライト用CHRテーブルの開始アドレス
    * 0x0000 or 0x1000 */
-  spriteChrAddr() {
-    const bit = this.readOneBit(3)
-
-    if (bit) {
-      return 0x1000
-    } else {
-      return 0x0000
-    }
+  isSpriteChrBehind() {
+    return !!this.readOneBit(3)
   }
 
   /* VRAM入出力時のアドレスの増分
    * clear: +1
-   * set: +32*/
+   * set: +32 */
   vramIncremental() {
     const bit = this.readOneBit(2)
 
-    if (bit) {
-      return 32
-    } else {
-      return 1
-    }
+    return bit ? 32 : 1
   }
 
   /* メインスクリーンのアドレス

@@ -2,6 +2,16 @@ export default class Rom {
   constructor(data) {
     this.check(data)
     this.data = data
+    this.debugInfo()
+  }
+
+  debugInfo() {
+    //eslint-disable-next-line
+    console.log('Vertical mirror?: ' + this.isVerticalMirror())
+    //eslint-disable-next-line
+    console.log('PRG-ROM size: 0x' + this.SIZE_OF_PRG_ROM.toString(16))
+    //eslint-disable-next-line
+    console.log('CHR-ROM size: 0x' + this.SIZE_OF_CHR_ROM.toString(16))
   }
 
   check(data) {
@@ -50,7 +60,7 @@ export default class Rom {
   get prgRom() {
     return this.data.slice(
       this.NES_ROM_HEADER_SIZE,
-      this.START_ADDRESS_OF_CHR_ROM - 1
+      this.START_ADDRESS_OF_CHR_ROM
     )
   }
 
@@ -59,7 +69,7 @@ export default class Rom {
   get chrRom() {
     return this.data.slice(
       this.START_ADDRESS_OF_CHR_ROM,
-      this.END_ADDRESS_OF_CHR_ROM - 1
+      this.END_ADDRESS_OF_CHR_ROM + 1
     )
   }
 

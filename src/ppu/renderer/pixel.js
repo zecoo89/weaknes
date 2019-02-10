@@ -1,29 +1,35 @@
 export default class Pixel {
   constructor() {
-    this._rgba = [0, 0, 0, 0]
+    this._rgb = [0, 0, 0]
+    this._alpha = 0
+    this._priority = 0
   }
 
   reset() {
-    for(let i=0;i<4;i++)
-      this._rgba[i] = 0
+    for(let i=0;i<3;i++)
+      this._rgb[i] = 0
+
+    this._alpha = 0
+    this._priority = 0
   }
 
-  rgba() {
-    return this._rgba
+  rgb() {
+    return this._rgb
   }
 
   alpha() {
-    return this._rgba[3]
+    return this._alpha
   }
 
-  read() {
-    return this._rgba
+  priority() {
+    return this._priority
   }
 
-  write(rgb, alpha) {
-    for(let i=0;i<3;i++) {
-      this._rgba[i] = rgb[i]
-    }
-    this._rgba[3] = alpha
+  write(rgb, alpha, priority) {
+    this._rgb[0] = rgb[0]
+    this._rgb[1] = rgb[1]
+    this._rgb[2] = rgb[2]
+    this._alpha = alpha
+    this._priority = priority
   }
 }

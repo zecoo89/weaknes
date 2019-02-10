@@ -1,11 +1,14 @@
 export default class BaseRegister {
   constructor(module) {
+    this.connect(module)
+    this.register = 0x00
+  }
+
+  connect(module) {
     if (module) {
       const name = module.constructor.name.toLowerCase()
       this[name] = module
     }
-
-    this.register = 0x00
   }
 
   read() {
@@ -47,8 +50,6 @@ export default class BaseRegister {
   }
 
   writeOneBit(order, bit) {
-    if (bit > 0b1) throw new Error("Arg's bit is more than 2 bits.")
-
     const resetRegister = this.register & (0xff - (0b1 << order))
     this.register = resetRegister | (bit << order)
   }
