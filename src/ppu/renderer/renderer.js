@@ -1,10 +1,14 @@
 import Layer from './layer'
 import Palette from './palette'
 import Tiles from './tiles'
+import modules from './modules'
 
 export default class Renderer {
   constructor() {
     this.init()
+    this.bindModules()
+    this.prepareTileIndex()
+    this.preparePixelIndex()
   }
 
   init() {
@@ -19,15 +23,17 @@ export default class Renderer {
     this.bgPalette = new Palette(0x3f00)
     this.spritesPalette = new Palette(0x3f10)
     this.position = 0
-    this.x = 0
-    this.y = 0
     this.scrollX = 0
     this.scrollY = 0
     this.offsetX = 0
     this.offsetY = 0
-    this.mainScreenNumber = 0
     this.mainScreenAddr = 0x2000
     this.secondScreenAddr = 0x2800
+  }
+
+  bindModules() {
+    for(let key of Object.keys(modules))
+      this[key] = modules[key]
   }
 
   connect(parts) {
@@ -39,35 +45,24 @@ export default class Renderer {
     parts.registers && (this.registers = parts.registers)
     parts.screen && (this.pixels = parts.screen.image.data)
   }
-
-  initPixelPosition() {
-    this.position = 0
-  }
-
-  incrementPixelPosition() {
-    this.position++
-  }
-
-  isVblankStart() {
-    return this.position === this.width * 240
-  }
-
-  isVblankEnd() {
-    return this.position === this.width * 262
-  }
-
   /* Call from ppu */
   render() {
-    this.scrollX = this.registers[0x2005].horizontalScrollPosition
+    const scrollX = this.registers[0x2005].horizontalScrollPosition
+    //const x = this.position & (this.width - 1)
+    //const y = (this.position - (this.position & (this.width - 1))) / this.width
+    const pixelIndex = this.pixelIndex[this.position]
+    const x = pixelIndex[0]
+    const y = pixelIndex[1]
+    const mainScreenNumber = this.registers[0x2000].mainScreenNumber()
+    const offsetX = (mainScreenNumber & 0b1) * this._offsetX
+    const offsetY = (mainScreenNumber >> 1) * this._offsetY
 
-    const x = this.position & (this.width - 1)
-    const y = (this.position - (this.position & (this.width - 1))) / this.width
-    this.offsetX = (this.registers[0x2000].mainScreenNumber() & 0b1) * this._offsetX
-    this.offsetY = ((this.registers[0x2000].mainScreenNumber() & 0b10) >> 1) * this._offsetY
+    this.position++
+    if(this.position === this.width * this.height) {
+      this.position = 0
+    }
 
-    this.incrementPixelPosition()
-
-    this.renderPixel(x, y, this.scrollX, this.scrollY, this.offsetX, this.offsetY)
+    return this.renderPixel(x, y, scrollX, this.scrollY, offsetX, offsetY)
   }
 
   renderPixel(x, y, scrollX, scrollY, offsetX, offsetY) {
@@ -88,9 +83,9 @@ export default class Renderer {
     const spPriority = spPixel.priority()
 
     !bgAlpha && this.setPixel(x, y, bgRgb, 255)
-    spPriority && spAlpha && this.setPixel(x, y, spRgb, spAlpha)
+    spAlpha && spPriority && this.setPixel(x, y, spRgb, spAlpha)
     bgAlpha && this.setPixel(x, y, bgRgb, bgAlpha)
-    !spPriority && spAlpha && this.setPixel(x, y, spRgb, spAlpha)
+    spAlpha && !spPriority && this.setPixel(x, y, spRgb, spAlpha)
   }
 
   setPixel(x, y, rgb, alpha) {
@@ -103,9 +98,8 @@ export default class Renderer {
 
   /* load backgrounds and sprites to each layer */
   loadAllOnEachLayer() {
-    //this.scrollX = this.registers[0x2005].horizontalScrollPosition
     this.scrollY = this.registers[0x2005].verticalScrollPosition
-    this.mainScreenNumber = this.registers[0x2000].mainScreenNumber()
+    this.tileIdOffset = this.registers[0x2000].isBackgroundChrBehind() ? 256 : 0
     this.loadBackground()
     this.loadSprites()
   }
@@ -116,17 +110,17 @@ export default class Renderer {
   }
 
   loadScreen(screenStartAddr, offsetX, offsetY) {
-    const tileIdOffset = this.registers[0x2000].isBackgroundChrBehind() ? 256 : 0
 
     for (let i = 0x000; i <= 0x3bf; i++) {
       let addr = screenStartAddr + i
-      let tileId = this.vram.read(addr) + tileIdOffset
+      let tileId = this.vram.read(addr) + this.tileIdOffset
       let paletteId = this.loadPalette(screenStartAddr, i)
-      let x = (i & (this.tileWidth-1)) * 8
-      let y = ((i - (i & (this.tileWidth-1))) / this.tileWidth) * 8
+      const tileIndex = this.tileIndex[i]
+      const x = tileIndex[0] + offsetX
+      const y = tileIndex[1] + offsetY
 
       let tile = this.tiles.select(tileId)
-      this.background.writeBgTile(tile, this.bgPalette, paletteId, x+offsetX, y+offsetY)
+      this.background.writeBgTile(tile, this.bgPalette, paletteId, x, y)
     }
   }
 

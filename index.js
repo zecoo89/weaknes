@@ -58,14 +58,16 @@ class Main {
     const allInOne = new AllInOne(screenId, isDebug)
     await allInOne.run(path)
 
-    /* CHR-ROMを可視化する*/
+    /* CHR-ROMを可視化する
     const palette = [0x31, 0x3d, 0x2d, 0x1f]
     const Tool = NesPack.Tool
     const tool = new Tool(allInOne.nes)
 
     tool.dumpChrRom('chr-dump', palette)
     tool.dumpPalette('palette-dump')
-    tool.dumpBackground('background')
+    const isShadowEnabled = true
+    tool.dumpBackground('background', isShadowEnabled)
+    /**/
   }
 }
 

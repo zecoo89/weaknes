@@ -5,11 +5,11 @@ export default class Tool {
     this.nes = nes
   }
 
-  dumpBackground(id) {
-    setInterval(this._dumpBackground.bind(this, id), 100)
+  dumpBackground(id, isShadowEnabled) {
+    setInterval(this._dumpBackground.bind(this, id, isShadowEnabled), 300)
   }
 
-  _dumpBackground(id) {
+  _dumpBackground(id, isShadowEnabled) {
     const width = 256 * 2
     const height = 240 * 2
     const canvas = document.getElementById(id)
@@ -31,17 +31,21 @@ export default class Tool {
         const pixel = bg.getPixel(x % ex, y % ey)
         const rgb = pixel.rgb()
 
-        const isAreaX =
-          x >= tx && x < tx + 256 ||
-          x < (tx + 256) % width && (tx + 256) != (tx + 256) % width
-        const isAreaY =
-          y >= ty && y < ty + 240 ||
-          y < (ty + 240) % height && (ty + 240) != (ty + 240) % height
+        if(isShadowEnabled) {
+          const isAreaX =
+            x >= tx && x < tx + 256 ||
+            x < (tx + 256) % width && (tx + 256) != (tx + 256) % width
+          const isAreaY =
+            y >= ty && y < ty + 240 ||
+            y < (ty + 240) % height && (ty + 240) != (ty + 240) % height
 
-        if(isAreaX && isAreaY) {
-          this.setPixel(image, i, rgb, 255)
+          if(isAreaX && isAreaY) {
+            this.setPixel(image, i, rgb, 255)
+          } else {
+            this.setPixel(image, i, rgb, 150)
+          }
         } else {
-          this.setPixel(image, i, rgb, 150)
+          this.setPixel(image, i, rgb, 255)
         }
       }
     }
@@ -66,7 +70,7 @@ export default class Tool {
   }
 
   dumpPalette(id) {
-    setInterval(this._dumpPalette.bind(this, id), 100)
+    setInterval(this._dumpPalette.bind(this, id), 300)
   }
 
   _dumpPalette(id) {

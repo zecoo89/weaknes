@@ -2,10 +2,12 @@ import Vram from './vram'
 import Oam from './oam'
 import RegistersFactory from './registers'
 import Renderer from './renderer'
+import modules from './modules'
 
 export default class Ppu {
   constructor() {
     this.init()
+    this.bindModules()
   }
 
   init() {
@@ -22,7 +24,14 @@ export default class Ppu {
     })
 
     this.cycles = 0
+    this.cyclesPerLine = 341
     this.cyclesPerFrame = 89342
+    this.isHblank = false
+  }
+
+  bindModules() {
+    for(let e of Object.keys(modules))
+      this[e] = modules[e]
   }
 
   connect(parts) {
@@ -36,75 +45,33 @@ export default class Ppu {
   }
 
   run() {
-    if(this.isHblank()) {
+    if(this.isVblankStart()) {
+      this.screen && this.screen.refresh()
+      this.registers[0x2002].setVblank()
+      this.registers[0x2000].isNmiEnabled() && this.cpu.nmi()
+    } else if(this.isVblankEnd()) {
+      this.registers[0x2002].clearVblank()
+      /* y is 0 ~ 239 */
+      this.registers[0x2005].verticalScrollPosition < 240 && this.renderer.loadAllOnEachLayer()
+
+    }
+
+    if(this.isHblankStart()) {
       this.registers[0x2002].clearZeroSpriteFlag()
+      this.isHblank = true
+      return
+    } else if(this.isHblank) {
+      if(this.isHblankEnd()) {
+        this.isHblank = false
+      }
       return
     }
 
-    if(this.registers[0x2002].isVblank()) {
-      this.runInVblank()
-    } else {
-      this.runInRendering()
+    if(!this.registers[0x2002].isVblank()) {
+      /* Check zero sprite overlap */
+      this.isZeroSpriteOverlapped() && this.registers[0x2002].setZeroSpriteFlag()
+      this.renderer.render()
     }
-  }
-
-  isHblank() {
-    const x = this.cycles - (this.cycles - (this.cycles % 341))
-    //TODO copy t to v
-    //const bits = this.
-    return x >= 256 && x <= 340
-  }
-
-  runInVblank() {
-    /* Check vblank ending */
-    if(this.renderer.isVblankEnd()) {
-      this.registers[0x2002].clearVblank()
-      this.registers[0x2002].clearZeroSpriteFlag()
-      /* y is 0 ~ 239 */
-      this.registers[0x2005].verticalScrollPosition < 240 && this.renderer.loadAllOnEachLayer()
-      this.renderer.initPixelPosition()
-    }
-    this.renderer.incrementPixelPosition()
-  }
-
-  runInRendering() {
-    this.renderer.render()
-
-    /* Check vblank beginning */
-    if(this.renderer.isVblankStart()) {
-      this.screen && this.screen.refresh()
-      this.registers[0x2002].setVblank()
-      this.registers[0x2000].isNmiInterruptable() && this.cpu.nmi()
-    }
-
-    /* Check zero sprite overlap */
-    if(!this.registers[0x2002].isZeroSpriteOverlapped() && this.isZeroSpriteOverlapped()) {
-      this.registers[0x2002].setZeroSpriteFlag()
-    }
-  }
-
-  isZeroSpriteOverlapped() {
-    const isSpriteEnabled = this.registers[0x2001].isSpriteEnabled()
-    if(!isSpriteEnabled) {
-      return false
-    }
-    const isBackgroundEnabled = this.registers[0x2001].isBackgroundEnabled()
-    if(!isBackgroundEnabled) {
-      return false
-    }
-
-    const zsPosition = this.oam.zeroSpritePosition()
-    const position = this.renderer.position
-    const width = this.renderer.width
-    const x = position & (width-1)
-    const y = (position - (position & (width-1))) / width
-
-    //const isXOverlapped = x >= zsPosition.x && x < zsPosition.x + 8
-    //const isYOverlapped = y-7 >= zsPosition.y && y-7 < zsPosition.y + 8
-    const isXOverlapped = x === zsPosition.x
-    const isYOverlapped = y === zsPosition.y
-
-    return isXOverlapped && isYOverlapped
   }
 
   readRegister(addr) {

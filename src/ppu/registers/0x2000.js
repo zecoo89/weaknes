@@ -13,7 +13,7 @@ export default class X2000 extends BaseRegister {
   }
 
   /* VBlank時にNMI割込の発生の有無 */
-  isNmiInterruptable() {
+  isNmiEnabled() {
     return !!this.readOneBit(7)
   }
 
