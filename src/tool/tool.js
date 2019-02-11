@@ -3,10 +3,11 @@ import colors from '../ppu/renderer/colors'
 export default class Tool {
   constructor(nes) {
     this.nes = nes
+    this.updateInterval = 200
   }
 
   dumpBackground(id, isShadowEnabled) {
-    setInterval(this._dumpBackground.bind(this, id, isShadowEnabled), 300)
+    setInterval(this._dumpBackground.bind(this, id, isShadowEnabled), this.updateInterval)
   }
 
   _dumpBackground(id, isShadowEnabled) {
@@ -70,7 +71,7 @@ export default class Tool {
   }
 
   dumpPalette(id) {
-    setInterval(this._dumpPalette.bind(this, id), 300)
+    setInterval(this._dumpPalette.bind(this, id), this.updateInterval)
   }
 
   _dumpPalette(id) {
