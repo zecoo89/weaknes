@@ -4,8 +4,8 @@ class Main {
 
     const createWindow = () => {
       let win = new BrowserWindow({
-        width: 256,
-        height: 360,
+        width: 512,
+        height: 720,
         useContentSize: true,
         resizable: false,
         webPreferences: {
@@ -20,7 +20,7 @@ class Main {
       })
 
       win.loadURL(url)
-      //win.webContents.openDevTools()
+      win.webContents.openDevTools()
       win.on('closed', () => {
         win = null
       })
@@ -58,7 +58,7 @@ class Main {
     const allInOne = new AllInOne(screenId, isDebug)
     await allInOne.run(path)
 
-    /* CHR-ROMを可視化する
+    /* CHR-ROMを可視化する *////*
     const palette = [0x31, 0x3d, 0x2d, 0x1f]
     const Tool = NesPack.Tool
     const tool = new Tool(allInOne.nes)
