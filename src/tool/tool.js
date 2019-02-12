@@ -3,14 +3,9 @@ import colors from '../ppu/renderer/colors'
 export default class Tool {
   constructor(nes) {
     this.nes = nes
-    this.updateInterval = 200
   }
 
   dumpBackground(id, isShadowEnabled) {
-    setInterval(this._dumpBackground.bind(this, id, isShadowEnabled), this.updateInterval)
-  }
-
-  _dumpBackground(id, isShadowEnabled) {
     const width = 256 * 2
     const height = 240 * 2
     const canvas = document.getElementById(id)
@@ -71,10 +66,6 @@ export default class Tool {
   }
 
   dumpPalette(id) {
-    setInterval(this._dumpPalette.bind(this, id), this.updateInterval)
-  }
-
-  _dumpPalette(id) {
     const canvas = document.getElementById(id)
     const context = canvas.getContext('2d')
 
