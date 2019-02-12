@@ -10,7 +10,7 @@ $ npm install
 $ npm run build
 ```
 ## Usage
-#### index.js
+### index.js
 ```javascript
 async function main() {
   const path = './assets/nestest/nestest.nes'
@@ -25,7 +25,7 @@ async function main() {
 main()
 ```
 
-#### index.html
+### index.html
 ```html
 <!DOCTYPE html>
 <html>
