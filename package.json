@@ -10,8 +10,8 @@
     "test": "jest ./src",
     "watch:test": "jest --watch ./src",
     "nes:browser": "node server.js 1234",
-    "nes:electron": "electron ./index.js",
-    "nes:nodejs": "NODE_ENV=development node index.js",
+    "nes:electron": "electron ./sample.js",
+    "nes:nodejs": "NODE_ENV=development node sample.js",
     "format": "prettier --config .prettierrc.json \"src/**/*.js\" --write",
     "debug": "node diff.js"
   },

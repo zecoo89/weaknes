@@ -4,7 +4,7 @@ const app = express()
 const port = process.argv[2]
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname+'/index.html'))
+  res.sendFile(path.join(__dirname+'/sample.html'))
 })
 
 app.use(express.static(__dirname))

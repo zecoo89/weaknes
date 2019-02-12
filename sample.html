@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="icon" href="data:;base64,iVBORwOKGO=" />
+    <title>Screen of NES emulator</title>
+    <style>
+      body {
+        margin: 0px;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        font-size: 0;
+      }
+      canvas {
+        vertical-align: top;
+      }
+      div {
+        display: inline-block;
+      }
+      div > canvas {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas" width="256" height="240"></canvas>
+    <div>
+      <canvas id="chr-dump" width="256" height="120"></canvas>
+      <canvas id="palette-dump" width="256" height="120"></canvas>
+    </div>
+    <canvas id="background" width="512" height="480"></canvas>
+    <script src="dist/bundle.js"></script>
+    <script src="sample.js"></script>
+  </body>
+</html>
