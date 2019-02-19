@@ -34,4 +34,19 @@ describe('Renderer', () => {
     expect(renderer.blockOffset(38)).toBe(1)
     expect(renderer.blockOffset(39)).toBe(1)
   })
+
+  test('nametable addr belonging to attribute table', () => {
+    let addrs = renderer.nametableBelongingToAttr(0x23c0, 0x2000)
+
+    expect(addrs[0]).toBe(0)
+    expect(addrs[1]).toBe(1)
+    expect(addrs[2]).toBe(0x20)
+    expect(addrs[3]).toBe(0x21)
+
+    addrs = renderer.nametableBelongingToAttr(0x23d0, 0x2000)
+    expect(addrs[0]).toBe(0x40)
+    expect(addrs[1]).toBe(0x41)
+    expect(addrs[2]).toBe(0x60)
+    expect(addrs[3]).toBe(0x61)
+  })
 })

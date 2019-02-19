@@ -9,17 +9,12 @@ export default {
     return x === 340
   },
 
-  isHblank: function() {
-    const x = this.cycles % this.cyclesPerLine
-    return x >= this.renderer.width && x <= this.cyclesPerLine - 1
-  },
-
   isVblankStart: function () {
     return this.cycles === this.cyclesPerLine * this.renderer.height
   },
 
   isVblankEnd: function () {
-    return this.cycles === this.cyclesPerFrame - 1
+    return this.cycles === 0
   },
 
 
@@ -33,6 +28,7 @@ export default {
       return false
     }
 
+    /*
     const zsPosition = this.oam.zeroSpritePosition()
     const position = this.renderer.position
     const width = this.renderer.width
@@ -43,8 +39,13 @@ export default {
     //const isYOverlapped = y-7 >= zsPosition.y && y-7 < zsPosition.y + 8
     const isXOverlapped = x === zsPosition.x
     const isYOverlapped = y === zsPosition.y
+    */
 
-    return isXOverlapped && isYOverlapped
+
+
+    //return isXOverlapped && isYOverlapped
+
+    return this.cycles === this.zeroSpritePosition
   }
 
 }

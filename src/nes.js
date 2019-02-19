@@ -47,13 +47,18 @@ export default class Nes {
   }
 
   frame() {
-    for(this.ppu.cycles=0;this.ppu.cycles<this.ppu.cyclesPerFrame;) {
+    this.ppu.cycles = 0
+    for(;;) {
       this.cpu.run(1)
-      for(let i=0;i<3;i++) {
-        this.ppu.run()
-        this.ppu.cycles++
-        if(this.ppu.cycles === this.ppu.cyclesPerFrame) break
-      }
+      this.ppu.run()
+      this.ppu.cycles++
+      if(this.ppu.cycles === this.ppu.cyclesPerFrame) break
+      this.ppu.run()
+      this.ppu.cycles++
+      if(this.ppu.cycles === this.ppu.cyclesPerFrame) break
+      this.ppu.run()
+      this.ppu.cycles++
+      if(this.ppu.cycles === this.ppu.cyclesPerFrame) break
     }
 
     this.calcFps()
@@ -62,13 +67,15 @@ export default class Nes {
   }
 
   nextFrame() {
-    if (env !== 'nodejs') window.requestAnimationFrame(this.frame.bind(this))
+    if (env !== 'nodejs') {
+      window.requestAnimationFrame(this.frame.bind(this))
+    }
   }
 
   calcFps() {
     this.frames++
 
-    if(this.frames === 60) {
+      if(this.frames === 60) {
       this.frames = 0
       this.endTime = Date.now()
 

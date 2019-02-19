@@ -15,7 +15,6 @@ export default class Oam {
     this.pOffset = 0 // pointerからのオフセット(0~3)
     this.memory = new Array(0x100).fill(0)
     this._attrs = this.createAttrs()
-    this._zeroSpritePosition = { x:null, y:null }
   }
 
   createAttrs() {
@@ -78,10 +77,11 @@ export default class Oam {
   }
 
   zeroSpritePosition() {
-    this._zeroSpritePosition.x = this.memory[3]
-    this._zeroSpritePosition.y = this.memory[0]
+    const x = this.memory[3]
+    const y = this.memory[0]
+    const position = x + y * this.ppu.cyclesPerLine
 
-    return this._zeroSpritePosition
+    return position
   }
 
   attrs() {

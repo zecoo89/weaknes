@@ -1,11 +1,4 @@
 export default {
-  isVblankStart: function () {
-    return this.position === this.width * 240
-  },
-  isVblankEnd: function () {
-    return this.position === this.width * 262
-  },
-
   prepareTileIndex: function() {
     this.tileIndex = new Array()
 
@@ -16,6 +9,10 @@ export default {
     }
   },
 
+  prepareTileIdOffsetIndex: function() {
+    this.tileIdOffsetIndex = [0, 256]
+  },
+
   preparePixelIndex: function() {
     this.pixelIndex = new Array()
 
@@ -23,6 +20,46 @@ export default {
       const x = i & (this.width - 1)
       const y = (i - (i & (this.width - 1))) / this.width
       this.pixelIndex[i] = [x, y]
+    }
+  },
+
+  prepareByteOffsetIndex: function() {
+    this.byteOffsetIndex = new Array(0x3c0)
+
+    for(let i=0;i< this.byteOffsetIndex.length;i++) {
+      this.byteOffsetIndex[i] = this.byteOffset(i)
+    }
+  },
+
+  prepareBlockOffsetIndex: function() {
+    this.blockOffsetIndex = new Array(0x3c0)
+
+    for(let i=0;i< this.blockOffsetIndex.length;i++) {
+      this.blockOffsetIndex[i] = this.blockOffset(i)
+    }
+  },
+
+  preparePaletteIdOfPaletteAddrIndex: function() {
+    this.paletteIdOfPaletteAddrIndex = {
+      0x3f00: 0,
+      0x3f01: 0,
+      0x3f02: 0,
+      0x3f03: 0,
+
+      0x3f04: 1,
+      0x3f05: 1,
+      0x3f06: 1,
+      0x3f07: 1,
+
+      0x3f08: 2,
+      0x3f09: 2,
+      0x3f0a: 2,
+      0x3f0b: 2,
+
+      0x3f0c: 3,
+      0x3f0d: 3,
+      0x3f0e: 3,
+      0x3f0f: 3,
     }
   }
 }

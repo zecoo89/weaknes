@@ -9,6 +9,10 @@ export default class Renderer {
     this.bindModules()
     this.prepareTileIndex()
     this.preparePixelIndex()
+    this.prepareTileIdOffsetIndex()
+    this.prepareByteOffsetIndex()
+    this.prepareBlockOffsetIndex()
+    this.preparePaletteIdOfPaletteAddrIndex()
   }
 
   init() {
@@ -45,27 +49,76 @@ export default class Renderer {
     parts.registers && (this.registers = parts.registers)
     parts.screen && (this.pixels = parts.screen.image.data)
   }
+
+  loadTile(offset, value, startAddr, offsetX, offsetY) {
+    const isBgChrBehind = this.registers[0x2000].isBackgroundChrBehind()
+    let tileId = value + this.tileIdOffsetIndex[isBgChrBehind]
+    const tileIndex = this.tileIndex[offset]
+    const x = tileIndex[0] + offsetX
+    const y = tileIndex[1] + offsetY
+
+    let tile = this.tiles.select(tileId)
+
+		let paletteId = this.loadPalette(startAddr, offset)
+    this.background.writeBgTile(tile, this.bgPalette, paletteId, x, y)
+	}
+
+	loadTileWithAttr(addr, startAddr, offsetX, offsetY) {
+    const nametableAddrs = this.nametableBelongingToAttr(addr, startAddr)
+
+    for(let i=0;i<nametableAddrs.length;i++) {
+      //for(let a of nametableAddrs) {
+      const a = nametableAddrs[i]
+      if(a >= 0x3c0) break
+      const tileId = this.vram.readFastly(startAddr + a)
+      const offset = (startAddr + a) % 0x400
+
+      this.loadTile(offset, tileId, startAddr, offsetX, offsetY)
+    }
+  }
+
+  loadTileWithColor(addr) {
+    const paletteId = this.paletteIdOfPaletteAddrIndex[addr]
+
+    const startAddr = 0x2000
+    for(let i=0x23c0;i<=0x23ff;i++) {
+      const pids = this.vram.readFastly(i)
+      for(let j=0;j<4;j++) {
+        const pid = (pids >> (j*2)) & 0b11
+        if(paletteId === 0 || paletteId === pid) {
+          const nametableAddrs = this.nametableBelongingToAttr(i, startAddr)
+
+          for(let k=0;k<4;k++) {
+            const a = nametableAddrs[j*4+k]
+
+            if(a >= 0x3c0) break
+
+            const tileId = this.vram.readFastly(startAddr + a)
+            const offset = (startAddr + a) % 0x400
+
+            this.loadTile(offset, tileId, startAddr, 0, 0)
+          }
+        }
+      }
+    }
+  }
+
   /* Call from ppu */
   render() {
-    const scrollX = this.registers[0x2005].horizontalScrollPosition
-    //const x = this.position & (this.width - 1)
-    //const y = (this.position - (this.position & (this.width - 1))) / this.width
+    //const scrollX = this.registers[0x2005].horizontalScrollPosition
     const pixelIndex = this.pixelIndex[this.position]
     const x = pixelIndex[0]
     const y = pixelIndex[1]
-    const mainScreenNumber = this.registers[0x2000].mainScreenNumber()
-    const offsetX = (mainScreenNumber & 0b1) * this._offsetX
-    const offsetY = (mainScreenNumber >> 1) * this._offsetY
+
+    this.renderPixel(this.position, x, y, this.scrollX, this.scrollY, this.offsetX, this.offsetY)
 
     this.position++
-    if(this.position === this.width * this.height) {
+      if(this.position === this.width * this.height) {
       this.position = 0
     }
-
-    return this.renderPixel(x, y, scrollX, this.scrollY, offsetX, offsetY)
   }
 
-  renderPixel(x, y, scrollX, scrollY, offsetX, offsetY) {
+  renderPixel(position, x, y, scrollX, scrollY, offsetX, offsetY) {
     /* y is 0 ~ 239 */
     if(scrollY >= 240) {
       scrollY = 0
@@ -98,9 +151,10 @@ export default class Renderer {
 
   /* load backgrounds and sprites to each layer */
   loadAllOnEachLayer() {
-    this.scrollY = this.registers[0x2005].verticalScrollPosition
-    this.tileIdOffset = this.registers[0x2000].isBackgroundChrBehind() ? 256 : 0
-    this.loadBackground()
+    //this.scrollY = this.registers[0x2005].verticalScrollPosition
+    const isChrBehind = this.registers[0x2000].isBackgroundChrBehind()
+    this.tileIdOffset = this.tileIdOffsetIndex[isChrBehind]
+    //this.loadBackground()
     this.loadSprites()
   }
 
@@ -110,10 +164,9 @@ export default class Renderer {
   }
 
   loadScreen(screenStartAddr, offsetX, offsetY) {
-
     for (let i = 0x000; i <= 0x3bf; i++) {
       let addr = screenStartAddr + i
-      let tileId = this.vram.read(addr) + this.tileIdOffset
+      let tileId = this.vram.readFastly(addr) + this.tileIdOffset
       let paletteId = this.loadPalette(screenStartAddr, i)
       const tileIndex = this.tileIndex[i]
       const x = tileIndex[0] + offsetX
@@ -125,18 +178,24 @@ export default class Renderer {
   }
 
   loadSprites() {
-    const isSprite = true
     const attrs = this.oam.attrs()
 
     this.sprites.reset()
 
-    const tileIdOffset = this.registers[0x2000].isSpriteChrBehind() ? 256 : 0
+    const isChrBehind = this.registers[0x2000].isSpriteChrBehind()
+    let tileIdOffset = this.tileIdOffsetIndex[isChrBehind]
     const isSpriteSizeTwice = this.registers[0x2000].isSpriteSizeTwice()
 
     for(let i=0;i<attrs.length;i++) {
       const attr = attrs[i]
 
-      const tileId = attr.tileId + tileIdOffset
+      let tileId
+      if(isSpriteSizeTwice) {
+        tileIdOffset = this.tileIdOffsetIndex[attr.tileId & 0b1]
+        tileId = (attr.tileId & 0xfe) + tileIdOffset
+      } else {
+        tileId = attr.tileId + tileIdOffset
+      }
       const paletteId = attr.paletteId
 
       const tile = this.tiles.select(tileId)
@@ -146,16 +205,16 @@ export default class Renderer {
 
       if(attr.y >= 240) continue
 
-      const isHflip = attr.isHorizontalFlip
-      const isVflip = attr.isVerticalFlip
+        const isHflip = attr.isHorizontalFlip
+        const isVflip = attr.isVerticalFlip
 
-      this.sprites.writeSpTile(tile, this.spritesPalette, paletteId, x, y, isHflip, isVflip, isSprite, priority)
+        this.sprites.writeSpTile(tile, this.spritesPalette, paletteId, x, y, isHflip, isVflip, priority)
 
-      /* case of 8x16 pixels*/
-      if(isSpriteSizeTwice) {
-        const secondTile = this.tiles.select(tileId+1)
-        this.sprites.writeSpTile(secondTile, this.spritesPalette, paletteId, x, y+8, isHflip, isVflip, isSprite, priority)
-      }
+        /* case of 8x16 pixels*/
+        if(isSpriteSizeTwice) {
+          const secondTile = this.tiles.select(tileId+1)
+          this.sprites.writeSpTile(secondTile, this.spritesPalette, paletteId, x, y+8, isHflip, isVflip, priority)
+        }
     }
   }
 
@@ -163,10 +222,12 @@ export default class Renderer {
   loadPalette(nameTableStartAddr, i) {
     const attrTableStartAddr = nameTableStartAddr + 0x3c0
 
-    const byteOffset = this.byteOffset(i)
-    const byte = this.vram.read(attrTableStartAddr + byteOffset)
+    const byteOffset = this.byteOffsetIndex[i]
+    //const byteOffset = this.byteOffset(i)
+    const byte = this.vram.readFastly(attrTableStartAddr + byteOffset)
 
-    const blockOffset = this.blockOffset(i)
+    const blockOffset = this.blockOffsetIndex[i]
+    //const blockOffset = this.blockOffset(i)
     const block = (byte >> (blockOffset*2)) & 0b11
 
     return block
@@ -183,5 +244,33 @@ export default class Renderer {
     const y = (i >> 6) & 0b1
 
     return x + (y << 1)
+  }
+
+  nametableBelongingToAttr(addr, startAddr) {
+    const i = addr - 0x3c0 - startAddr
+    const x = i % 0x8
+    const y = (i - x) / 0x8
+
+    return [
+      y * 0x80 + x * 4,
+      y * 0x80 + x * 4 + 1,
+      y * 0x80 + 0x20 + x * 4,
+      y * 0x80 + 0x20 + x * 4 + 1,
+
+      y * 0x80 + x * 4 + 2,
+      y * 0x80 + x * 4 + 3,
+      y * 0x80 + 0x20 + x * 4 + 2,
+      y * 0x80 + 0x20 + x * 4 + 3,
+
+      y * 0x80 + 0x40 + x * 4,
+      y * 0x80 + 0x40 + x * 4 + 1,
+      y * 0x80 + 0x60 + x * 4,
+      y * 0x80 + 0x60 + x * 4 + 1,
+
+      y * 0x80 + 0x40 + x * 4 + 2,
+      y * 0x80 + 0x40 + x * 4 + 3,
+      y * 0x80 + 0x60 + x * 4 + 2,
+      y * 0x80 + 0x60 + x * 4 + 3,
+    ]
   }
 }

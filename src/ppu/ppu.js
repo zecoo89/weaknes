@@ -16,6 +16,7 @@ export default class Ppu {
     this.registers = RegistersFactory.create(this)
     this.renderer = new Renderer()
 
+    this.vram.connect({ renderer: this.renderer })
     this.oam.connect({ ppu: this })
     this.renderer.connect({
       vram: this.vram,
@@ -27,6 +28,7 @@ export default class Ppu {
     this.cyclesPerLine = 341
     this.cyclesPerFrame = 89342
     this.isHblank = false
+    this.zeroSpritePosition = this.oam.zeroSpritePosition()
   }
 
   bindModules() {
@@ -52,13 +54,15 @@ export default class Ppu {
     } else if(this.isVblankEnd()) {
       this.registers[0x2002].clearVblank()
       /* y is 0 ~ 239 */
-      this.registers[0x2005].verticalScrollPosition < 240 && this.renderer.loadAllOnEachLayer()
-
+      //this.registers[0x2005].verticalScrollPosition < 240 && this.renderer.loadAllOnEachLayer()
+      this.renderer.loadAllOnEachLayer()
+      this.zeroSpritePosition = this.oam.zeroSpritePosition()
     }
 
     if(this.isHblankStart()) {
       this.registers[0x2002].clearZeroSpriteFlag()
       this.isHblank = true
+      //this.renderer.mainScreenNumber = this.registers[0x2000].mainScreenNumber()
       return
     } else if(this.isHblank) {
       if(this.isHblankEnd()) {
@@ -97,5 +101,16 @@ export default class Ppu {
     this.renderer.endX = this.renderer.isVerticalMirror ? this.renderer.width * 2 : this.renderer.width
     this.renderer.endY = this.renderer.isVerticalMirror ? this.renderer.height : this.renderer.height * 2
     this.renderer.secondScreenAddr = rom.isVerticalMirror() ? 0x2400 : 0x2800
+    this.renderer.layerOffsetOfNametable = this.renderer.isVerticalMirror ? {
+      0x2000: { x:0, y:0 },
+      0x2400: { x:256, y:0 },
+      0x2800: { x:0, y:0 },
+      0x2c00: { x:256, y:0 }
+    } : {
+      0x2000: { x:0, y:0 },
+      0x2400: { x:0, y:0 },
+      0x2800: { x:0, y:240 },
+      0x2c00: { x:0, y:240 }
+    }
   }
 }

@@ -5,16 +5,20 @@ export default class X2007 extends BaseRegister {
     super(ppu)
 
     this.buffer = 0x00
-    this.rNum = 0x2006 // VRAMへの書き込みアドレスを保持するレジスタ
+    //this.rNum = 0x2006 // VRAMへの書き込みアドレスを保持するレジスタ
+    this.addr = 0x00
+    this.incremental = 1
   }
 
   read() {
     const value = this.buffer
 
-    const addr = this.ppu.registers[this.rNum].vramAddr
-    this.ppu.registers[this.rNum].incrementVramAddr()
+    //const addr = this.ppu.registers[this.rNum].vramAddr
+    //this.ppu.registers[this.rNum].incrementVramAddr()
+    const addr = this.addr
+    this.addr += this.incremental
 
-    if(addr <= 0x3eff) { // external access
+    if(this.addr <= 0x3eff) { // external access
       this.buffer = this.ppu.vram.read(addr)
       return value
     } else { // internal access
@@ -23,15 +27,20 @@ export default class X2007 extends BaseRegister {
   }
 
   _read() {
-    const addr = this.ppu.registers[this.rNum].vramAddr
+    //const addr = this.ppu.registers[this.rNum].vramAddr
+    const addr = this.addr
+    this.addr += this.incremental
     const filteredAddr = this.filter(addr)
-    this.ppu.registers[this.rNum].incrementVramAddr()
+    //this.ppu.registers[this.rNum].incrementVramAddr()
     return this.ppu.vram.read(filteredAddr)
   }
 
   write(bits) {
-    const addr = this.ppu.registers[this.rNum].vramAddr
-    this.ppu.registers[this.rNum].incrementVramAddr()
+    //const addr = this.ppu.registers[this.rNum].vramAddr
+    //this.ppu.registers[this.rNum].incrementVramAddr()
+
+    const addr = this.addr
+    this.addr += this.incremental
 
     const filteredAddr = this.filter(addr)
     this.ppu.vram.write(filteredAddr, bits)

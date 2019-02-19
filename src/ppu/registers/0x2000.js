@@ -5,40 +5,43 @@ export default class X2000 extends BaseRegister {
   constructor(ppu) {
     super(ppu)
     this.register = 0b00000100
+    this.vramIncrementalIndex = [1, 32]
   }
 
   write(bits) {
     this.t.writeScreenNumber(bits)
     super.write(bits)
+    this.ppu.registers[0x2007].incremental = this.vramIncremental()
+    this.bypassMainScreenNumberToRenderer()
   }
 
   /* VBlank時にNMI割込の発生の有無 */
   isNmiEnabled() {
-    return !!this.readOneBit(7)
+    return this.readOneBit(7)
   }
 
   /* PPUがマスターかスレーブを決定する(多分使わない) */
   isPpuSlave() {
-    return !!this.readOneBit(6)
+    return this.readOneBit(6)
   }
 
   /* スプライトサイズを決定する
    * false: 8x8
    * true:  8x16 */
   isSpriteSizeTwice() {
-    return !!this.readOneBit(5)
+    return this.readOneBit(5)
   }
 
   /* バックグランド用CHRテーブルの開始アドレス
    * 0x0000 or 0x1000 */
   isBackgroundChrBehind() {
-    return !!this.readOneBit(4)
+    return this.readOneBit(4)
   }
 
   /* スプライト用CHRテーブルの開始アドレス
    * 0x0000 or 0x1000 */
   isSpriteChrBehind() {
-    return !!this.readOneBit(3)
+    return this.readOneBit(3)
   }
 
   /* VRAM入出力時のアドレスの増分
@@ -47,7 +50,7 @@ export default class X2000 extends BaseRegister {
   vramIncremental() {
     const bit = this.readOneBit(2)
 
-    return bit ? 32 : 1
+    return this.vramIncrementalIndex[bit]
   }
 
   /* メインスクリーンのアドレス
@@ -74,5 +77,11 @@ export default class X2000 extends BaseRegister {
 
   mainScreenNumber() {
     return this.readBits(0, 1)
+  }
+
+  bypassMainScreenNumberToRenderer() {
+    const renderer = this.ppu.renderer
+    renderer.offsetX = (this.mainScreenNumber() & 0b1) * renderer._offsetX
+    renderer.offsetY = (this.mainScreenNumber() >> 1) * renderer._offsetY
   }
 }

@@ -7,25 +7,25 @@ export default class Layer {
   }
 
   _init(width, height) {
-    this.width = width
-    this.height = height
-    this.layer = new Array(height)
+    this.width = width+7
+    this.height = height+7
+    this.layer = new Array(this.height)
 
-    for(let i=0;i<height;i++) {
-      this.layer[i] = new Array(width)
+    for(let i=0;i<this.height;i++) {
+      this.layer[i] = new Array(this.width)
 
-      for(let j=0;j<width;j++) {
+      for(let j=0;j<this.width;j++) {
         this.layer[i][j] = new Pixel()
       }
     }
   }
 
   reset() {
-    const layer = this.layer
-
-    for(let h=0;h<this.height;h++)
-      for(let w=0;w<this.width;w++)
-        layer[h][w].reset()
+    for(let h=0;h<this.height;h++) {
+      for(let w=0;w<this.width;w++) {
+        this.layer[h][w].reset()
+      }
+    }
   }
 
   get raw() {
@@ -61,7 +61,7 @@ export default class Layer {
     }
   }
 
-  writeSpTile(tile, palette, paletteId, x, y, isHflip, isVflip, isSprite, priority) {
+  writeSpTile(tile, palette, paletteId, x, y, isHflip, isVflip, priority) {
     let iStart = 0
     let iSign = 1
     let vStart = 0

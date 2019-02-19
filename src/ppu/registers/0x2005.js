@@ -14,9 +14,11 @@ export default class X2005 extends BaseRegister {
       this.t.writeScrollX(bits)
       this.x.write(bits)
       this.verticalScrollPosition_ = bits
+      this.bypassVerticalScrollToRenderer()
     } else {
       this.t.writeScrollY(bits)
       this.horizontalScrollPosition_ = bits
+      this.bypassHorizontalScrollToRenderer()
     }
 
     this.w.toggle()
@@ -28,5 +30,13 @@ export default class X2005 extends BaseRegister {
 
   get verticalScrollPosition() {
     return this.verticalScrollPosition_
+  }
+
+  bypassHorizontalScrollToRenderer() {
+    this.ppu.renderer.scrollX = this.horizontalScrollPosition_
+  }
+
+  bypassVerticalScrollToRenderer() {
+    this.ppu.renderer.scrollY = this.verticalScrollPosition_
   }
 }
