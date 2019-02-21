@@ -47,17 +47,17 @@ export default class Vram {
     } else if(addr >= 0x2400 && addr <= 0x27bf) {
       this.renderer.loadTile(offset, value, startAddr, offsetX, offsetY)
     } else if(addr >= 0x2800 && addr <= 0x2bbf) {
-      //this.renderer.loadTile(offset, value, startAddr, offsetX, offsetY)
+      this.renderer.loadTile(offset, value, startAddr, offsetX, offsetY)
     } else if(addr >= 0x2c00 && addr <= 0x2fbf) {
-      //this.renderer.loadTile(offset, value, startAddr, offsetX, offsetY)
+      this.renderer.loadTile(offset, value, startAddr, offsetX, offsetY)
     } else if(addr >= 0x23c0 && addr <= 0x23ff) {
       this.renderer.loadTileWithAttr(addr, startAddr, offsetX, offsetY)
     } else if(addr >= 0x27c0 && addr <= 0x27ff) {
       this.renderer.loadTileWithAttr(addr, value, startAddr, offsetX, offsetY)
     } else if(addr >= 0x2bc0 && addr <= 0x2bff) {
-      //this.renderer.loadTileWithAttr(addr, value, startAddr, offsetX, offsetY)
+      this.renderer.loadTileWithAttr(addr, value, startAddr, offsetX, offsetY)
     } else if(addr >= 0x2fc0 && addr <= 0x2fff) {
-      //this.renderer.loadTileWithAttr(addr, value, startAddr, offsetX, offsetY)
+      this.renderer.loadTileWithAttr(addr, value, startAddr, offsetX, offsetY)
     }
   }
 
