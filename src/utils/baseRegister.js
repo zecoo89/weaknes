@@ -28,13 +28,6 @@ export default class BaseRegister {
   }
 
   writeBits(from, to, bits) {
-    const width = to - from + 1
-
-    if (bits >> width)
-      throw new Error(
-        `Arg's bits are more than ${width} bits: ${bits.toString(2)}`
-      )
-
     let bitHigh = (this.register << (7 - to)) & 0xff00
     bitHigh = bitHigh >> (7 - to)
 

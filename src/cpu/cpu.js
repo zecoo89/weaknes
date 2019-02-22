@@ -1,4 +1,4 @@
-import Registers from './registers'
+import RegistersFactory from './registers'
 import Ram from './ram'
 import opcodes from './opcodes'
 import OpcodeUtil from './opcodes/util'
@@ -11,7 +11,7 @@ export default class Cpu {
   }
 
   init() {
-    this.registers = new Registers()
+    this.registers = RegistersFactory.create(this)
     this.ram = new Ram()
     this.ram.connect({cpu: this})
     this.opcodes = opcodes
@@ -56,7 +56,8 @@ export default class Cpu {
   }
 
   eval() {
-    const addr = this.registers.pc++
+    const addr = this.registers.pc.read()
+    this.registers.pc.increment()
     const opcodeId = this.ram.read(addr)
 
     return this.executeOpcode(this.opcodes[opcodeId])
@@ -67,14 +68,14 @@ export default class Cpu {
   }
 
   nmi() {
-    const addr = this.registers.pc
+    const addr = this.registers.pc.read()
     const highAddr = addr >> 8
     const lowAddr = addr & 0x00ff
     this.stackPush(highAddr)
     this.stackPush(lowAddr)
-    const statusBits = this.registers.statusAllRawBits
+    const statusBits = this.registers.status.read()
     this.stackPush(statusBits)
-    this.registers.pc = this.nmiAddr
+    this.registers.pc.write(this.nmiAddr)
   }
 
   /* 0x8000~のメモリにROM内のPRG-ROMを読み込む*/
@@ -98,8 +99,7 @@ export default class Cpu {
     this.nmiAddr = this.ram.read(0xfffa) | (this.ram.read(0xfffb) << 8)
     this.resetAddr = (this.ram.read(0xfffd) << 8) | this.ram.read(0xfffc)
     this.irqBrkAddr = (this.ram.read(0xfffe) << 8) | this.ram.read(0xffff)
-    // プログラムカウンタの初期値を0xFFFDから設定する
-    this.registers.pc = this.resetAddr ? this.resetAddr : 0x8000
+    this.registers.pc.init(this.resetAddr)
 
     //eslint-disable-next-line
     console.log('NMI: 0x' + this.nmiAddr.toString(16))
@@ -111,11 +111,14 @@ export default class Cpu {
 
   /* スタック領域に対する操作*/
   stackPush(value) {
-    this.ram.write(this.registers.sp, value)
-    this.registers.sp--
+    const addr = this.registers.sp.read()
+    this.ram.write(addr, value)
+    this.registers.sp.decrement()
   }
 
-    stackPop() {
-      return this.ram.read(++this.registers.sp)
-    }
+  stackPop() {
+    this.registers.sp.increment()
+    const addr = this.registers.sp.read()
+    return this.ram.read(addr)
+  }
 }

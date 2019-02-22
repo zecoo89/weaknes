@@ -96,7 +96,7 @@ export class AllInOne {
     }
   }
 
-  async run(romPath) {
+  async run(romPath, pcAddr) {
     if(env === 'browser') {
       const data = await this.download(romPath)
       this.rom = new Rom(data)
@@ -109,6 +109,7 @@ export class AllInOne {
       throw new Error()
     }
 
+    pcAddr && this.nes.cpu.registers.pc.init(pcAddr)
     this.nes.run()
   }
 

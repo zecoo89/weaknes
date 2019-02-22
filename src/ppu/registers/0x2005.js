@@ -11,11 +11,11 @@ export default class X2005 extends BaseRegister {
 
   write(bits) {
     if (this.w.isLatched()) {
-      this.t.writeScrollX(bits)
-      this.x.write(bits)
+      this.t.writeScrollY(bits)
       this.verticalScrollPosition_ = bits
     } else {
-      this.t.writeScrollY(bits)
+      this.t.writeScrollX(bits)
+      this.x.write(bits)
       this.horizontalScrollPosition_ = bits
     }
 

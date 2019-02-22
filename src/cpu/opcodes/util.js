@@ -37,7 +37,7 @@ export default class Util {
 
   static debug(opcode) {
     let addrOfOpcode
-    addrOfOpcode = this.registers.pc - 1
+    addrOfOpcode = this.registers.pc.read() - 1
 
     const addressingName = opcode.addressing
 

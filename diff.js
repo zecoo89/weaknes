@@ -60,6 +60,7 @@ const myLogLines = myLog.split('\n')
  * */
 let state = 0
 for(let i=0;i<nestestLines.length-1;i++) {
+  //console.log(i)
   if(!myLogLines[i]) {
     state = state === 1 ? 2 : 3
     break

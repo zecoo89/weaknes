@@ -56,8 +56,13 @@ class Main {
     }
 
     const allInOne = new AllInOne(screenId, isDebug)
-    await allInOne.run(path)
 
+    let pcAddr = null
+    if(env === 'nodejs')  pcAddr = 0xc000
+
+    await allInOne.run(path, pcAddr)
+
+    if(env === 'nodejs') return
     /* CHR-ROMを可視化する *////*
     const palette = [0x31, 0x3d, 0x2d, 0x1f]
     const Tool = NesPack.Tool

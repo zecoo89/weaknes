@@ -9,7 +9,7 @@ describe('Addressing', () => {
   })
   test('immediate', () => {
     const cpu = new Cpu()
-    cpu.registers.pc = 0x0001
+    cpu.registers.pc.write(0x0001)
 
     const immediate = Addressing.immediate.bind(cpu)
     const addr = immediate()
@@ -20,7 +20,7 @@ describe('Addressing', () => {
     const cpu = new Cpu()
     cpu.ram.write(0x00, 0x01)
     cpu.ram.write(0x01, 0x02)
-    cpu.registers.pc = 0x0001
+    cpu.registers.pc.write(0x0001)
 
     const zeropage = Addressing.zeropage.bind(cpu)
     const addr = zeropage()
@@ -31,12 +31,14 @@ describe('Addressing', () => {
     const cpu = new Cpu()
     cpu.ram.write(0x00, 0x01)
     cpu.ram.write(0x01, 0x02)
-    cpu.registers.pc = 0x0001
-    cpu.registers.indexX = 0x01
+    cpu.registers.pc.write(0x0001)
+    cpu.registers.indexX.write(0x01)
 
     const zeropageX = Addressing.zeropageX.bind(cpu)
     const addr = zeropageX()
     expect(addr).toBe(0x03)
+    const pc = cpu.registers.pc.read()
+    expect(pc).toBe(0x0002)
   })
 
   test('zeropageY', () => {
@@ -44,19 +46,21 @@ describe('Addressing', () => {
     cpu.ram.write(0x00, 0x01)
     cpu.ram.write(0x01, 0x02)
     cpu.ram.write(0x02, 0x03)
-    cpu.registers.pc = 0x0001
-    cpu.registers.indexY = 0x01
+    cpu.registers.pc.write(0x0001)
+    cpu.registers.indexY.write(0x01)
 
     const zeropageY = Addressing.zeropageY.bind(cpu)
     const addr = zeropageY()
     expect(addr).toBe(0x03)
+    const pc = cpu.registers.pc.read()
+    expect(pc).toBe(0x0002)
   })
 
   test('absolute', () => {
     const cpu = new Cpu()
     cpu.ram.write(0x00, 0x01)
     cpu.ram.write(0x01, 0x02)
-    cpu.registers.pc = 0x0000
+    cpu.registers.pc.write(0x0000)
 
     const absolute = Addressing.absolute.bind(cpu)
     const addr = absolute()
@@ -67,8 +71,8 @@ describe('Addressing', () => {
     const cpu = new Cpu()
     cpu.ram.write(0x00, 0x01)
     cpu.ram.write(0x01, 0x02)
-    cpu.registers.pc = 0x0000
-    cpu.registers.indexX = 0x02
+    cpu.registers.pc.write(0x0000)
+    cpu.registers.indexX.write(0x02)
 
     const absoluteX = Addressing.absoluteX.bind(cpu)
     const addr = absoluteX()
@@ -79,8 +83,8 @@ describe('Addressing', () => {
     const cpu = new Cpu()
     cpu.ram.write(0x00, 0x01)
     cpu.ram.write(0x01, 0x02)
-    cpu.registers.pc = 0x0000
-    cpu.registers.indexY = 0x02
+    cpu.registers.pc.write(0x0000)
+    cpu.registers.indexY.write(0x02)
 
     const absoluteY = Addressing.absoluteY.bind(cpu)
     const addr = absoluteY()
@@ -92,7 +96,7 @@ describe('Addressing', () => {
     cpu.ram.write(0x00, 0x00)
     cpu.ram.write(0x01, 0x01)
     cpu.ram.write(0x0100, 0x0012)
-    cpu.registers.pc = 0x0000
+    cpu.registers.pc.write(0x0000)
 
     const indirect = Addressing.indirect.bind(cpu)
     const address = indirect()
@@ -101,11 +105,11 @@ describe('Addressing', () => {
 
   test('indexIndirect', () => {
     const cpu = new Cpu()
-    cpu.registers.indexX = 0x02
+    cpu.registers.indexX.write(0x02)
     cpu.ram.write(0x00, 0x01)
     cpu.ram.write(0x03, 0x00)
     cpu.ram.write(0x04, 0x01)
-    cpu.registers.pc = 0x0000
+    cpu.registers.pc.write(0x0000)
 
     const indexIndirect = Addressing.indexIndirect.bind(cpu)
     const addr = indexIndirect()
@@ -114,11 +118,11 @@ describe('Addressing', () => {
 
   test('indirectIndex', () => {
     const cpu = new Cpu()
-    cpu.registers.indexY = 0x02
+    cpu.registers.indexY.write(0x02)
     cpu.ram.write(0x00, 0x01)
     cpu.ram.write(0x01, 0x00)
     cpu.ram.write(0x02, 0x01)
-    cpu.registers.pc = 0x0000
+    cpu.registers.pc.write(0x0000)
 
     const indirectIndex = Addressing.indirectIndex.bind(cpu)
     const addr = indirectIndex()
@@ -130,7 +134,7 @@ describe('Addressing', () => {
     cpu.ram.write(0x00, 0x01)
     cpu.ram.write(0x01, 0x02)
     cpu.ram.write(0x02, 0x03)
-    cpu.registers.pc = 0x0001
+    cpu.registers.pc.write(0x0001)
 
     const relative = Addressing.relative.bind(cpu)
     const addr = relative()
@@ -142,7 +146,7 @@ describe('Addressing', () => {
     cpu.ram.write(0x00, 0x01)
     cpu.ram.write(0x01, 0xfe)
     cpu.ram.write(0x02, 0x03)
-    cpu.registers.pc = 0x0001
+    cpu.registers.pc.write(0x0001)
 
     const relative = Addressing.relative.bind(cpu)
     const addr = relative()
