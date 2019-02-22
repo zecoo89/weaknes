@@ -8,7 +8,7 @@ export default class X2002 extends BaseRegister {
 
   read() {
     this.w.clear()
-    return this.register
+    return super.read()
   }
 
   setVblank() {
