@@ -1,35 +1,35 @@
 /* 0xf0 - 0xff */
 export default [
   /* 0xf0: BEQ relative */
-  { instruction: 'BEQ', addressing: 'relative', cycle: 2 },
+  { instruction: 'BEQ', addressing: 'relative', cycles: 2 },
   /* 0xf1: SBC indirectIndex */
-  { instruction: 'SBC', addressing: 'indirectIndex', cycle: 5 },
+  { instruction: 'SBC', addressing: 'indirectIndex', cycles: 5 },
   /* TODO This is not implemented */
-  { instruction: 'STP', addressing: 'implied', cycle: 3 },
+  { instruction: 'STP', addressing: 'implied', cycles: 3 },
   /* TODO This is not implemented */
-  { instruction: 'ISC', addressing: 'indirectIndex', cycle: 8 },
+  { instruction: 'ISC', addressing: 'indirectIndex', cycles: 8 },
   /* 0xf4: 2byte NOP */
-  { instruction: 'NOP', addressing: 'zeropageX', cycle: 4 },
+  { instruction: 'NOP', addressing: 'zeropageX', cycles: 4 },
   /* 0xf5: SBC zeropageX */
-  { instruction: 'SBC', addressing: 'zeropageX', cycle: 4 },
+  { instruction: 'SBC', addressing: 'zeropageX', cycles: 4 },
   /* 0xf6: INC zeropageX */
-  { instruction: 'INC', addressing: 'zeropageX', cycle: 6 },
+  { instruction: 'INC', addressing: 'zeropageX', cycles: 6 },
   /* TODO This is not implemented */
-  { instruction: 'ISC', addressing: 'zeropageX', cycle: 6 },
+  { instruction: 'ISC', addressing: 'zeropageX', cycles: 6 },
   /* 0xf8: SED implied */
-  { instruction: 'SED', addressing: 'implied', cycle: 2 },
+  { instruction: 'SED', addressing: 'implied', cycles: 2 },
   /* 0xf9 SBC absoluteY */
-  { instruction: 'SBC', addressing: 'absoluteY', cycle: 4 },
+  { instruction: 'SBC', addressing: 'absoluteY', cycles: 4 },
   /* 0xfa: NOP */
-  { instruction: 'NOP', addressing: 'implied', cycle: 2 },
+  { instruction: 'NOP', addressing: 'implied', cycles: 2 },
   /* TODO This is not implemented */
-  { instruction: 'ISC', addressing: 'absoluteY', cycle: 7 },
+  { instruction: 'ISC', addressing: 'absoluteY', cycles: 7 },
   /* 0xfc: 3byte NOP */
-  { instruction: 'NOP', addressing: 'absoluteX', cycle: 4 },
+  { instruction: 'NOP', addressing: 'absoluteX', cycles: 4 },
   /* 0xfd: SBC absoluteX */
-  { instruction: 'SBC', addressing: 'absoluteX', cycle: 4 },
+  { instruction: 'SBC', addressing: 'absoluteX', cycles: 4 },
   /* 0xfe: INC absoluteX */
-  { instruction: 'INC', addressing: 'absoluteX', cycle: 7 },
+  { instruction: 'INC', addressing: 'absoluteX', cycles: 7 },
   /* TODO This is not implemented */
-  { instruction: 'ISC', addressing: 'absoluteX', cycle: 7 }
+  { instruction: 'ISC', addressing: 'absoluteX', cycles: 7 }
 ]

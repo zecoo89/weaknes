@@ -1,35 +1,35 @@
 /* 0xd0 - 0xdF */
 export default [
   /* 0xd0: BNE relative */
-  { instruction: 'BNE', addressing: 'relative', cycle: 2 },
+  { instruction: 'BNE', addressing: 'relative', cycles: 2 },
   /* 0xd1: CMP indirectIndex */
-  { instruction: 'CMP', addressing: 'indirectIndex', cycle: 5 },
+  { instruction: 'CMP', addressing: 'indirectIndex', cycles: 5 },
   /* TODO This is not implemented */
-  { instruction: 'STP', addressing: 'implied', cycle: 3 },
+  { instruction: 'STP', addressing: 'implied', cycles: 3 },
   /* TODO This is not implemented */
-  { instruction: 'DCP', addressing: 'indirectIndex', cycle: 8 },
+  { instruction: 'DCP', addressing: 'indirectIndex', cycles: 8 },
   /* 0xd4: 2byte NOP */
-  { instruction: 'NOP', addressing: 'zeropageX', cycle: 4 },
+  { instruction: 'NOP', addressing: 'zeropageX', cycles: 4 },
   /* 0xd5: CMP zeropageX */
-  { instruction: 'CMP', addressing: 'zeropageX', cycle: 4 },
+  { instruction: 'CMP', addressing: 'zeropageX', cycles: 4 },
   /* 0xd6: DEC zeropageX */
-  { instruction: 'DEC', addressing: 'zeropageX', cycle: 6 },
+  { instruction: 'DEC', addressing: 'zeropageX', cycles: 6 },
   /* TODO This is not implemented */
-  { instruction: 'DCP', addressing: 'zeropageX', cycle: 6 },
+  { instruction: 'DCP', addressing: 'zeropageX', cycles: 6 },
   /* 0xd8: CLD implied */
-  { instruction: 'CLD', addressing: 'implied', cycle: 2 },
+  { instruction: 'CLD', addressing: 'implied', cycles: 2 },
   /* 0xd9: CMP absoluteY */
-  { instruction: 'CMP', addressing: 'absoluteY', cycle: 4 },
+  { instruction: 'CMP', addressing: 'absoluteY', cycles: 4 },
   /* 0xda: NOP */
-  { instruction: 'NOP', addressing: 'implied', cycle: 2 },
+  { instruction: 'NOP', addressing: 'implied', cycles: 2 },
   /* TODO This is not implemented */
-  { instruction: 'DCP', addressing: 'absoluteY', cycle: 7 },
+  { instruction: 'DCP', addressing: 'absoluteY', cycles: 7 },
   /* 0xdc: 3byte NOP */
-  { instruction: 'NOP', addressing: 'absoluteX', cycle: 4 },
+  { instruction: 'NOP', addressing: 'absoluteX', cycles: 4 },
   /* 0xdd: CMP absoluteX */
-  { instruction: 'CMP', addressing: 'absoluteX', cycle: 4 },
+  { instruction: 'CMP', addressing: 'absoluteX', cycles: 4 },
   /* 0xde: DEC absoluteX */
-  { instruction: 'DEC', addressing: 'absoluteX', cycle: 7 },
+  { instruction: 'DEC', addressing: 'absoluteX', cycles: 7 },
   /* TODO This is not implemented */
-  { instruction: 'DCP', addressing: 'absoluteX', cycle: 7 }
+  { instruction: 'DCP', addressing: 'absoluteX', cycles: 7 }
 ]

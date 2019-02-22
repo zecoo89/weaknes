@@ -1,35 +1,35 @@
 /* 0xe0 - 0xeF */
 export default [
   /* 0xe0: CPX immediate */
-  { instruction: 'CPX', addressing: 'immediate', cycle: 2 },
+  { instruction: 'CPX', addressing: 'immediate', cycles: 2 },
   /* 0xe1: SBC indexIndirect */
-  { instruction: 'SBC', addressing: 'indexIndirect', cycle: 6 },
+  { instruction: 'SBC', addressing: 'indexIndirect', cycles: 6 },
   /* 0xe0: 2byte NOP */
-  { instruction: 'NOP', addressing: 'immediate', cycle: 2 },
+  { instruction: 'NOP', addressing: 'immediate', cycles: 2 },
   /* TODO This is not implemented */
-  { instruction: 'ISC', addressing: 'indexIndirect', cycle: 8 },
+  { instruction: 'ISC', addressing: 'indexIndirect', cycles: 8 },
   /* 0xe4: CPX zeropage */
-  { instruction: 'CPX', addressing: 'zeropage', cycle: 3 },
+  { instruction: 'CPX', addressing: 'zeropage', cycles: 3 },
   /* 0xe5: SBC zeropage*/
-  { instruction: 'SBC', addressing: 'zeropage', cycle: 3 },
+  { instruction: 'SBC', addressing: 'zeropage', cycles: 3 },
   /* 0xe6: INC zeropage*/
-  { instruction: 'INC', addressing: 'zeropage', cycle: 5 },
+  { instruction: 'INC', addressing: 'zeropage', cycles: 5 },
   /* TODO This is not implemented */
-  { instruction: 'ISC', addressing: 'zeropage', cycle: 5 },
+  { instruction: 'ISC', addressing: 'zeropage', cycles: 5 },
   /* 0xe8: INX implied */
-  { instruction: 'INX', addressing: 'implied', cycle: 2 },
+  { instruction: 'INX', addressing: 'implied', cycles: 2 },
   /* 0xe9: SBC immediate */
-  { instruction: 'SBC', addressing: 'immediate', cycle: 2 },
+  { instruction: 'SBC', addressing: 'immediate', cycles: 2 },
   /* 0xea: NOP implied */
-  { instruction: 'NOP', addressing: 'implied', cycle: 2 },
+  { instruction: 'NOP', addressing: 'implied', cycles: 2 },
   /* TODO This is not implemented */
-  { instruction: 'SBC', addressing: 'immediate', cycle: 2 },
+  { instruction: 'SBC', addressing: 'immediate', cycles: 2 },
   /* 0xec: CPX absolute */
-  { instruction: 'CPX', addressing: 'absolute', cycle: 4 },
+  { instruction: 'CPX', addressing: 'absolute', cycles: 4 },
   /* 0xed: SBC absolute */
-  { instruction: 'SBC', addressing: 'absolute', cycle: 4 },
+  { instruction: 'SBC', addressing: 'absolute', cycles: 4 },
   /* 0xee: INC absolute*/
-  { instruction: 'INC', addressing: 'absolute', cycle: 6 },
+  { instruction: 'INC', addressing: 'absolute', cycles: 6 },
   /* TODO This is not implemented */
-  { instruction: 'ISC', addressing: 'absolute', cycle: 6 }
+  { instruction: 'ISC', addressing: 'absolute', cycles: 6 }
 ]

@@ -60,7 +60,7 @@ export default class Util {
 
     instruction.call()
 
-    return opcode.cycle
+    return opcode.cycles
   }
 
   static execute(opcode) {
@@ -73,6 +73,6 @@ export default class Util {
 
     instruction()
 
-    return opcode.cycle
+    return opcode.cycles
   }
 }
