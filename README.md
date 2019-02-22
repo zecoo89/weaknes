@@ -4,15 +4,13 @@ Weaknes is a NES emulator written with JavaScript.
 
 <img src="./images/nestest1.png" height="240"> <img src="./images/nestest2.png" height="240">
 
-## Usage
-
-### Build
+## Build
 ```console
 $ npm install
 $ npm run build
 ```
-### Code
-#### index.js
+## Usage
+### index.js
 ```javascript
 async function main() {
   const path = './assets/nestest/nestest.nes'
@@ -27,7 +25,7 @@ async function main() {
 main()
 ```
 
-#### index.html
+### index.html
 ```html
 <!DOCTYPE html>
 <html>
