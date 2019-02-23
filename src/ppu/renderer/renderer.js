@@ -45,6 +45,7 @@ export default class Renderer {
     parts.registers && (this.registers = parts.registers)
     parts.screen && (this.pixels = parts.screen.image.data)
   }
+
   /* Call from ppu */
   render() {
     const scrollX = this.registers[0x2005].horizontalScrollPosition
