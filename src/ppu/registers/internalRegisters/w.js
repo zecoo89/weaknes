@@ -4,7 +4,7 @@ export default class W {
   }
 
   toggle() {
-    this.register = !this.register
+    this.register = ~this.register & 0b1
   }
 
   isLatched() {
@@ -12,6 +12,6 @@ export default class W {
   }
 
   clear() {
-    this.register = false
+    this.register = 0
   }
 }
