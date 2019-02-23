@@ -1,5 +1,6 @@
 import { eslint } from "rollup-plugin-eslint"
 import resolve from 'rollup-plugin-node-resolve'
+import notify from 'rollup-plugin-notify'
 
 export default {
   input: "./src/index.js",
@@ -12,6 +13,7 @@ export default {
   external: [ 'fs' ],
   plugins: [
     eslint(),
-    resolve()
+    resolve(),
+    notify()
   ]
 };
