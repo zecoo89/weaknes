@@ -91,11 +91,13 @@ export default class Ppu {
 
     this.renderer.tiles.extract()
 
-    this.renderer.isVerticalMirror = rom.isVerticalMirror()
-    this.renderer._offsetX = this.renderer.isVerticalMirror ? 256 : 0
-    this.renderer._offsetY = this.renderer.isVerticalMirror ? 0 : 240
-    this.renderer.endX = this.renderer.isVerticalMirror ? this.renderer.width * 2 : this.renderer.width
-    this.renderer.endY = this.renderer.isVerticalMirror ? this.renderer.height : this.renderer.height * 2
-    this.renderer.secondScreenAddr = rom.isVerticalMirror() ? 0x2400 : 0x2800
+    const isVerticalMirror = rom.isVerticalMirror()
+    this.renderer._offsetX = isVerticalMirror ? 256 : 0
+    this.renderer._offsetY = isVerticalMirror ? 0 : 240
+    this.renderer.endX = isVerticalMirror ? this.renderer.width * 2 : this.renderer.width
+    this.renderer.endY = isVerticalMirror ? this.renderer.height : this.renderer.height * 2
+    this.renderer.secondScreenAddr = isVerticalMirror ? 0x2400 : 0x2800
+
+    this.renderer.setScreenIndex(isVerticalMirror)
   }
 }
