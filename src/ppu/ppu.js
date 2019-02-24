@@ -2,6 +2,8 @@ import Vram from './vram'
 import Oam from './oam'
 import RegistersFactory from './registers'
 import Renderer from './renderer'
+import Layers from './layers'
+import Loader from './loader'
 import modules from './modules'
 
 export default class Ppu {
@@ -14,10 +16,22 @@ export default class Ppu {
     this.vram = new Vram()
     this.oam = new Oam()
     this.registers = RegistersFactory.create(this)
+
+    this.layers = new Layers()
+
     this.renderer = new Renderer()
+    this.loader = new Loader()
 
     this.oam.connect({ ppu: this })
+    this.layers.connect({vram: this.vram})
     this.renderer.connect({
+      vram: this.vram,
+      oam: this.oam,
+      registers: this.registers,
+      layers: this.layers
+    })
+    this.loader.connect({
+      layers: this.layers,
       vram: this.vram,
       oam: this.oam,
       registers: this.registers
@@ -52,7 +66,10 @@ export default class Ppu {
     } else if(this.isVblankEnd()) {
       this.registers[0x2002].clearVblank()
       /* y is 0 ~ 239 */
-      this.registers[0x2005].verticalScrollPosition < 240 && this.renderer.loadAllOnEachLayer()
+      if(this.registers[0x2005].verticalScrollPosition < 240) {
+        this.renderer.scrollY = this.registers[0x2005].verticalScrollPosition
+        this.loader.loadAllOnEachLayer()
+      }
 
     }
 
@@ -89,14 +106,16 @@ export default class Ppu {
       this.vram.write(i, chrRom[i])
     }
 
-    this.renderer.tiles.extract()
+    this.loader.tiles.extract()
 
     const isVerticalMirror = rom.isVerticalMirror()
     this.renderer._offsetX = isVerticalMirror ? 256 : 0
     this.renderer._offsetY = isVerticalMirror ? 0 : 240
+    this.loader.offsetX = isVerticalMirror ? 256 : 0
+    this.loader.offsetY = isVerticalMirror ? 0 : 240
     this.renderer.endX = isVerticalMirror ? this.renderer.width * 2 : this.renderer.width
     this.renderer.endY = isVerticalMirror ? this.renderer.height : this.renderer.height * 2
-    this.renderer.secondScreenAddr = isVerticalMirror ? 0x2400 : 0x2800
+    this.loader.secondScreenAddr = isVerticalMirror ? 0x2400 : 0x2800
 
     this.renderer.setScreenIndex(isVerticalMirror)
   }

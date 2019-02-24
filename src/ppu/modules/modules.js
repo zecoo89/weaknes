@@ -9,19 +9,13 @@ export default {
     return x === 340
   },
 
-  isHblank: function() {
-    const x = this.cycles % this.cyclesPerLine
-    return x >= this.renderer.width && x <= this.cyclesPerLine - 1
-  },
-
   isVblankStart: function () {
     return this.cycles === this.cyclesPerLine * this.renderer.height
   },
 
   isVblankEnd: function () {
-    return this.cycles === this.cyclesPerFrame - 1
+    return this.cycles === 0
   },
-
 
   isZeroSpriteOverlapped: function() {
     const isSpriteEnabled = this.registers[0x2001].isSpriteEnabled()

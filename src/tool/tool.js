@@ -1,4 +1,4 @@
-import colors from '../ppu/renderer/colors'
+import colors from '../ppu/layers/layer/colors'
 
 export default class Tool {
   constructor(nes) {
@@ -11,7 +11,7 @@ export default class Tool {
     const canvas = document.getElementById(id)
     const context = canvas.getContext('2d')
     const image = context.createImageData(width, height)
-    const bg = this.nes.ppu.renderer.background
+    const bg = this.nes.ppu.loader.bgLayer
     const sx = this.nes.ppu.renderer.scrollX
     const sy = this.nes.ppu.renderer.scrollY
     const ox = this.nes.ppu.renderer.offsetX
@@ -52,7 +52,7 @@ export default class Tool {
     const canvas = document.getElementById(id)
     const context = canvas.getContext('2d')
     const image = context.createImageData(8, 8)
-    const tiles = this.nes.ppu.renderer.tiles
+    const tiles = this.nes.ppu.loader.tiles
 
     for (let i = 0; i < tiles.length; i++) {
       const x = (i % 32) * 8
