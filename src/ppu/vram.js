@@ -13,7 +13,7 @@ export default class Vram {
   }
 
   filterForRead(addr) {
-    switch(addr) {
+    switch (addr) {
       case 0x3f04:
       case 0x3f08:
       case 0x3f0c:

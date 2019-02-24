@@ -21,14 +21,14 @@ export default class Renderer {
   }
 
   bindModules() {
-    for(let key of Object.keys(modules)) {
+    for (let key of Object.keys(modules)) {
       this[key] = modules[key]
     }
   }
 
   connect(parts) {
     parts.registers && (this.registers = parts.registers)
-    if(parts.layers) {
+    if (parts.layers) {
       this.bgLayer = parts.layers.background
       this.spLayer = parts.layers.sprites
     }
@@ -46,16 +46,23 @@ export default class Renderer {
     this.offsetY = (mainScreenNumber >> 1) * this._offsetY
 
     this.position++
-    if(this.position === this.width * this.height) {
+    if (this.position === this.width * this.height) {
       this.position = 0
     }
 
-    return this.renderPixel(x, y, this.scrollX, this.scrollY, this.offsetX, this.offsetY)
+    return this.renderPixel(
+      x,
+      y,
+      this.scrollX,
+      this.scrollY,
+      this.offsetX,
+      this.offsetY
+    )
   }
 
   renderPixel(x, y, scrollX, scrollY, offsetX, offsetY) {
     /* y is 0 ~ 239 */
-    if(scrollY >= 240) {
+    if (scrollY >= 240) {
       scrollY = 0
     }
 
@@ -79,8 +86,8 @@ export default class Renderer {
   setPixel(x, y, rgb, alpha) {
     const i = (x + y * this.width) * 4
     this.pixels[i] = rgb[0]
-    this.pixels[i+1] = rgb[1]
-    this.pixels[i+2] = rgb[2]
-    this.pixels[i+3] = alpha
+    this.pixels[i + 1] = rgb[1]
+    this.pixels[i + 2] = rgb[2]
+    this.pixels[i + 3] = alpha
   }
 }

@@ -10,12 +10,12 @@ export default class Loader {
   }
 
   connect(parts) {
-    if(parts.layers) {
+    if (parts.layers) {
       this.bgLayer = parts.layers.background
       this.spLayer = parts.layers.sprites
     }
 
-    if(parts.vram) {
+    if (parts.vram) {
       this.vram = parts.vram
       this.tiles.connect({ vram: this.vram })
     }
@@ -61,7 +61,7 @@ export default class Loader {
     const tileIdOffset = this.registers[0x2000].isSpriteChrBehind() ? 256 : 0
     const isSpriteSizeTwice = this.registers[0x2000].isSpriteSizeTwice()
 
-    for(let i=0;i<attrs.length;i++) {
+    for (let i = 0; i < attrs.length; i++) {
       const attr = attrs[i]
 
       const tileId = attr.tileId + tileIdOffset
@@ -72,18 +72,26 @@ export default class Loader {
       const y = attr.y
       const priority = attr.priority
 
-      if(attr.y >= 240) continue
+      if (attr.y >= 240) continue
 
-        const isHflip = attr.isHorizontalFlip
-        const isVflip = attr.isVerticalFlip
+      const isHflip = attr.isHorizontalFlip
+      const isVflip = attr.isVerticalFlip
 
-        this.spLayer.writeTile(tile, paletteId, x, y, isHflip, isVflip, priority)
+      this.spLayer.writeTile(tile, paletteId, x, y, isHflip, isVflip, priority)
 
-        /* case of 8x16 pixels*/
-        if(isSpriteSizeTwice) {
-          const secondTile = this.tiles.select(tileId+1)
-          this.spLayer.writeTile(secondTile, paletteId, x, y+8, isHflip, isVflip, priority)
-        }
+      /* case of 8x16 pixels*/
+      if (isSpriteSizeTwice) {
+        const secondTile = this.tiles.select(tileId + 1)
+        this.spLayer.writeTile(
+          secondTile,
+          paletteId,
+          x,
+          y + 8,
+          isHflip,
+          isVflip,
+          priority
+        )
+      }
     }
   }
 
@@ -95,14 +103,14 @@ export default class Loader {
     const byte = this.vram.read(attrTableStartAddr + byteOffset)
 
     const blockOffset = this.blockOffset(i)
-    const block = (byte >> (blockOffset*2)) & 0b11
+    const block = (byte >> (blockOffset * 2)) & 0b11
 
     return block
   }
 
   byteOffset(i) {
     const x = (i >> 2) & 0b111
-    const y = (i >> 7)
+    const y = i >> 7
     return x + (y << 3)
   }
 
@@ -116,9 +124,9 @@ export default class Loader {
   prepareTileIndex() {
     this.tileIndex = new Array()
 
-    for(let i=0;i<=0x3bf;i++) {
-      let x = (i & (this.tileWidth-1)) * 8
-      let y = ((i - (i & (this.tileWidth-1))) / this.tileWidth) * 8
+    for (let i = 0; i <= 0x3bf; i++) {
+      let x = (i & (this.tileWidth - 1)) * 8
+      let y = ((i - (i & (this.tileWidth - 1))) / this.tileWidth) * 8
       this.tileIndex[i] = [x, y]
     }
   }

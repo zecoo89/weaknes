@@ -2,7 +2,7 @@ import Renderer from '../renderer'
 
 let renderer
 
-beforeEach(() => renderer = new Renderer)
+beforeEach(() => (renderer = new Renderer()))
 
 describe('Renderer', () => {
   test('calculate a byte offset of a tile', () => {

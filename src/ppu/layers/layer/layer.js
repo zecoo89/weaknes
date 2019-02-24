@@ -18,27 +18,27 @@ export default class Layer {
   }
 
   initLayer() {
-    for(let i=0;i<this.height;i++) {
+    for (let i = 0; i < this.height; i++) {
       this.layer[i] = new Array(this.width)
 
-      for(let j=0;j<this.width;j++) {
+      for (let j = 0; j < this.width; j++) {
         this.layer[i][j] = new Pixel()
       }
     }
   }
 
   connect(parts) {
-    if(parts.vram) {
-      this.bgPalette.connect({vram: parts.vram})
-      this.spPalette.connect({vram: parts.vram})
+    if (parts.vram) {
+      this.bgPalette.connect({ vram: parts.vram })
+      this.spPalette.connect({ vram: parts.vram })
     }
   }
 
   reset() {
     const layer = this.layer
 
-    for(let h=0;h<this.height;h++) {
-      for(let w=0;w<this.width;w++) {
+    for (let h = 0; h < this.height; h++) {
+      for (let w = 0; w < this.width; w++) {
         layer[h][w].reset()
       }
     }
@@ -53,8 +53,8 @@ export default class Layer {
   }
 
   writeBgTile(tile, paletteId, x, y) {
-    for(let i=0;i<8;i++) {
-      for(let j=0;j<8;j++) {
+    for (let i = 0; i < 8; i++) {
+      for (let j = 0; j < 8; j++) {
         const tileBit = tile[i][j]
         const colorId = this.bgPalette.select(paletteId, tileBit)
         const rgb = colors[colorId]
@@ -75,18 +75,17 @@ export default class Layer {
     let vStart = 0
     let vSign = 1
 
-    if(isHflip) {
+    if (isHflip) {
       vStart = 7
       vSign = -1
     }
-    if(isVflip) {
+    if (isVflip) {
       iStart = 7
       iSign = -1
     }
 
-
-    for(let h=0,i=iStart;h<8;h++,i+=iSign) {
-      for(let w=0,v=vStart;w<8;w++,v+=vSign) {
+    for (let h = 0, i = iStart; h < 8; h++, i += iSign) {
+      for (let w = 0, v = vStart; w < 8; w++, v += vSign) {
         const tileBit = tile[i][v]
         const colorId = this.spPalette.select(paletteId, tileBit)
         const rgb = colors[colorId]

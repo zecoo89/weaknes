@@ -23,7 +23,7 @@ export default class Ppu {
     this.loader = new Loader()
 
     this.oam.connect({ ppu: this })
-    this.layers.connect({vram: this.vram})
+    this.layers.connect({ vram: this.vram })
     this.renderer.connect({
       vram: this.vram,
       oam: this.oam,
@@ -44,49 +44,48 @@ export default class Ppu {
   }
 
   bindModules() {
-    for(let e of Object.keys(modules))
-      this[e] = modules[e]
+    for (let e of Object.keys(modules)) this[e] = modules[e]
   }
 
   connect(parts) {
     parts.cpu && (this.cpu = parts.cpu)
     parts.cpu && this.oam.connect(parts)
 
-    if(parts.screen) {
+    if (parts.screen) {
       this.screen = parts.screen
       this.renderer.connect(parts)
     }
   }
 
   run() {
-    if(this.isVblankStart()) {
+    if (this.isVblankStart()) {
       this.screen && this.screen.refresh()
       this.registers[0x2002].setVblank()
       this.registers[0x2000].isNmiEnabled() && this.cpu.nmi()
-    } else if(this.isVblankEnd()) {
+    } else if (this.isVblankEnd()) {
       this.registers[0x2002].clearVblank()
       /* y is 0 ~ 239 */
-      if(this.registers[0x2005].verticalScrollPosition < 240) {
+      if (this.registers[0x2005].verticalScrollPosition < 240) {
         this.renderer.scrollY = this.registers[0x2005].verticalScrollPosition
         this.loader.loadAllOnEachLayer()
       }
-
     }
 
-    if(this.isHblankStart()) {
+    if (this.isHblankStart()) {
       this.registers[0x2002].clearZeroSpriteFlag()
       this.isHblank = true
       return
-    } else if(this.isHblank) {
-      if(this.isHblankEnd()) {
+    } else if (this.isHblank) {
+      if (this.isHblankEnd()) {
         this.isHblank = false
       }
       return
     }
 
-    if(!this.registers[0x2002].isVblank()) {
+    if (!this.registers[0x2002].isVblank()) {
       /* Check zero sprite overlap */
-      this.isZeroSpriteOverlapped() && this.registers[0x2002].setZeroSpriteFlag()
+      this.isZeroSpriteOverlapped() &&
+        this.registers[0x2002].setZeroSpriteFlag()
       this.renderer.render()
     }
   }
@@ -113,8 +112,12 @@ export default class Ppu {
     this.renderer._offsetY = isVerticalMirror ? 0 : 240
     this.loader.offsetX = isVerticalMirror ? 256 : 0
     this.loader.offsetY = isVerticalMirror ? 0 : 240
-    this.renderer.endX = isVerticalMirror ? this.renderer.width * 2 : this.renderer.width
-    this.renderer.endY = isVerticalMirror ? this.renderer.height : this.renderer.height * 2
+    this.renderer.endX = isVerticalMirror
+      ? this.renderer.width * 2
+      : this.renderer.width
+    this.renderer.endY = isVerticalMirror
+      ? this.renderer.height
+      : this.renderer.height * 2
     this.loader.secondScreenAddr = isVerticalMirror ? 0x2400 : 0x2800
 
     this.renderer.setScreenIndex(isVerticalMirror)

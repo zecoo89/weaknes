@@ -15,13 +15,13 @@ export default class Oam {
     this.pOffset = 0 // pointerからのオフセット(0~3)
     this.memory = new Array(0x100).fill(0)
     this._attrs = this.createAttrs()
-    this._zeroSpritePosition = { x:null, y:null }
+    this._zeroSpritePosition = { x: null, y: null }
   }
 
   createAttrs() {
     const attrs = new Array(64)
 
-    for(let i=0;i<attrs.length;i++) {
+    for (let i = 0; i < attrs.length; i++) {
       attrs[i] = {
         x: null,
         y: null,
@@ -53,7 +53,7 @@ export default class Oam {
   write(value) {
     const pointer = this.ppu.registers[0x2003].read()
     const addr = pointer + this.pOffset++
-      this.memory[addr] = value
+    this.memory[addr] = value
 
     if (this.pOffset > 3) {
       this.pOffset = 0
@@ -93,7 +93,7 @@ export default class Oam {
   }
 
   formatSpriteSettingData(id) {
-    const baseAddr = (id) * 4
+    const baseAddr = id * 4
 
     this._attrs[id].x = this.memory[baseAddr + 3]
     this._attrs[id].y = this.memory[baseAddr + 0]

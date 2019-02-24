@@ -6,8 +6,7 @@ export default class Pixel {
   }
 
   reset() {
-    for(let i=0;i<3;i++)
-      this._rgb[i] = 0
+    for (let i = 0; i < 3; i++) this._rgb[i] = 0
 
     this._alpha = 0
     this._priority = 0

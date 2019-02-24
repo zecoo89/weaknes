@@ -17,12 +17,12 @@ export default class Tiles {
 
   extract() {
     this.tiles.length = 0
-    for (let i = 0; i < 0x1fff; i+=16) {
+    for (let i = 0; i < 0x1fff; i += 16) {
       // タイルの下位ビット
       const tile = []
       for (let h = 0; h < 8; h++) {
-        let lByte = this.vram.read(i+h)
-        let uByte = this.vram.read(8+i+h)
+        let lByte = this.vram.read(i + h)
+        let uByte = this.vram.read(8 + i + h)
 
         const line = []
         for (let j = 0; j < 8; j++) {
@@ -43,8 +43,8 @@ export default class Tiles {
   dumpTile(tileId) {
     const tile = this.tiles[tileId]
     let output = ''
-    for(let h=0;h<8;h++) {
-      for(let w=0;w<8;w++) {
+    for (let h = 0; h < 8; h++) {
+      for (let w = 0; w < 8; w++) {
         output += tile[h][w]
       }
       output += '\n'

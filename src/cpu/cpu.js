@@ -13,9 +13,11 @@ export default class Cpu {
   init() {
     this.registers = new Registers()
     this.ram = new Ram()
-    this.ram.connect({cpu: this})
+    this.ram.connect({ cpu: this })
     this.opcodes = opcodes
-    this.executeOpcode = this.isDebug ? OpcodeUtil.debug.bind(this) : OpcodeUtil.execute.bind(this)
+    this.executeOpcode = this.isDebug
+      ? OpcodeUtil.debug.bind(this)
+      : OpcodeUtil.execute.bind(this)
     this.debtCycles = 0
   }
 
@@ -47,8 +49,7 @@ export default class Cpu {
   cycles(_cycles) {
     let cycles = this.debtCycles
 
-    for (; cycles < _cycles;)
-      cycles += this.eval()
+    for (; cycles < _cycles; ) cycles += this.eval()
 
     this.debtCycles = cycles - _cycles
 
@@ -86,13 +87,12 @@ export default class Cpu {
       this.ram.write(startAddr + i, prgRom[i])
     }
 
-    if(prgRom.length === 0x4000) {
+    if (prgRom.length === 0x4000) {
       startAddr = 0xc000
       // 0xc000~に0x8000~のコピーを置く
       for (let i = 0; i < prgRom.length; i++) {
         this.ram.write(startAddr + i, prgRom[i])
       }
-
     }
 
     this.nmiAddr = this.ram.read(0xfffa) | (this.ram.read(0xfffb) << 8)
@@ -115,7 +115,7 @@ export default class Cpu {
     this.registers.sp--
   }
 
-    stackPop() {
-      return this.ram.read(++this.registers.sp)
-    }
+  stackPop() {
+    return this.ram.read(++this.registers.sp)
+  }
 }
