@@ -6,7 +6,7 @@ export default [
   { instruction: 'ORA', addressing: 'indirectIndex', cycles: 5 },
   /* TODO This is not implemented */
   { instruction: 'STP', addressing: 'implied', cycles: 3 },
-  /* TODO This is not implemented */
+  /* 0x13 SLO indirectIndex */
   { instruction: 'SLO', addressing: 'indirectIndex', cycles: 8 },
   /* 0x14: 2byte NOP zeropageX */
   { instruction: 'NOP', addressing: 'zeropageX', cycles: 4 },
@@ -14,7 +14,7 @@ export default [
   { instruction: 'ORA', addressing: 'zeropageX', cycles: 4 },
   /* 0x16: ASL zeropageX */
   { instruction: 'ASL', addressing: 'zeropageX', cycles: 6 },
-  /* TODO This is not implemented */
+  /* 0x17: SLO zeropageX */
   { instruction: 'SLO', addressing: 'zeropageX', cycles: 6 },
   /* 0x18: CLC implied */
   { instruction: 'CLC', addressing: 'implied', cycles: 2 },
@@ -22,7 +22,7 @@ export default [
   { instruction: 'ORA', addressing: 'absoluteY', cycles: 4 },
   /* 0x1a: NOP */
   { instruction: 'NOP', addressing: 'implied', cycles: 2 },
-  /* TODO This is not implemented */
+  /* 0x1b: SLO absoluteY */
   { instruction: 'SLO', addressing: 'absoluteY', cycles: 8 },
   /* 0x1c: 3byte NOP absoluteX */
   { instruction: 'NOP', addressing: 'absoluteX', cycles: 4 },
@@ -30,6 +30,6 @@ export default [
   { instruction: 'ORA', addressing: 'absoluteX', cycles: 4 },
   /* 0x1e ASL absoluteX*/
   { instruction: 'ASL', addressing: 'absoluteX', cycles: 7 },
-  /* TODO This is not implemented */
+  /* 0x1f SLO absoluteX */
   { instruction: 'SLO', addressing: 'absoluteX', cycles: 7 }
 ]
