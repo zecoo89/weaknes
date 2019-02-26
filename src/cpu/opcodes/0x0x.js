@@ -30,6 +30,6 @@ export default [
   { instruction: 'ORA', addressing: 'absolute', cycles: 4 },
   /* 0x0e: ASL absolute */
   { instruction: 'ASL', addressing: 'absolute', cycles: 6 },
-  /* TODO This is not implemented*/
+  /* 0x0f SLO absolute */
   { instruction: 'SLO', addressing: 'absolute', cycles: 6 }
 ]
