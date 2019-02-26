@@ -6,7 +6,7 @@ export default [
   { instruction: 'AND', addressing: 'indexIndirect', cycles: 6 },
   /* TODO This is not implemented */
   { instruction: 'STP', addressing: 'implied', cycles: 3 },
-  /* TODO This is not implemented */
+  /* 0x23: RLA indexIndirect */
   { instruction: 'RLA', addressing: 'indexIndirect', cycles: 8 },
   /* 0x24: BIT zeropage */
   { instruction: 'BIT', addressing: 'zeropage', cycles: 3 },
@@ -14,7 +14,7 @@ export default [
   { instruction: 'AND', addressing: 'zeropage', cycles: 3 },
   /* 0x26: ROL zeropage */
   { instruction: 'ROL', addressing: 'zeropage', cycles: 5 },
-  /* TODO This is not implemented */
+  /* 0x27: RLA zeropage */
   { instruction: 'RLA', addressing: 'zeropage', cycles: 5 },
   /* 0x28: PLP implied */
   { instruction: 'PLP', addressing: 'implied', cycles: 4 },
@@ -30,6 +30,6 @@ export default [
   { instruction: 'AND', addressing: 'absolute', cycles: 4 },
   /* 0x2e: ROL absolute*/
   { instruction: 'ROL', addressing: 'absolute', cycles: 6 },
-  /* TODO This is not implemented */
+  /* 0x2f: RLA absolute */
   { instruction: 'RLA', addressing: 'absolute', cycles: 6 }
 ]
