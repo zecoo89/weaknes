@@ -6,7 +6,7 @@ export default [
   { instruction: 'CMP', addressing: 'indirectIndex', cycles: 5 },
   /* TODO This is not implemented */
   { instruction: 'STP', addressing: 'implied', cycles: 3 },
-  /* TODO This is not implemented */
+  /* 0xd3: DCP indirectIndex */
   { instruction: 'DCP', addressing: 'indirectIndex', cycles: 8 },
   /* 0xd4: 2byte NOP */
   { instruction: 'NOP', addressing: 'zeropageX', cycles: 4 },
@@ -14,7 +14,7 @@ export default [
   { instruction: 'CMP', addressing: 'zeropageX', cycles: 4 },
   /* 0xd6: DEC zeropageX */
   { instruction: 'DEC', addressing: 'zeropageX', cycles: 6 },
-  /* TODO This is not implemented */
+  /* 0xd7: DCP zeropageX */
   { instruction: 'DCP', addressing: 'zeropageX', cycles: 6 },
   /* 0xd8: CLD implied */
   { instruction: 'CLD', addressing: 'implied', cycles: 2 },
@@ -22,7 +22,7 @@ export default [
   { instruction: 'CMP', addressing: 'absoluteY', cycles: 4 },
   /* 0xda: NOP */
   { instruction: 'NOP', addressing: 'implied', cycles: 2 },
-  /* TODO This is not implemented */
+  /* 0xdb: DCP absoluteY */
   { instruction: 'DCP', addressing: 'absoluteY', cycles: 7 },
   /* 0xdc: 3byte NOP */
   { instruction: 'NOP', addressing: 'absoluteX', cycles: 4 },
@@ -30,6 +30,6 @@ export default [
   { instruction: 'CMP', addressing: 'absoluteX', cycles: 4 },
   /* 0xde: DEC absoluteX */
   { instruction: 'DEC', addressing: 'absoluteX', cycles: 7 },
-  /* TODO This is not implemented */
+  /* 0xdf: DCP absoluteX */
   { instruction: 'DCP', addressing: 'absoluteX', cycles: 7 }
 ]
