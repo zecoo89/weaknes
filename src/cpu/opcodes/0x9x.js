@@ -14,7 +14,7 @@ export default [
   { instruction: 'STA', addressing: 'zeropageX', cycles: 4 },
   /* 0x96: STX zeropageY */
   { instruction: 'STX', addressing: 'zeropageY', cycles: 4 },
-  /* TODO This is not implemented */
+  /* 0x97: SAX zeropageY */
   { instruction: 'SAX', addressing: 'zeropageY', cycles: 4 },
   /* 0x98: TYA implied */
   { instruction: 'TYA', addressing: 'implied', cycles: 2 },
