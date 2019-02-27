@@ -20,7 +20,8 @@ export default class RegistersFactory {
       0x2005: new X2005(ppu),
       0x2006: new X2006(ppu),
       0x2007: new X2007(ppu),
-      0x4014: new X4014(ppu)
+      0x4014: new X4014(ppu),
+      ...internalRegisters
     }
 
     registers[0x2000].connect(internalRegisters.t)
@@ -32,6 +33,7 @@ export default class RegistersFactory {
     registers[0x2005].connect(internalRegisters.w)
 
     registers[0x2006].connect(internalRegisters.t)
+    registers[0x2006].connect(internalRegisters.v)
     registers[0x2006].connect(internalRegisters.w)
 
     return registers
