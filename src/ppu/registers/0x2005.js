@@ -22,11 +22,11 @@ export default class X2005 extends BaseRegister {
     this.w.toggle()
   }
 
-  get horizontalScrollPosition() {
+  horizontalScrollPosition() {
     return this.horizontalScrollPosition_
   }
 
-  get verticalScrollPosition() {
+  verticalScrollPosition() {
     return this.verticalScrollPosition_
   }
 }

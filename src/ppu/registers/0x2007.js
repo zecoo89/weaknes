@@ -11,7 +11,7 @@ export default class X2007 extends BaseRegister {
   read() {
     const value = this.buffer
 
-    const addr = this.ppu.registers[this.rNum].vramAddr
+    const addr = this.ppu.registers[this.rNum].vramAddr()
     this.ppu.registers[this.rNum].incrementVramAddr()
 
     if (addr <= 0x3eff) {
@@ -25,14 +25,14 @@ export default class X2007 extends BaseRegister {
   }
 
   _read() {
-    const addr = this.ppu.registers[this.rNum].vramAddr
+    const addr = this.ppu.registers[this.rNum].vramAddr()
     const filteredAddr = this.filter(addr)
     this.ppu.registers[this.rNum].incrementVramAddr()
     return this.ppu.vram.read(filteredAddr)
   }
 
   write(bits) {
-    const addr = this.ppu.registers[this.rNum].vramAddr
+    const addr = this.ppu.registers[this.rNum].vramAddr()
     this.ppu.registers[this.rNum].incrementVramAddr()
 
     const filteredAddr = this.filter(addr)

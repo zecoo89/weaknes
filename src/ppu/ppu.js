@@ -63,16 +63,21 @@ export default class Ppu {
       this.registers[0x2002].setVblank()
       this.registers[0x2000].isNmiEnabled() && this.cpu.nmi()
     } else if (this.isVblankEnd()) {
+      //this.registers.v.write(this.registers.t.read())
       this.registers[0x2002].clearVblank()
       /* y is 0 ~ 239 */
-      if (this.registers[0x2005].verticalScrollPosition < 240) {
-        this.renderer.scrollY = this.registers[0x2005].verticalScrollPosition
+      const vScroll = this.registers[0x2005].verticalScrollPosition()
+      if (vScroll < 240) {
+        this.renderer.mainScreenNumber = this.registers[0x2000].mainScreenNumber()
+        this.renderer.scrollY = vScroll
         this.loader.loadAllOnEachLayer()
       }
     }
 
     if (this.isHblankStart()) {
       this.registers[0x2002].clearZeroSpriteFlag()
+      this.renderer.scrollX = this.registers[0x2005].horizontalScrollPosition()
+      this.renderer.mainScreenNumber = this.registers[0x2000].mainScreenNumber()
       this.isHblank = true
       return
     } else if (this.isHblank) {
