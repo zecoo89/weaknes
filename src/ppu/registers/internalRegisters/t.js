@@ -39,7 +39,7 @@ export default class T {
   }
 
   write(bits) {
-    this.register = bits & 0b000000000000000
+    this.register = bits & 0b111111111111111
   }
 
   readBits(from, to) {
