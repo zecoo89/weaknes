@@ -3,19 +3,36 @@ export default class V {
     this.register = 0b000000000000000 // 15bit
   }
 
-  writeScrollX(_bits) {
-    const bits = _bits & 0b11111000
+  writeCoarseX(bits) {
     this.writeBits(0, 4, bits)
   }
 
-  writeScrollY(_bits) {
-    const low3Bits = _bits & 0b111
-    const mid3Bits = _bits & 0b111000
-    const high2Bits = _bits * 0b11100000
+  readCoarseX() {
+    return this.readBits(0, 4)
+  }
 
-    this.writeBits(13, 15, low3Bits)
-    this.writeBits(5, 7, mid3Bits)
-    this.writeBits(8, 9, high2Bits)
+  writeCoarseY(bits) {
+    this.writeBits(5, 9, bits)
+  }
+
+  readCoarseY() {
+    return this.readBits(5, 9)
+  }
+
+  writeFineY() {
+    this.writeBits(12, 14)
+  }
+
+  readFineY() {
+    return this.readBits(12, 14)
+  }
+
+  writeNametable(bits) {
+    this.writeBits(10, 11, bits)
+  }
+
+  readNametable() {
+    return this.readBits(10, 11)
   }
 
   writeVramHighAddr(_bits) {
@@ -43,7 +60,7 @@ export default class V {
   }
 
   readBits(from, to) {
-    let bits = (this.register << (14 - to)) & 0xff
+    let bits = (this.register << (14 - to)) & 0x7fff
     bits = bits >> (14 - to)
     bits = bits >> from
 
