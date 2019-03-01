@@ -4,7 +4,7 @@ export default class V {
   }
 
   writeCoarseX(bits) {
-    this.writeBits(0, 4, bits)
+    this.writeBits(0, 4, bits & 0b11111)
   }
 
   readCoarseX() {
@@ -12,15 +12,15 @@ export default class V {
   }
 
   writeCoarseY(bits) {
-    this.writeBits(5, 9, bits)
+    this.writeBits(5, 9, bits & 0b11111)
   }
 
   readCoarseY() {
     return this.readBits(5, 9)
   }
 
-  writeFineY() {
-    this.writeBits(12, 14)
+  writeFineY(bits) {
+    this.writeBits(12, 14, bits & 0b111)
   }
 
   readFineY() {
@@ -28,27 +28,11 @@ export default class V {
   }
 
   writeNametable(bits) {
-    this.writeBits(10, 11, bits)
+    this.writeBits(10, 11, bits & 0b11)
   }
 
   readNametable() {
     return this.readBits(10, 11)
-  }
-
-  writeVramHighAddr(_bits) {
-    const bits = _bits & 0b111111
-
-    this.writeBits(8, 13, bits)
-    this.writeOneBit(14, 0b0)
-  }
-
-  writeVramLowAddr(bits) {
-    this.writeBits(0, 7, bits)
-  }
-
-  writeScreenNumber(_bits) {
-    const bits = _bits & 0b11
-    this.writeBits(10, 11, bits)
   }
 
   read() {
@@ -68,7 +52,7 @@ export default class V {
   }
 
   writeBits(from, to, bits) {
-    let bitHigh = (this.register << (14 - to)) & 0x3ff8000
+    let bitHigh = (this.register << (14 - to)) & 0xffff8000
     bitHigh = bitHigh >> (14 - to)
 
     let bitLow = (this.register << (15 - from)) & 0x7fff

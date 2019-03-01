@@ -23,11 +23,11 @@ export default class X2002 extends BaseRegister {
     return !!this.readOneBit(7)
   }
 
-  setZeroSpriteFlag() {
+  setZeroSpriteHit() {
     this.writeOneBit(6, 1)
   }
 
-  clearZeroSpriteFlag() {
+  clearZeroSpriteHit() {
     this.writeOneBit(6, 0)
   }
 

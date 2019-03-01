@@ -12,10 +12,11 @@ export default class Tool {
     const context = canvas.getContext('2d')
     const image = context.createImageData(width, height)
     const bg = this.nes.ppu.loader.bgLayer
-    const sx = this.nes.ppu.renderer.scrollX
-    const sy = this.nes.ppu.renderer.scrollY
-    const ox = this.nes.ppu.renderer.offsetX
-    const oy = this.nes.ppu.renderer.offsetY
+    const sx = this.nes.ppu.registers[0x2005].horizontalScrollPosition()
+    const sy = this.nes.ppu.registers[0x2005].verticalScrollPosition()
+    const mainScreenNumber = this.nes.ppu.registers[0x2000].mainScreenNumber()
+    const ox = (mainScreenNumber & 0b1) * 256
+    const oy = (mainScreenNumber >> 1) * 240
     const tx = sx + ox
     const ty = sy + oy
     const ex = this.nes.ppu.renderer.endX

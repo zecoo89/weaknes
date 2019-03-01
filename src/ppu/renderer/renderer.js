@@ -10,12 +10,9 @@ export default class Renderer {
   init() {
     this.width = 256
     this.height = 240
-    this.position = 0
     this.pixels = new Array(256 * 240 * 4).fill(0)
     this.scrollX = 0
     this.scrollY = 0
-    this._offsetX = 0
-    this._offsetY = 0
     this.endX = 256
     this.endY = 240
   }
@@ -35,39 +32,20 @@ export default class Renderer {
     parts.screen && (this.pixels = parts.screen.image.data)
   }
 
-  /* Call from ppu */
-  render() {
-    this.scrollX = this.registers[0x2005].horizontalScrollPosition
-    const pixelIndex = this.pixelIndex[this.position]
-    const x = pixelIndex[0]
-    const y = pixelIndex[1]
-    const mainScreenNumber = this.registers[0x2000].mainScreenNumber()
-    this.offsetX = (mainScreenNumber & 0b1) * this._offsetX
-    this.offsetY = (mainScreenNumber >> 1) * this._offsetY
+  render(x, y) {
+    const fineX = this.registers.x.read()
+    const coarseX = this.registers.v.readCoarseX() * 8
+    const lx = fineX + coarseX
+    const fineY = this.registers.v.readFineY()
+    const coarseY = this.registers.v.readCoarseY() * 8
+    let ly = fineY + coarseY
+    if (ly >= 240) ly = this.scrollY = 0
+    const nametable = this.registers.v.readNametable()
+    this.offsetX = (nametable & 0b1) * 256
+    this.offsetY = (nametable >> 1) * 240
 
-    this.position++
-    if (this.position === this.width * this.height) {
-      this.position = 0
-    }
-
-    return this.renderPixel(
-      x,
-      y,
-      this.scrollX,
-      this.scrollY,
-      this.offsetX,
-      this.offsetY
-    )
-  }
-
-  renderPixel(x, y, scrollX, scrollY, offsetX, offsetY) {
-    /* y is 0 ~ 239 */
-    if (scrollY >= 240) {
-      scrollY = 0
-    }
-
-    const dx = (x + scrollX + offsetX) & (this.endX - 1) // faster than % operator
-    const dy = (y + scrollY + offsetY) % this.endY
+    const dx = lx + this.offsetX
+    let dy = ly + this.offsetY
 
     const bgPixel = this.bgLayer.getPixel(dx, dy)
     const bgRgb = bgPixel.rgb()

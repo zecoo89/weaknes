@@ -41,6 +41,7 @@ export default class Ppu {
     this.cyclesPerLine = 341
     this.cyclesPerFrame = 89342
     this.isHblank = false
+    this.isAlreadyZeroSpriteHit = false
   }
 
   bindModules() {
@@ -58,40 +59,50 @@ export default class Ppu {
   }
 
   run() {
+    const isBackgroundEnabled = this.registers[0x2001].isBackgroundEnabled()
+    const isSpriteEnabled = this.registers[0x2001].isSpriteEnabled()
+    const isRenderingEnabled = isBackgroundEnabled || isSpriteEnabled
+    const hPosition = this.hPosition()
+    const vPosition = this.vPosition()
+
+    hPosition === 256 && (this.isHblank = true)
+    hPosition === 0 && (this.isHblank = false)
+
+    /* Setting vblank */
     if (this.isVblankStart()) {
       this.screen && this.screen.refresh()
       this.registers[0x2002].setVblank()
       this.registers[0x2000].isNmiEnabled() && this.cpu.nmi()
     } else if (this.isVblankEnd()) {
-      //this.registers.v.write(this.registers.t.read())
       this.registers[0x2002].clearVblank()
-      /* y is 0 ~ 239 */
-      const vScroll = this.registers[0x2005].verticalScrollPosition()
-      if (vScroll < 240) {
-        this.renderer.mainScreenNumber = this.registers[0x2000].mainScreenNumber()
-        this.renderer.scrollY = vScroll
-        this.loader.loadAllOnEachLayer()
+      this.registers[0x2002].clearZeroSpriteHit()
+      this.isAlreadyZeroSpriteHit = false
+      this.loader.loadAllOnEachLayer()
+    }
+
+    if (!isRenderingEnabled) return
+
+    const isRendering = !this.registers[0x2002].isVblank()
+    if (isRendering) {
+      if (hPosition === 256) {
+        this.registers[0x2002].clearZeroSpriteHit()
+        this.incrementY()
+      }
+
+      if (hPosition === 257) {
+        this.copyHorizontalPosition()
       }
     }
 
-    if (this.isHblankStart()) {
-      this.registers[0x2002].clearZeroSpriteFlag()
-      this.renderer.scrollX = this.registers[0x2005].horizontalScrollPosition()
-      this.renderer.mainScreenNumber = this.registers[0x2000].mainScreenNumber()
-      this.isHblank = true
-      return
-    } else if (this.isHblank) {
-      if (this.isHblankEnd()) {
-        this.isHblank = false
+    if (!this.isHblank && isRendering) {
+      const isZeroSpriteHit = this.isZeroSpriteHit(hPosition, vPosition)
+      isZeroSpriteHit && this.registers[0x2002].setZeroSpriteHit()
+      this.renderer.render(hPosition, vPosition)
+      this.incrementX()
+    } else {
+      if (vPosition === 261) {
+        hPosition === 304 && this.copyVerticalPosition()
       }
-      return
-    }
-
-    if (!this.registers[0x2002].isVblank()) {
-      /* Check zero sprite overlap */
-      this.isZeroSpriteOverlapped() &&
-        this.registers[0x2002].setZeroSpriteFlag()
-      this.renderer.render()
     }
   }
 

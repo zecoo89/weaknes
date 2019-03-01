@@ -35,7 +35,7 @@ export default class Ram {
         this.ppu.writeRegister(addr, value)
         break
       case 0x4014:
-        this.ppu.cycles += 513 * 3
+        //this.ppu.cycles += 513 * 3
         this.ppu.writeRegister(addr, value)
         break
       /*

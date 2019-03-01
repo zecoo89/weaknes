@@ -1,6 +1,6 @@
 export default class X {
   constructor() {
-    this.register = 0b000 // 15bit
+    this.register = 0b000 // 3bit
   }
 
   read() {
