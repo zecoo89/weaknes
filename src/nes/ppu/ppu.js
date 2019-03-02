@@ -16,17 +16,13 @@ export default class Ppu {
     this.vram = new Vram()
     this.oam = new Oam()
     this.registers = RegistersFactory.create(this)
-
     this.layers = new Layers()
-
     this.renderer = new Renderer()
     this.loader = new Loader()
 
     this.oam.connect({ ppu: this })
     this.layers.connect({ vram: this.vram })
     this.renderer.connect({
-      vram: this.vram,
-      oam: this.oam,
       registers: this.registers,
       layers: this.layers
     })

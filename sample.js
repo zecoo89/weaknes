@@ -33,7 +33,7 @@ class Main {
     let NesPack
     let path
     if (env === 'electron:renderer') {
-      NesPack =require('./dist/bundle')
+      NesPack = require('./dist/bundle')
       path = require('electron').remote.process.argv[2] //eslint-disable-line
     } else if (env === 'nodejs') {
       NesPack = require('./dist/bundle')
@@ -43,14 +43,14 @@ class Main {
       path = urlParams().path
     }
 
-    if(!path) throw new Error('ROM\'s path is not set.')
+    if (!path) throw new Error("ROM's path is not set.")
 
     const AllInOne = NesPack.AllInOne
 
     let screenId = null
     let isDebug = true
 
-    if(env !== 'nodejs') {
+    if (env !== 'nodejs') {
       screenId = 'canvas'
       isDebug = false
     }
@@ -58,21 +58,23 @@ class Main {
     const allInOne = new AllInOne(screenId, isDebug)
 
     let pcAddr = null
-    if(env === 'nodejs')  pcAddr = 0xc000
+    if (env === 'nodejs') pcAddr = 0xc000
 
     await allInOne.run(path, pcAddr)
 
-    if(env === 'nodejs') return
-    /* CHR-ROMを可視化する *////*
-    const palette = [0x31, 0x3d, 0x2d, 0x1f]
-    const Tool = NesPack.Tool
-    const tool = new Tool(allInOne.nes)
+    if (env === 'nodejs') return ///*
+    /* CHR-ROMを可視化する */ const palette = [0x31, 0x3d, 0x2d, 0x1f]
+    const Tools = NesPack.Tools
+    const tool = new Tools(allInOne.nes)
 
     tool.dumpChrRom('chr-dump', palette)
     const interval = 300
     setInterval(tool.dumpPalette.bind(tool, 'palette-dump'), interval)
     const isShadowEnabled = true
-    setInterval(tool.dumpBackground.bind(tool, 'background', isShadowEnabled), interval)
+    setInterval(
+      tool.dumpBackground.bind(tool, 'background', isShadowEnabled),
+      interval
+    )
     /**/
   }
 }
@@ -80,13 +82,11 @@ class Main {
 const _env = _envType()
 
 /* start program */
-if(_env === 'electron:main') {
+if (_env === 'electron:main') {
   Main.startElectron()
 } else {
   Main.startNes(_env)
 }
-
-
 
 /* process
  *  :true  -> nodejs or electron
@@ -97,12 +97,12 @@ if(_env === 'electron:main') {
  *  :false -> browser
  * */
 function _envType() {
-  if(typeof process !== 'undefined') {
-    if(process.type === 'browser') {
+  if (typeof process !== 'undefined') {
+    if (process.type === 'browser') {
       return 'electron:main'
-    } else if(process.type === 'renderer') {
+    } else if (process.type === 'renderer') {
       return 'electron:renderer'
-    } else if(!process.type) {
+    } else if (!process.type) {
       return 'nodejs'
     } else {
       throw new Error('Unknown enviroment')
@@ -115,23 +115,24 @@ function _envType() {
 function urlParams() {
   const href = window.location.href
 
-  if(href.indexOf('?') === -1)
-    throw new Error('ROM\'s path is not set in URL params.')
+  if (href.indexOf('?') === -1)
+    throw new Error("ROM's path is not set in URL params.")
 
   const splittedHref = href.split('?')
 
-  if(!splittedHref[1])
-    throw new Error('ROM\'s path is not set in URL params.')
+  if (!splittedHref[1]) throw new Error("ROM's path is not set in URL params.")
 
   const params = {}
-  href.split('?')[1].split('&').forEach(str => {
-    const param = str.split('=')
-    const key = param[0]
-    const value = param[1]
+  href
+    .split('?')[1]
+    .split('&')
+    .forEach(str => {
+      const param = str.split('=')
+      const key = param[0]
+      const value = param[1]
 
-    params[key] = value
-  })
+      params[key] = value
+    })
 
   return params
 }
-

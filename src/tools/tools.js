@@ -1,6 +1,6 @@
-import colors from '../ppu/layers/layer/colors'
+import colors from '../nes/ppu/layers/layer/colors'
 
-export default class Tool {
+export default class Tools {
   constructor(nes) {
     this.nes = nes
   }

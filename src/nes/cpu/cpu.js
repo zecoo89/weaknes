@@ -15,9 +15,9 @@ export default class Cpu {
     this.ram = new Ram()
     this.ram.connect({ cpu: this })
     this.opcodes = opcodes
-    this.executeOpcode = this.isDebug
-      ? OpcodeUtil.debug.bind(this)
-      : OpcodeUtil.execute.bind(this)
+    const debug = OpcodeUtil.debug.bind(this)
+    const execute = OpcodeUtil.execute.bind(this)
+    this.executeOpcode = this.isDebug ? debug : execute
     this.debtCycles = 0
   }
 
