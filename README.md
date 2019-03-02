@@ -2,6 +2,8 @@
 
 Weaknes is a NES emulator written with JavaScript.
 
+[![CircleCI](https://circleci.com/gh/zecoo89/weaknes.svg?style=svg)](https://circleci.com/gh/zecoo89/weaknes)
+
 <img src="./images/nestest1.png" height="240"> <img src="./images/nestest2.png" height="240">
 
 ## Build
