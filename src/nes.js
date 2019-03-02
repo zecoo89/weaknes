@@ -109,7 +109,6 @@ export class AllInOne {
       throw new Error()
     }
 
-    pcAddr && this.nes.cpu.registers.pc.init(pcAddr)
     this.nes.run()
   }
 

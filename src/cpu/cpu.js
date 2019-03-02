@@ -57,7 +57,8 @@ export default class Cpu {
   }
 
   step() {
-    const addr = this.registers.pc++
+    const addr = this.registers.pc.read()
+    this.registers.pc.increment()
     const opcodeId = this.ram.read(addr)
 
     return this.executeOpcode(this.opcodes[opcodeId])
