@@ -64,10 +64,6 @@ export default class Cpu {
     return this.executeOpcode(this.opcodes[opcodeId])
   }
 
-  isInterruptable() {
-    return this.ppu.registers[0x2000].isNmiInterruptable()
-  }
-
   nmi() {
     const addr = this.registers.pc.read()
     const highAddr = addr >> 8
