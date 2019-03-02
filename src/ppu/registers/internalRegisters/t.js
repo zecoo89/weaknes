@@ -4,16 +4,16 @@ export default class T {
   }
 
   writeScrollX(_bits) {
-    const bits = _bits & 0b11111000
+    const bits = (_bits >> 3) & 0b11111
     this.writeBits(0, 4, bits)
   }
 
   writeScrollY(_bits) {
     const low3Bits = _bits & 0b111
-    const mid3Bits = _bits & 0b111000
-    const high2Bits = _bits * 0b11100000
+    const mid3Bits = (_bits >> 3) & 0b111
+    const high2Bits = (_bits >> 6) & 0b11
 
-    this.writeBits(13, 15, low3Bits)
+    this.writeBits(12, 14, low3Bits)
     this.writeBits(5, 7, mid3Bits)
     this.writeBits(8, 9, high2Bits)
   }
@@ -39,11 +39,11 @@ export default class T {
   }
 
   write(bits) {
-    this.register = bits & 0b000000000000000
+    this.register = bits & 0b111111111111111
   }
 
   readBits(from, to) {
-    let bits = (this.register << (14 - to)) & 0xff
+    let bits = (this.register << (14 - to)) & 0x7fff
     bits = bits >> (14 - to)
     bits = bits >> from
 
@@ -51,13 +51,18 @@ export default class T {
   }
 
   writeBits(from, to, bits) {
-    let bitHigh = (this.register << (14 - to)) & 0x3ff8000
+    let bitHigh = (this.register << (14 - to)) & 0xffff8000
     bitHigh = bitHigh >> (14 - to)
 
     let bitLow = (this.register << (15 - from)) & 0x7fff
     bitLow = bitLow >> (15 - from)
 
     this.register = bitHigh | (bits << from) | bitLow
+  }
+
+  readOneBit(order) {
+    const bit = (this.register >> order) & 0b1
+    return bit
   }
 
   writeOneBit(order, bit) {

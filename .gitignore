@@ -2,6 +2,7 @@ node_modules/
 assets/
 .DS_store
 nestest.log
+package-lock.json
 log.txt
 dist/
 wiki

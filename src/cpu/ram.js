@@ -11,10 +11,10 @@ export default class Ram {
   }
 
   filter(addr) {
-    if(addr >= 0x0800 && addr <= 0x1fff) {
+    if (addr >= 0x0800 && addr <= 0x1fff) {
       const size = addr - 0x800
       addr = size % 0x800
-    } else if(addr >= 0x2008 && addr <= 0x3FFF) {
+    } else if (addr >= 0x2008 && addr <= 0x3fff) {
       const size = addr - 0x2008
       addr = 0x2000 + (size % 0x8)
     }
@@ -35,7 +35,7 @@ export default class Ram {
         this.ppu.writeRegister(addr, value)
         break
       case 0x4014:
-        this.ppu.cycles += 513 * 3
+        //this.ppu.cycles += 513 * 3
         this.ppu.writeRegister(addr, value)
         break
       /*

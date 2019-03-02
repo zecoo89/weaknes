@@ -22,8 +22,6 @@ export default class Nes {
     this.frames = 0
     this.startTime = 0
     this.endTime = 0
-    this.cyclesPerFrame = this.ppu.cyclesPerFrame
-    this.cycles = 0
   }
 
   connect(parts) {
@@ -43,22 +41,24 @@ export default class Nes {
 
   run() {
     const frame = this.frame.bind(this)
-    env === 'nodejs' ? setInterval(frame, 1000/60) : frame()
+    env === 'nodejs' ? setInterval(frame, 1000 / 60) : frame()
   }
 
   frame() {
-    for(this.ppu.cycles=0;this.ppu.cycles<this.ppu.cyclesPerFrame;) {
-      this.cpu.run(1)
-      for(let i=0;i<3;i++) {
-        this.ppu.run()
+    this.step()
+    this.calcFps()
+    this.nextFrame()
+  }
+
+  step() {
+    for (this.ppu.cycles = 0; this.ppu.cycles < this.ppu.cyclesPerFrame; ) {
+      const cpuCycles = this.cpu.step()
+      const ppuCycles = cpuCycles * 2
+      for (let i = 0; i < ppuCycles; i++) {
+        this.ppu.step()
         this.ppu.cycles++
-        if(this.ppu.cycles === this.ppu.cyclesPerFrame) break
       }
     }
-
-    this.calcFps()
-
-    this.nextFrame()
   }
 
   nextFrame() {
@@ -68,7 +68,7 @@ export default class Nes {
   calcFps() {
     this.frames++
 
-    if(this.frames === 60) {
+    if (this.frames === 60) {
       this.frames = 0
       this.endTime = Date.now()
 
@@ -86,7 +86,7 @@ export class AllInOne {
   constructor(screenId, isDebug) {
     this.nes = new Nes(isDebug)
 
-    if(env !== 'nodejs') {
+    if (env !== 'nodejs') {
       const screen = new Screen.Browser(screenId)
       const audio = new Audio()
       this.nes.connect({
@@ -96,12 +96,12 @@ export class AllInOne {
     }
   }
 
-  async run(romPath, pcAddr) {
-    if(env === 'browser') {
+  async run(romPath) {
+    if (env === 'browser') {
       const data = await this.download(romPath)
       this.rom = new Rom(data)
       this.nes.rom = this.rom
-    } else if(env === 'nodejs' || env === 'electron:renderer') {
+    } else if (env === 'nodejs' || env === 'electron:renderer') {
       const data = await this.readFile(romPath)
       this.rom = new Rom(data)
       this.nes.rom = this.rom
@@ -115,8 +115,8 @@ export class AllInOne {
 
   async download(romUrl) {
     this.data = await fetch(romUrl)
-    .then(response => response.arrayBuffer())
-    .then(buffer => new Uint8Array(buffer))
+      .then(response => response.arrayBuffer())
+      .then(buffer => new Uint8Array(buffer))
 
     return this.data
   }

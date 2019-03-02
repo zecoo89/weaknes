@@ -9,7 +9,7 @@ export default class X2006 extends BaseRegister {
   write(bits) {
     if (this.w.isLatched()) {
       this.t.writeVramLowAddr(bits)
-      this.vramAddr = this.t.read()
+      this.v.write(this.t.read())
     } else {
       this.t.writeVramHighAddr(bits)
     }
@@ -17,15 +17,13 @@ export default class X2006 extends BaseRegister {
     this.w.toggle()
   }
 
-  get vramAddr() {
-    return this.vramAddr_
-  }
-
-  set vramAddr(bits) {
-    this.vramAddr_ = bits
+  vramAddr() {
+    return this.v.read()
   }
 
   incrementVramAddr() {
-    this.vramAddr_ += this.ppu.registers[0x2000].vramIncremental()
+    const incremental = this.ppu.registers[0x2000].vramIncremental()
+    const newV = this.v.read() + incremental
+    this.v.write(newV)
   }
 }

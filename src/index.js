@@ -1,4 +1,4 @@
-if(typeof process !== 'undefined' && process.env.NODE_ENV === 'development') {
+if (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') {
   require('source-map-support').install()
 }
 
@@ -15,4 +15,3 @@ export const Screen = Screen_
 export const Audio = Audio_
 export const Tool = Tool_
 export const AllInOne = AllInOne_
-

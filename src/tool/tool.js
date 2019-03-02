@@ -1,4 +1,4 @@
-import colors from '../ppu/renderer/colors'
+import colors from '../ppu/layers/layer/colors'
 
 export default class Tool {
   constructor(nes) {
@@ -11,31 +11,32 @@ export default class Tool {
     const canvas = document.getElementById(id)
     const context = canvas.getContext('2d')
     const image = context.createImageData(width, height)
-    const bg = this.nes.ppu.renderer.background
-    const sx = this.nes.ppu.renderer.scrollX
-    const sy = this.nes.ppu.renderer.scrollY
-    const ox = this.nes.ppu.renderer.offsetX
-    const oy = this.nes.ppu.renderer.offsetY
+    const bg = this.nes.ppu.loader.bgLayer
+    const sx = this.nes.ppu.registers[0x2005].horizontalScrollPosition()
+    const sy = this.nes.ppu.registers[0x2005].verticalScrollPosition()
+    const mainScreenNumber = this.nes.ppu.registers[0x2000].mainScreenNumber()
+    const ox = (mainScreenNumber & 0b1) * 256
+    const oy = (mainScreenNumber >> 1) * 240
     const tx = sx + ox
     const ty = sy + oy
     const ex = this.nes.ppu.renderer.endX
     const ey = this.nes.ppu.renderer.endY
 
-    for(let y=0;y<height;y++) {
-      for(let x=0;x<width;x++) {
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
         const i = (y * width + x) * 4
         const pixel = bg.getPixel(x % ex, y % ey)
         const rgb = pixel.rgb()
 
-        if(isShadowEnabled) {
+        if (isShadowEnabled) {
           const isAreaX =
-            x >= tx && x < tx + 256 ||
-            x < (tx + 256) % width && (tx + 256) != (tx + 256) % width
+            (x >= tx && x < tx + 256) ||
+            (x < (tx + 256) % width && tx + 256 != (tx + 256) % width)
           const isAreaY =
-            y >= ty && y < ty + 240 ||
-            y < (ty + 240) % height && (ty + 240) != (ty + 240) % height
+            (y >= ty && y < ty + 240) ||
+            (y < (ty + 240) % height && ty + 240 != (ty + 240) % height)
 
-          if(isAreaX && isAreaY) {
+          if (isAreaX && isAreaY) {
             this.setPixel(image, i, rgb, 255)
           } else {
             this.setPixel(image, i, rgb, 150)
@@ -52,7 +53,7 @@ export default class Tool {
     const canvas = document.getElementById(id)
     const context = canvas.getContext('2d')
     const image = context.createImageData(8, 8)
-    const tiles = this.nes.ppu.renderer.tiles
+    const tiles = this.nes.ppu.loader.tiles
 
     for (let i = 0; i < tiles.length; i++) {
       const x = (i % 32) * 8
@@ -80,19 +81,19 @@ export default class Tool {
 
   drawPalette(context, baseAddr, line) {
     let j = 0
-    for(let i=0;i<16;i++) {
+    for (let i = 0; i < 16; i++) {
       const colorId = this.nes.ppu.vram.read(baseAddr + i)
       const color = colors[colorId]
 
       context.fillStyle = 'rgb(' + color.join(',') + ')'
-      j = i % 4 === 0 && i !== 0 ? j+2: j
-      context.fillRect(i*15+j, line*17, 15, 15)
+      j = i % 4 === 0 && i !== 0 ? j + 2 : j
+      context.fillRect(i * 15 + j, line * 17, 15, 15)
     }
   }
 
   tileImage(image, palette, tile) {
-    for(let h=0;h<8;h++) {
-      for(let w=0;w<8;w++) {
+    for (let h = 0; h < 8; h++) {
+      for (let w = 0; w < 8; w++) {
         const i = (h * 8 + w) * 4
         const tileBit = tile[h][w]
         const colorId = palette[tileBit]
@@ -107,8 +108,8 @@ export default class Tool {
 
   setPixel(image, i, rgb, alpha) {
     image.data[i] = rgb[0]
-    image.data[i+1] = rgb[1]
-    image.data[i+2] = rgb[2]
-    image.data[i+3] = alpha
+    image.data[i + 1] = rgb[1]
+    image.data[i + 2] = rgb[2]
+    image.data[i + 3] = alpha
   }
 }
