@@ -103,4 +103,16 @@ export default class Ram {
         return this.memory[addr]
     }
   }
+
+  stackPush(value) {
+    const addr = this.cpu.registers.sp.read()
+    this.write(addr, value)
+    this.cpu.registers.sp.decrement()
+  }
+
+  stackPop() {
+    this.cpu.registers.sp.increment()
+    const addr = this.cpu.registers.sp.read()
+    return this.read(addr)
+  }
 }

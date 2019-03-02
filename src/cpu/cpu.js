@@ -72,10 +72,10 @@ export default class Cpu {
     const addr = this.registers.pc.read()
     const highAddr = addr >> 8
     const lowAddr = addr & 0x00ff
-    this.stackPush(highAddr)
-    this.stackPush(lowAddr)
+    this.ram.stackPush(highAddr)
+    this.ram.stackPush(lowAddr)
     const statusBits = this.registers.status.read()
-    this.stackPush(statusBits)
+    this.ram.stackPush(statusBits)
     this.registers.pc.write(this.nmiAddr)
   }
 
@@ -107,18 +107,5 @@ export default class Cpu {
     console.log('RESET: 0x' + this.resetAddr.toString(16))
     //eslint-disable-next-line
     console.log('IRQ/BRK: 0x' + this.irqBrkAddr.toString(16))
-  }
-
-  /* スタック領域に対する操作*/
-  stackPush(value) {
-    const addr = this.registers.sp.read()
-    this.ram.write(addr, value)
-    this.registers.sp.decrement()
-  }
-
-  stackPop() {
-    this.registers.sp.increment()
-    const addr = this.registers.sp.read()
-    return this.ram.read(addr)
   }
 }

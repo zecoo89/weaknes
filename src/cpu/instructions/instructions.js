@@ -136,7 +136,8 @@ export default {
   BIT: function(addr) {
     const memory = this.ram.read(addr)
 
-    this.registers.status.isZero = this.registers.acc.read() & memory ? 0x00 : 0x01
+    this.registers.status.isZero =
+      this.registers.acc.read() & memory ? 0x00 : 0x01
     this.registers.status.isNegative = memory >> 7
     this.registers.status.isOverflow = (memory >> 6) & 0x01
   },
@@ -311,7 +312,8 @@ export default {
 
     const total = (added + this.registers.status.isCarry) & 0xff
     this.registers.acc.write(total)
-    this.registers.status.isCarry = (added + this.registers.status.isCarry > 0xff) & 1
+    this.registers.status.isCarry =
+      (added + this.registers.status.isCarry > 0xff) & 1
     this.registers.status.isZero = Util.isZero(total)
     this.registers.status.isNegative = Util.isNegative(total)
 
@@ -360,12 +362,12 @@ export default {
   /* accをスタックにプッシュ */
   PHA: function() {
     const value = this.registers.acc.read()
-    this.stackPush(value)
+    this.ram.stackPush(value)
   },
 
   /* スタックからaccにポップアップする */
   PLA: function() {
-    const value = this.stackPop()
+    const value = this.ram.stackPop()
     this.registers.acc.write(value)
     this.registers.status.isZero = Util.isZero(value)
     this.registers.status.isNegative = Util.isNegative(value)
@@ -376,14 +378,14 @@ export default {
    * プッシュ後はクリアされるのでスタックに保存されたステータスレジスタだけBRKが有効になる
    * */
   PHP: function() {
-    this.stackPush(this.registers.status.read() | 0x10)
+    this.ram.stackPush(this.registers.status.read() | 0x10)
   },
 
   /* スタックからステータスレジスタにポップアップする
    * ポップされてからステータスレジスタのBRKがクリアされる
    */
   PLP: function() {
-    this.registers.status.write(this.stackPop() & 0xef)
+    this.registers.status.write(this.ram.stackPop() & 0xef)
   },
 
   /* アドレスへジャンプする */
@@ -401,26 +403,26 @@ export default {
     const highAddr = jsrAddr >> 8
     const lowAddr = jsrAddr & 0x00ff
 
-    this.stackPush(highAddr)
-    this.stackPush(lowAddr)
+    this.ram.stackPush(highAddr)
+    this.ram.stackPush(lowAddr)
     this.registers.pc.write(addr)
   },
 
   /* サブルーチンから復帰する */
   RTS: function() {
-    const lowAddr = this.stackPop()
-    const highAddr = this.stackPop()
+    const lowAddr = this.ram.stackPop()
+    const highAddr = this.ram.stackPop()
     const addr = (highAddr << 8) | lowAddr
     this.registers.pc.write(addr + 1)
   },
 
   /* 割り込みルーチンから復帰する */
   RTI: function() {
-    const status = this.stackPop()
+    const status = this.ram.stackPop()
     this.registers.status.write(status)
 
-    const lowAddr = this.stackPop()
-    const highAddr = this.stackPop() << 8
+    const lowAddr = this.ram.stackPop()
+    const highAddr = this.ram.stackPop() << 8
     this.registers.pc.write(lowAddr | highAddr)
   },
 
@@ -517,10 +519,10 @@ export default {
     const addr = this.registers.pc.read()
     const highAddr = addr >> 8
     const lowAddr = addr & 0x00ff
-    this.stackPush(highAddr)
-    this.stackPush(lowAddr)
+    this.ram.stackPush(highAddr)
+    this.ram.stackPush(lowAddr)
     const statusBits = this.registers.status.read()
-    this.stackPush(statusBits)
+    this.ram.stackPush(statusBits)
     this.registers.pc.write(this.irqBrkAddr)
   },
 
@@ -685,7 +687,8 @@ export default {
 
     const masked = (added + this.registers.status.isCarry) & 0xff
     this.registers.acc.write(masked)
-    this.registers.status.isCarry = (added + this.registers.status.isCarry > 0xff) & 1
+    this.registers.status.isCarry =
+      (added + this.registers.status.isCarry > 0xff) & 1
     this.registers.status.isZero = Util.isZero(masked)
     this.registers.status.isNegative = Util.isNegative(masked)
 
