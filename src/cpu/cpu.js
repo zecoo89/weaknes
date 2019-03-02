@@ -49,14 +49,14 @@ export default class Cpu {
   cycles(_cycles) {
     let cycles = this.debtCycles
 
-    for (; cycles < _cycles; ) cycles += this.eval()
+    for (; cycles < _cycles; ) cycles += this.step()
 
     this.debtCycles = cycles - _cycles
 
     return cycles
   }
 
-  eval() {
+  step() {
     const addr = this.registers.pc++
     const opcodeId = this.ram.read(addr)
 

@@ -58,13 +58,19 @@ export default class Loader {
 
     this.spLayer.reset()
 
-    const tileIdOffset = this.registers[0x2000].isSpriteChrBehind() ? 256 : 0
+    let tileIdOffset = this.registers[0x2000].isSpriteChrBehind() ? 256 : 0
     const isSpriteSizeTwice = this.registers[0x2000].isSpriteSizeTwice()
 
     for (let i = 0; i < attrs.length; i++) {
       const attr = attrs[i]
 
-      const tileId = attr.tileId + tileIdOffset
+      let tileId
+      if (isSpriteSizeTwice) {
+        tileIdOffset = attr.tileId & 0b1 ? 256 : 0
+        tileId = (attr.tileId & 0xfe) + tileIdOffset
+      } else {
+        tileId = attr.tileId + tileIdOffset
+      }
       const paletteId = attr.paletteId
 
       const tile = this.tiles.select(tileId)

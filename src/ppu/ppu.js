@@ -39,7 +39,8 @@ export default class Ppu {
 
     this.cycles = 0
     this.cyclesPerLine = 341
-    this.cyclesPerFrame = 89342
+    this.scanlines = 262
+    this.cyclesPerFrame = this.cyclesPerLine * this.scanlines
     this.isHblank = false
     this.isAlreadyZeroSpriteHit = false
   }
@@ -58,7 +59,7 @@ export default class Ppu {
     }
   }
 
-  run() {
+  step() {
     const isBackgroundEnabled = this.registers[0x2001].isBackgroundEnabled()
     const isSpriteEnabled = this.registers[0x2001].isSpriteEnabled()
     const isRenderingEnabled = isBackgroundEnabled || isSpriteEnabled
@@ -82,26 +83,32 @@ export default class Ppu {
 
     if (!isRenderingEnabled) return
 
-    const isRendering = !this.registers[0x2002].isVblank()
-    if (isRendering) {
+    const isPreScanline = vPosition === 261
+    if (isPreScanline && hPosition >= 280 && hPosition <= 304) {
+      this.copyY()
+    }
+
+    const isRenderLine = !this.registers[0x2002].isVblank()
+    if (!this.isHblank && isRenderLine) {
+      if (!this.isAlreadyZeroSpriteHit) {
+        const isZeroSpriteHit = this.isZeroSpriteHit(hPosition, vPosition)
+        if (isZeroSpriteHit) {
+          this.registers[0x2002].setZeroSpriteHit()
+          this.isAlreadyZeroSpriteHit = true
+        }
+      }
+      this.renderer.render(hPosition, vPosition)
+      this.incrementX()
+    }
+
+    if (isRenderLine) {
       if (hPosition === 256) {
         this.registers[0x2002].clearZeroSpriteHit()
         this.incrementY()
       }
 
       if (hPosition === 257) {
-        this.copyHorizontalPosition()
-      }
-    }
-
-    if (!this.isHblank && isRendering) {
-      const isZeroSpriteHit = this.isZeroSpriteHit(hPosition, vPosition)
-      isZeroSpriteHit && this.registers[0x2002].setZeroSpriteHit()
-      this.renderer.render(hPosition, vPosition)
-      this.incrementX()
-    } else {
-      if (vPosition === 261) {
-        hPosition === 304 && this.copyVerticalPosition()
+        this.copyX()
       }
     }
   }
@@ -124,8 +131,6 @@ export default class Ppu {
     this.loader.tiles.extract()
 
     const isVerticalMirror = rom.isVerticalMirror()
-    this.renderer._offsetX = isVerticalMirror ? 256 : 0
-    this.renderer._offsetY = isVerticalMirror ? 0 : 240
     this.loader.offsetX = isVerticalMirror ? 256 : 0
     this.loader.offsetY = isVerticalMirror ? 0 : 240
     this.renderer.endX = isVerticalMirror

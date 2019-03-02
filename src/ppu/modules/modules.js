@@ -19,8 +19,6 @@ export default {
   },
 
   isZeroSpriteHit: function(x, y) {
-    if (this.isAlreadyZeroSpriteHit) return false
-
     const zsPosition = this.oam.zeroSpritePosition()
 
     const isXHit = x === zsPosition.x
@@ -28,19 +26,17 @@ export default {
 
     const isHit = isXHit && isYHit
 
-    if (isHit) this.isAlreadyZeroSpriteHit = true
-
     return isHit
   },
 
-  copyHorizontalPosition: function() {
+  copyX: function() {
     const tBits = this.registers.t.readBits(0, 4)
     this.registers.v.writeBits(0, 4, tBits)
     const tBit = this.registers.t.readOneBit(10)
     this.registers.v.writeOneBit(10, tBit)
   },
 
-  copyVerticalPosition: function() {
+  copyY: function() {
     let tBits = this.registers.t.readBits(5, 9)
     this.registers.v.writeBits(5, 9, tBits)
     tBits = this.registers.t.readBits(11, 14)

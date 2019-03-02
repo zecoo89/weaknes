@@ -15,7 +15,10 @@ export default class Oam {
     this.pOffset = 0 // pointerからのオフセット(0~3)
     this.memory = new Array(0x100).fill(0)
     this._attrs = this.createAttrs()
-    this._zeroSpritePosition = { x: null, y: null }
+    this._zeroSpritePosition = {
+      x: null,
+      y: null
+    }
   }
 
   createAttrs() {
@@ -57,6 +60,10 @@ export default class Oam {
 
     if (this.pOffset > 3) {
       this.pOffset = 0
+      this.formatSpriteSettingData(pointer % 4)
+      if (pointer === 0) {
+        this.extractZeroSpritePosition()
+      }
     }
   }
 
@@ -75,20 +82,46 @@ export default class Oam {
         this.memory[addr++] = this.cpu.ram.read(i + j)
       }
     }
-  }
 
-  zeroSpritePosition() {
-    this._zeroSpritePosition.x = this.memory[3]
-    this._zeroSpritePosition.y = this.memory[0]
-
-    return this._zeroSpritePosition
-  }
-
-  attrs() {
     for (let i = 0; i < 64; i++) {
       this.formatSpriteSettingData(i)
     }
 
+    this.extractZeroSpritePosition()
+  }
+
+  zeroSpritePosition() {
+    return this._zeroSpritePosition
+  }
+
+  extractZeroSpritePosition() {
+    let tileIdOffset = this.ppu.registers[0x2000].isSpriteChrBehind() ? 256 : 0
+    const isSpriteSizeTwice = this.ppu.registers[0x2000].isSpriteSizeTwice()
+    const attr = this._attrs[0]
+
+    let tileId
+    if (isSpriteSizeTwice) {
+      tileIdOffset = attr.tileId & 0b1 ? 256 : 0
+      tileId = (attr.tileId & 0xfe) + tileIdOffset
+    } else {
+      tileId = attr.tileId + tileIdOffset
+    }
+
+    const tile = this.ppu.loader.tiles.select(tileId)
+
+    for (let i = 0; i < tile.length; i++) {
+      const line = tile[i]
+      for (let j = 0; j < line.length; j++) {
+        if (line[j]) {
+          this._zeroSpritePosition.x = attr.x + j
+          this._zeroSpritePosition.y = attr.y + i + 1
+          return
+        }
+      }
+    }
+  }
+
+  attrs() {
     return this._attrs
   }
 

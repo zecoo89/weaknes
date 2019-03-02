@@ -39,13 +39,13 @@ export default class Renderer {
     const fineY = this.registers.v.readFineY()
     const coarseY = this.registers.v.readCoarseY() * 8
     let ly = fineY + coarseY
-    if (ly >= 240) ly = this.scrollY = 0
+    if (ly >= 240) return
     const nametable = this.registers.v.readNametable()
     this.offsetX = (nametable & 0b1) * 256
     this.offsetY = (nametable >> 1) * 240
 
-    const dx = lx + this.offsetX
-    let dy = ly + this.offsetY
+    const dx = (lx + this.offsetX) % this.endX
+    let dy = (ly + this.offsetY) % this.endY
 
     const bgPixel = this.bgLayer.getPixel(dx, dy)
     const bgRgb = bgPixel.rgb()

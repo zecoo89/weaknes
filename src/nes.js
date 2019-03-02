@@ -22,8 +22,6 @@ export default class Nes {
     this.frames = 0
     this.startTime = 0
     this.endTime = 0
-    this.cyclesPerFrame = this.ppu.cyclesPerFrame
-    this.cycles = 0
   }
 
   connect(parts) {
@@ -47,18 +45,20 @@ export default class Nes {
   }
 
   frame() {
+    this.step()
+    this.calcFps()
+    this.nextFrame()
+  }
+
+  step() {
     for (this.ppu.cycles = 0; this.ppu.cycles < this.ppu.cyclesPerFrame; ) {
-      this.cpu.run(1)
-      for (let i = 0; i < 3; i++) {
-        this.ppu.run()
+      const cpuCycles = this.cpu.step()
+      const ppuCycles = cpuCycles * 2
+      for (let i = 0; i < ppuCycles; i++) {
+        this.ppu.step()
         this.ppu.cycles++
-        if (this.ppu.cycles === this.ppu.cyclesPerFrame) break
       }
     }
-
-    this.calcFps()
-
-    this.nextFrame()
   }
 
   nextFrame() {
