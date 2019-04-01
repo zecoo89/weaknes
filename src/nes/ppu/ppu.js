@@ -86,7 +86,7 @@ export default class Ppu {
 
     const isRenderLine = !this.registers[0x2002].isVblank()
     if (!this.isHblank && isRenderLine) {
-      if (!this.isAlreadyZeroSpriteHit) {
+      if (isRenderingEnabled && !this.isAlreadyZeroSpriteHit) {
         const isZeroSpriteHit = this.isZeroSpriteHit(hPosition, vPosition)
         if (isZeroSpriteHit) {
           this.registers[0x2002].setZeroSpriteHit()
@@ -99,7 +99,6 @@ export default class Ppu {
 
     if (isRenderLine) {
       if (hPosition === 256) {
-        this.registers[0x2002].clearZeroSpriteHit()
         this.incrementY()
       }
 
