@@ -33,7 +33,7 @@ export default class Renderer {
   }
 
   render(x, y) {
-    const fineX = this.registers.x.read()
+    const fineX = this.registers.x.read() + (x % 8)
     const coarseX = this.registers.v.readCoarseX() * 8
     const lx = fineX + coarseX
     const fineY = this.registers.v.readFineY()
