@@ -47,7 +47,7 @@ export default class Nes {
   step() {
     for (this.ppu.cycles = 0; this.ppu.cycles < this.ppu.cyclesPerFrame; ) {
       const cpuCycles = this.cpu.step()
-      const ppuCycles = cpuCycles * 2
+      const ppuCycles = cpuCycles * 3
       for (let i = 0; i < ppuCycles; i++) {
         this.ppu.step()
         this.ppu.cycles++
