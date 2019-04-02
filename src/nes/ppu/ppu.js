@@ -80,6 +80,7 @@ export default class Ppu {
     if (!isRenderingEnabled) return
 
     const isPreScanline = vPosition === 261
+
     if (isPreScanline && hPosition >= 280 && hPosition <= 304) {
       this.copyY()
     }
@@ -93,11 +94,15 @@ export default class Ppu {
           this.isAlreadyZeroSpriteHit = true
         }
       }
+
       this.renderer.render(hPosition, vPosition)
-      this.incrementX()
     }
 
     if (isRenderLine) {
+      if (!this.isHblank && (hPosition & 7) === 7) {
+        this.incrementX()
+      }
+
       if (hPosition === 256) {
         this.incrementY()
       }
