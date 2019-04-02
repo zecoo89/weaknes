@@ -44,19 +44,13 @@ export default {
   },
 
   incrementX: function() {
-    const x = this.registers.x.read()
-    if (x === 7) {
-      this.registers.x.write(0)
-      const coarseX = this.registers.v.readCoarseX()
-      if (coarseX === 31) {
-        this.registers.v.writeCoarseX(0)
-        const nametable = this.registers.v.readNametable()
-        this.registers.v.writeNametable(nametable ^ 0b01)
-      } else {
-        this.registers.v.writeCoarseX(coarseX + 1)
-      }
+    const coarseX = this.registers.v.readCoarseX()
+    if (coarseX === 31) {
+      this.registers.v.writeCoarseX(0)
+      const nametable = this.registers.v.readNametable()
+      this.registers.v.writeNametable(nametable ^ 0b01)
     } else {
-      this.registers.x.write(x + 1)
+      this.registers.v.writeCoarseX(coarseX + 1)
     }
   },
 
